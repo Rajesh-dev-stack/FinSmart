@@ -57,16 +57,27 @@
   border: 1px solid var(--border-hover);
 }
 
+.payee-info {
+  flex: 1;
+  min-width: 0;
+}
+
 .payee-info h4 {
   font-size: 1rem;
   font-weight: 600;
   margin: 0 0 0.25rem 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .payee-info p {
   font-size: 0.85rem;
   color: var(--text-secondary);
   margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .payee-action {
@@ -74,6 +85,7 @@
   color: var(--mint);
   font-weight: 600;
   font-size: 0.9rem;
+  white-space: nowrap;
 }
 
 .payee-delete-btn {
@@ -83,7 +95,7 @@
   cursor: pointer;
   padding: 4px 8px;
   border-radius: var(--r-md);
-  margin-left: auto; /* Push it next to the Send button */
+  margin-left: 5px;
   opacity: 0.6;
   transition: opacity 0.2s, background 0.2s;
 }
@@ -93,13 +105,23 @@
   background: rgba(239, 68, 68, 0.1); /* light red tint */
 }
 
-/* Ensure the layout looks right with both buttons */
-.payee-card .payee-action {
-  margin-left: 10px; 
-}
-
 @media (max-width: 900px) {
   .transfer-grid {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .payee-card {
+    padding: 0.75rem;
+    gap: 0.5rem;
+  }
+  .payee-avatar {
+    width: 40px;
+    height: 40px;
+  }
+  .payee-action {
+    font-size: 0.8rem;
+    padding: 0.25rem 0.5rem;
   }
 }

@@ -50,6 +50,17 @@
   gap: 1rem;
 }
 
+@media (max-width: 480px) {
+  .wallet-actions {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .wallet-amount {
+    font-size: 2.5rem;
+  }
+}
+
 /* Grid Layout */
 .wallet-grid {
   display: grid;
