@@ -18,7 +18,8 @@ service cloud.firestore {
     // Users Collection
     // ------------------------------------------
     match /users/{userId} {
-      allow read, delete: if isOwner(userId);
+      allow read: if isAuthenticated();
+      allow delete: if isOwner(userId);
       allow create: if isOwner(userId)
                     && request.resource.data.keys().hasAll(['email'])
                     && request.resource.data.email is string;
