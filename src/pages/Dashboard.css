@@ -1,0 +1,236 @@
+/* ─── Dashboard-specific styles ─── */
+
+/* Stats row */
+.dash-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.dash-stat-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.25rem 1.5rem;
+}
+
+.dash-stat-icon {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.dash-stat-label {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 0.2rem;
+}
+
+.dash-stat-val {
+  font-size: 1.35rem;
+  font-weight: 700;
+  font-family: 'Outfit', sans-serif;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+
+/* Widget grid */
+.dash-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.25rem;
+}
+
+@media (max-width: 1100px) {
+  .dash-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 680px) {
+  .dash-grid { grid-template-columns: 1fr; }
+  .dash-stats { grid-template-columns: repeat(2, 1fr); }
+}
+
+.dash-widget {
+  padding: 1.25rem;
+  border-radius: var(--r-lg);
+}
+
+.dash-widget-wide {
+  grid-column: span 2;
+}
+
+@media (max-width: 1100px) {
+  .dash-widget-wide { grid-column: span 2; }
+}
+
+@media (max-width: 680px) {
+  .dash-widget-wide { grid-column: span 1; }
+}
+
+/* Widget Header */
+.dash-widget-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.dash-widget-header h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.dash-widget-add {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(0, 201, 167, 0.12);
+  color: var(--mint);
+  font-size: 1.1rem;
+  font-weight: 400;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  cursor: pointer;
+  transition: var(--ease);
+  line-height: 1;
+}
+
+.dash-widget-add:hover {
+  background: var(--mint);
+  color: white;
+}
+
+/* Transaction rows */
+.dash-txn-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+  margin-top: 0.5rem;
+}
+
+.dash-txn-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--r-md);
+  transition: background 0.15s;
+}
+
+.dash-txn-row:hover {
+  background: var(--bg);
+}
+
+.dash-txn-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--mint-light);
+  color: var(--mint-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.dash-txn-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.dash-txn-name {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dash-txn-date {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.dash-txn-amount {
+  font-size: 0.9rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.dash-txn-amount.income { color: #00C9A7; }
+.dash-txn-amount.expense { color: #FC5A5A; }
+
+/* Reports widget */
+.dash-reports-summary {
+  display: flex;
+  gap: 1.5rem;
+  margin-top: 0.75rem;
+}
+
+/* Budget bars */
+.dash-budget-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.dash-budget-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.dash-budget-label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.dash-budget-val {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+}
+
+.dash-budget-val.over { color: var(--danger); }
+
+.dash-budget-track {
+  height: 6px;
+  background: var(--bg);
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.dash-budget-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #00C9A7, #4B9EFF);
+  border-radius: 99px;
+  transition: width 0.6s ease;
+}
+
+.dash-budget-fill.over {
+  background: linear-gradient(90deg, #FF974A, #FC5A5A);
+}
+
+/* Circle Progress */
+.dash-circle-progress {
+  display: flex;
+  justify-content: center;
+}

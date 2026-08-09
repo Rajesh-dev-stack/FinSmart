@@ -1,0 +1,105 @@
+.transfer-page {
+  animation: pageIn 0.35s ease forwards;
+}
+
+.transfer-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.payee-section {
+  background: var(--surface);
+  border-radius: var(--r-lg);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border);
+}
+
+.payee-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.25rem;
+}
+
+.payee-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.payee-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border-radius: var(--r-md);
+  border: 1px solid var(--border);
+  transition: var(--ease);
+  cursor: pointer;
+  background: var(--bg);
+}
+
+.payee-card:hover {
+  background: var(--mint-light);
+  border-color: var(--mint);
+  transform: translateY(-2px);
+}
+
+.payee-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: var(--surface);
+  border: 1px solid var(--border-hover);
+}
+
+.payee-info h4 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0 0 0.25rem 0;
+}
+
+.payee-info p {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.payee-action {
+  margin-left: auto;
+  color: var(--mint);
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.payee-delete-btn {
+  background: none;
+  border: none;
+  font-size: 1.1rem;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: var(--r-md);
+  margin-left: auto; /* Push it next to the Send button */
+  opacity: 0.6;
+  transition: opacity 0.2s, background 0.2s;
+}
+
+.payee-delete-btn:hover {
+  opacity: 1;
+  background: rgba(239, 68, 68, 0.1); /* light red tint */
+}
+
+/* Ensure the layout looks right with both buttons */
+.payee-card .payee-action {
+  margin-left: 10px; 
+}
+
+@media (max-width: 900px) {
+  .transfer-grid {
+    grid-template-columns: 1fr;
+  }
+}

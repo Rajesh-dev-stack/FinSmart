@@ -1,0 +1,202 @@
+.budget-page {
+  animation: fadeIn 0.3s ease;
+}
+
+.month-selector-budget {
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background-color: var(--surface-color);
+  font-size: 1rem;
+  outline: none;
+}
+
+.budget-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+@media (min-width: 1024px) {
+  .budget-layout {
+    grid-template-columns: 350px 1fr;
+  }
+}
+
+.subtitle {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  margin-bottom: 1.5rem;
+}
+
+.set-budget-card {
+  margin-bottom: 1.5rem;
+}
+
+.budget-form .form-group {
+  margin-bottom: 1rem;
+}
+
+/* Summary Card */
+.summary-stats {
+  display: flex;
+  justify-content: space-between;
+  margin: 1.5rem 0;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.stat span {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+}
+
+.stat h4 {
+  font-size: 1.5rem;
+  margin: 0.25rem 0 0 0;
+}
+
+.progress-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+.remaining-text {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+/* Full Width Summary Card (Top Dashboard Style) */
+.budget-summary-card-fullwidth {
+  margin-bottom: 1.5rem;
+  padding: 1.5rem 2rem;
+  background: var(--surface-light);
+  border: 1px solid var(--border-color);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.fullwidth-summary-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .fullwidth-summary-content {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 3rem;
+  }
+}
+
+.summary-stats-fullwidth {
+  display: flex;
+  gap: 3rem;
+  flex: 0 0 auto;
+}
+
+.overall-progress-fullwidth {
+  flex: 1;
+  max-width: 600px;
+}
+
+.text-right {
+  text-align: right;
+}
+
+/* Budget Cards Grid */
+.budget-cards-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+  margin-top: 1rem;
+}
+
+@media (min-width: 640px) {
+  .budget-cards-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1280px) {
+  .budget-cards-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.budget-item-card {
+  padding: 1.25rem;
+}
+
+.budget-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.budget-item-title {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.budget-icon {
+  font-size: 1.5rem;
+  background: var(--bg-color);
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+}
+
+.budget-item-title h4 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.budget-item-amounts {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
+.budget-item-amounts h2 {
+  margin: 0;
+  font-size: 1.8rem;
+}
+
+.limit-text {
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.budget-item-footer {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.mt-2 { margin-top: 0.5rem; }
+.mt-3 { margin-top: 1rem; }
+.text-center { text-align: center; }
+
+/* Colors */
+.progress-green { background-color: var(--success); }
+.progress-yellow { background-color: var(--warning); }
+.progress-red { background-color: var(--danger); }
+
+.text-yellow { color: var(--warning); }
+
+/* Toasts */
+.toast-warning { background-color: var(--warning); color: #111827; }
