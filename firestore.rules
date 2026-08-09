@@ -1,0 +1,86 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ------------------------------------------
+    // Helper Functions
+    // ------------------------------------------
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // ------------------------------------------
+    // Users Collection
+    // ------------------------------------------
+    match /users/{userId} {
+      allow read, delete: if isOwner(userId);
+      allow create: if isOwner(userId)
+                    && request.resource.data.keys().hasAll(['email'])
+                    && request.resource.data.email is string;
+      allow update: if isOwner(userId)
+                    && (request.resource.data.walletBalance == null || request.resource.data.walletBalance is number)
+                    && (request.resource.data.savingsBalance == null || request.resource.data.savingsBalance is number)
+                    && (request.resource.data.finCoins == null || request.resource.data.finCoins is number);
+
+      // Subcollection: Payees
+      match /payees/{payeeId} {
+        allow read, delete: if isOwner(userId);
+        allow create, update: if isOwner(userId)
+                              && request.resource.data.name is string
+                              && request.resource.data.type is string;
+      }
+    }
+
+    // ------------------------------------------
+    // Budgets Collection
+    // ------------------------------------------
+    match /budgets/{userId}/categories/{categoryId} {
+      allow read, delete: if isOwner(userId);
+      allow create, update: if isOwner(userId)
+                            && request.resource.data.limit is number
+                            && request.resource.data.spent is number;
+    }
+
+    // ------------------------------------------
+    // Transactions Collection
+    // ------------------------------------------
+    match /transactions/{transactionId} {
+      allow read, delete: if isAuthenticated() && resource.data.userId == request.auth.uid;
+      allow create: if isAuthenticated() 
+                    && request.resource.data.userId == request.auth.uid
+                    && request.resource.data.amount is number
+                    && request.resource.data.type in ['income', 'expense']
+                    && request.resource.data.date is string;
+      allow update: if isAuthenticated() 
+                    && resource.data.userId == request.auth.uid
+                    && request.resource.data.userId == request.auth.uid
+                    && request.resource.data.amount is number;
+    }
+
+    // ------------------------------------------
+    // Interest Transactions
+    // ------------------------------------------
+    match /interestTransactions/{txnId} {
+      allow read, delete: if isAuthenticated() && resource.data.userId == request.auth.uid;
+      allow create, update: if isAuthenticated() 
+                            && request.resource.data.userId == request.auth.uid
+                            && request.resource.data.amount is number;
+    }
+
+    // ------------------------------------------
+    // Coin Transactions (FinCoins)
+    // ------------------------------------------
+    match /coinTransactions/{txnId} {
+      allow read, delete: if isAuthenticated() && resource.data.userId == request.auth.uid;
+      allow create, update: if isAuthenticated() 
+                            && request.resource.data.userId == request.auth.uid
+                            && request.resource.data.amount is number
+                            && request.resource.data.reason is string;
+    }
+  }
+}
