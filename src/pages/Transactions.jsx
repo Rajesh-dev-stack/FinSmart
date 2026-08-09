@@ -5,14 +5,14 @@ import { getTransactions, addTransaction, deleteTransaction, updateTransaction }
 import './Transactions.css';
 
 const EXPENSE_CATEGORIES = [
-  'Food/Canteen', 'Transport/Auto', 'Books & Stationery', 'Entertainment', 
-  'Hostel/Rent', 'Medical', 'Mobile Recharge', 'Shopping', 'Travel', 'Transfer', 'Others'
+  'Food & Canteen', 'Transport & Auto', 'Books & Stationery', 'Entertainment', 
+  'Hostel & Rent', 'Medical', 'Mobile Recharge', 'Shopping', 'Travel', 'Transfer', 'Others'
 ];
 const INCOME_CATEGORIES = ['Salary', 'Freelance', 'Business', 'Gift', 'Other'];
 
 const CATEGORY_ICONS = {
-  'Food/Canteen': '🍱', 'Transport/Auto': '🛺', 'Books & Stationery': '📚', 'Entertainment': '🎬', 
-  'Hostel/Rent': '🏠', 'Medical': '💊', 'Mobile Recharge': '📱', 'Shopping': '🛒', 'Travel': '✈️', 'Transfer': '🔄', 'Others': '🔧',
+  'Food & Canteen': '🍱', 'Transport & Auto': '🛺', 'Books & Stationery': '📚', 'Entertainment': '🎬', 
+  'Hostel & Rent': '🏠', 'Medical': '💊', 'Mobile Recharge': '📱', 'Shopping': '🛒', 'Travel': '✈️', 'Transfer': '🔄', 'Others': '🔧',
   'Salary': '💼', 'Freelance': '💻', 'Business': '🏢', 'Gift': '🎁', 'Other': '📦'
 };
 

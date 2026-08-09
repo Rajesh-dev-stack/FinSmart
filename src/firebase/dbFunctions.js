@@ -292,8 +292,8 @@ export const getBudgets = async (userId) => {
 
     if (budgets.length === 0) {
       const defaultBudgets = {
-        'Food/Canteen': { limit: 2000, spent: 0 },
-        'Transport/Auto': { limit: 500, spent: 0 },
+        'Food & Canteen': { limit: 2000, spent: 0 },
+        'Transport & Auto': { limit: 500, spent: 0 },
         'Shopping': { limit: 1000, spent: 0 },
         'Entertainment': { limit: 500, spent: 0 },
         'Transfer': { limit: 1000, spent: 0 },

@@ -6,13 +6,13 @@ import GlassCard from '../components/ui/GlassCard';
 import './Budget.css';
 
 const EXPENSE_CATEGORIES = [
-  'Food/Canteen', 'Transport/Auto', 'Books & Stationery', 'Entertainment', 
-  'Hostel/Rent', 'Medical', 'Mobile Recharge', 'Shopping', 'Travel', 'Transfer', 'Others'
+  'Food & Canteen', 'Transport & Auto', 'Books & Stationery', 'Entertainment', 
+  'Hostel & Rent', 'Medical', 'Mobile Recharge', 'Shopping', 'Travel', 'Transfer', 'Others'
 ];
 
 const CATEGORY_ICONS = {
-  'Food/Canteen': '🍱', 'Transport/Auto': '🛺', 'Books & Stationery': '📚', 'Entertainment': '🎬', 
-  'Hostel/Rent': '🏠', 'Medical': '💊', 'Mobile Recharge': '📱', 'Shopping': '🛒', 'Travel': '✈️', 'Transfer': '🔄', 'Others': '🔧'
+  'Food & Canteen': '🍱', 'Transport & Auto': '🛺', 'Books & Stationery': '📚', 'Entertainment': '🎬', 
+  'Hostel & Rent': '🏠', 'Medical': '💊', 'Mobile Recharge': '📱', 'Shopping': '🛒', 'Travel': '✈️', 'Transfer': '🔄', 'Others': '🔧'
 };
 
 const Toast = ({ message, type, onClose }) => {
