@@ -10,8 +10,7 @@ const Profile = ({ user, onLogout, onProfileUpdate }) => {
   const [loading, setLoading]   = useState(true);
   const [userDoc, setUserDoc]   = useState(null);
   const [name, setName]         = useState('');
-  const [photoURL, setPhotoURL] = useState('');
-  const [saving, setSaving]     = useState(false);
+    const [saving, setSaving]     = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [message, setMessage]   = useState(null);
 
@@ -33,8 +32,7 @@ const Profile = ({ user, onLogout, onProfileUpdate }) => {
     const unsubscribe = auth.onAuthStateChanged(async (u) => {
       if (u) {
         setName(u.displayName || '');
-        setPhotoURL(u.photoURL || '');
-        try {
+                try {
           const doc = await getUser(u.uid);
           setUserDoc(doc);
         } catch (e) { console.error(e); }
@@ -49,13 +47,13 @@ const Profile = ({ user, onLogout, onProfileUpdate }) => {
     setTimeout(() => setMessage(null), 4000);
   };
 
-  /* ── Update Name / Photo ── */
+  /* ── Update Name ── */
   const handleUpdateProfile = async (e) => {
     e.preventDefault();
     setSaving(true);
     try {
-      await updateAuthProfile(name, photoURL);
-      if (onProfileUpdate) onProfileUpdate({ name, photo: photoURL });
+      await updateAuthProfile(name, '');
+      if (onProfileUpdate) onProfileUpdate({ name, photo: '' });
       showMsg('Profile updated successfully!');
     } catch {
       showMsg('Failed to update profile.', 'error');
@@ -163,16 +161,12 @@ const Profile = ({ user, onLogout, onProfileUpdate }) => {
         {/* ── Edit Name & Photo ── */}
         <div className="card profile-card">
           <h3>Personal Info</h3>
-          <p className="profile-card-sub">Update your display name and avatar.</p>
+          <p className="profile-card-sub">Update your display name.</p>
 
           <div className="profile-avatar-wrap">
             <img
-              src={photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(name || 'User')}&background=00C9A7&color=fff&bold=true&size=128`}
+              src={`https://ui-avatars.com/api/?name=${encodeURIComponent(name || 'User')}&background=random&color=fff&bold=true&size=128`}
               alt="Avatar"
-              onError={(e) => {
-                e.target.onerror = null; 
-                e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(name || 'User')}&background=00C9A7&color=fff&bold=true&size=128`;
-              }}
             />
           </div>
 
@@ -180,11 +174,6 @@ const Profile = ({ user, onLogout, onProfileUpdate }) => {
             <div className="profile-field">
               <label>Display Name</label>
               <input type="text" value={name} onChange={e => setName(e.target.value)} placeholder="Your full name" required />
-            </div>
-            <div className="profile-field">
-              <label>Profile Photo URL <span style={{ fontWeight: 400, opacity: 0.6 }}>(optional)</span></label>
-              <input type="url" value={photoURL} onChange={e => setPhotoURL(e.target.value)} placeholder="https://example.com/photo.jpg" />
-              <span className="profile-field-hint">Leave empty to use auto-generated avatar.</span>
             </div>
             <button type="submit" className="profile-btn-primary" disabled={saving}>
               {saving ? 'Saving…' : 'Save Changes'}

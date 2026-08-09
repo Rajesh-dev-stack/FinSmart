@@ -156,7 +156,7 @@ const Navbar = ({ title = 'Overview', user, onLogout }) => {
         {user && (
           <Link to="/profile" className="navbar-avatar-wrap" title={user.name}>
             <img
-              src={user.photo || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=00C9A7&color=fff&bold=true`}
+              src={`https://ui-avatars.com/api/?name=${encodeURIComponent(user.name || 'User')}&background=random&color=fff&bold=true`}
               alt={user.name}
               className="navbar-avatar"
             />
