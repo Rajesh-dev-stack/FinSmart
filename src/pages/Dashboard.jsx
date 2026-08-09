@@ -227,7 +227,7 @@ const Dashboard = ({ user }) => {
       <div className="page-content dashboard">
         <div className="page-header" style={{ marginBottom: '1.5rem' }}>
           <div>
-            <h1 style={{ fontSize: '1.8rem' }}>{greeting}, {user?.displayName?.split(' ')[0] || 'User'}! 👋</h1>
+            <h1 style={{ fontSize: '1.8rem' }}>{greeting}, {user?.name?.split(' ')[0] || 'User'}! 👋</h1>
             <p className="text-secondary" style={{ fontSize: '0.95rem' }}>Here's your summary for {dateStr}</p>
           </div>
         </div>

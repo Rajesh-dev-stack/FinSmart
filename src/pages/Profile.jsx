@@ -169,6 +169,10 @@ const Profile = ({ user, onLogout, onProfileUpdate }) => {
             <img
               src={photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(name || 'User')}&background=00C9A7&color=fff&bold=true&size=128`}
               alt="Avatar"
+              onError={(e) => {
+                e.target.onerror = null; 
+                e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(name || 'User')}&background=00C9A7&color=fff&bold=true&size=128`;
+              }}
             />
           </div>
 
@@ -260,7 +264,14 @@ const Profile = ({ user, onLogout, onProfileUpdate }) => {
           <h3>Account Info</h3>
           <div className="profile-info-row" style={{ borderBottom: '1px solid var(--border)', paddingBottom: '0.75rem', marginBottom: '0.75rem' }}>
             <span style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>Member Since</span>
-            <strong style={{ fontSize: '0.875rem' }}>{userDoc?.createdAt ? new Date(userDoc.createdAt).toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' }) : 'N/A'}</strong>
+            <strong style={{ fontSize: '0.875rem' }}>
+              {(() => {
+                const dateStr = userDoc?.createdAt || auth?.currentUser?.metadata?.creationTime;
+                if (!dateStr) return 'N/A';
+                const d = new Date(dateStr);
+                return d.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+              })()}
+            </strong>
           </div>
           <div className="profile-info-row" style={{ borderBottom: '1px solid var(--border)', paddingBottom: '0.75rem', marginBottom: '0.75rem' }}>
             <span style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>Sign-in Method</span>
