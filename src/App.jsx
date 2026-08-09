@@ -82,6 +82,11 @@ function App() {
             setTimeout(() => setInterestMsg(null), 6000);
           }
         }).catch(err => console.error(err));
+        
+        // Evaluate monthly FinCoin rewards
+        import('./firebase/dbFunctions').then(({ evaluateMonthlyRewards }) => {
+          evaluateMonthlyRewards(u.uid);
+        });
       }
     });
     return () => unsubscribe();

@@ -368,15 +368,34 @@ export const transferToSavings = async (userId, amount) => {
         throw new Error("Insufficient wallet balance for this transfer.");
       }
       
+      const newSavingsBalance = currentSavings + amount;
+      
       transaction.update(docRef, {
         walletBalance: currentWallet - amount,
-        "savings.balance": currentSavings + amount,
+        "savings.balance": newSavingsBalance,
         "savings.lastInterestDate": data.savings?.lastInterestDate || new Date().toISOString(),
         "savings.totalInterestEarned": data.savings?.totalInterestEarned || 0,
         "savings.savingsSince": data.savings?.savingsSince || new Date().toISOString()
       });
     });
     clearCache();
+    
+    // Evaluate goals after transaction completes
+    try {
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        if (data.savings?.goal && data.savings.balance >= data.savings.goal && !data.savings.goalAchieved) {
+          await awardCoins(userId, 150, "Achieved savings goal!");
+          await updateDoc(docRef, { "savings.goalAchieved": true });
+        }
+        // Simplified weekly goal check: If they add amount >= weekly target in one go (or total savings increase)
+        if (data.savings?.weeklyTarget && amount >= data.savings.weeklyTarget) {
+          await awardCoins(userId, 25, "Completed weekly savings target!");
+        }
+      }
+    } catch(e) { console.error("Error evaluating savings goals:", e); }
+    
   } catch (error) {
     console.error("Transfer to savings failed:", error);
     throw error;
@@ -697,5 +716,73 @@ export const deletePayee = async (userId, payeeId) => {
   } catch (error) {
     console.error("Error deleting payee:", error);
     throw error;
+  }
+};
+
+
+export const setSavingsGoal = async (userId, goal, weeklyTarget) => {
+  try {
+    const docRef = doc(db, "users", userId);
+    await updateDoc(docRef, {
+      "savings.goal": goal,
+      "savings.weeklyTarget": weeklyTarget,
+      "savings.goalAchieved": false
+    });
+  } catch(error) {
+    console.error("Error setting savings goal:", error);
+    throw error;
+  }
+};
+
+export const evaluateMonthlyRewards = async (userId) => {
+  try {
+    const docRef = doc(db, "users", userId);
+    const docSnap = await getDoc(docRef);
+    if (!docSnap.exists()) return;
+    const data = docSnap.data();
+    
+    const now = new Date();
+    const currentMonthStr = `${now.getFullYear()}-${now.getMonth() + 1}`;
+    
+    const lastEvalMonth = data.lastMonthlyRewardEval || null;
+    
+    if (lastEvalMonth !== currentMonthStr) {
+      // It's a new month! Let's check last month's performance.
+      // We will assume they stayed in budget if they have ANY FinCoins (as a mock/simplified check)
+      // or we can fetch their budgets.
+      
+      const budgets = await getBudgets(userId);
+      let stayedInBudget = true;
+      if (budgets && budgets.length > 0) {
+        for (let b of budgets) {
+          if (b.spent > b.limit) {
+            stayedInBudget = false;
+            break;
+          }
+        }
+      } else {
+        stayedInBudget = false; // no budgets = no reward
+      }
+      
+      if (stayedInBudget && budgets.length > 0) {
+        await awardCoins(userId, 50, "Stayed within monthly budget!");
+      }
+      
+      // Save more than last month check
+      const currentSavings = data.savings?.balance || 0;
+      const lastMonthSavings = data.lastMonthSavingsBalance || 0;
+      
+      if (currentSavings > lastMonthSavings && currentSavings > 0) {
+        await awardCoins(userId, 100, "Saved more than last month!");
+      }
+      
+      // Update for next month
+      await updateDoc(docRef, {
+        lastMonthlyRewardEval: currentMonthStr,
+        lastMonthSavingsBalance: currentSavings
+      });
+    }
+  } catch(e) {
+    console.error("Error evaluating monthly rewards:", e);
   }
 };
