@@ -663,6 +663,9 @@ export const processTransactionRewards = async (userId, transactionData) => {
     if (lastTxStr !== todayStr && transactionData.type === 'expense') {
       await awardCoins(userId, 10, "Daily expense log");
     }
+    
+    // Every transaction gets +10 coins
+    await awardCoins(userId, 10, "Transaction bonus");
 
     if (newStreak === 7 && data.streakDays !== 7) {
       await awardCoins(userId, 75, "7 Day Streak");
