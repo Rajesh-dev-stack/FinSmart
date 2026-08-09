@@ -23,9 +23,9 @@ service cloud.firestore {
                     && request.resource.data.keys().hasAll(['email'])
                     && request.resource.data.email is string;
       allow update: if isOwner(userId)
-                    && (request.resource.data.walletBalance == null || request.resource.data.walletBalance is number)
-                    && (request.resource.data.savingsBalance == null || request.resource.data.savingsBalance is number)
-                    && (request.resource.data.finCoins == null || request.resource.data.finCoins is number);
+                    && (!('walletBalance' in request.resource.data) || request.resource.data.walletBalance is number)
+                    && (!('savingsBalance' in request.resource.data) || request.resource.data.savingsBalance is number)
+                    && (!('finCoins' in request.resource.data) || request.resource.data.finCoins is number);
 
       // Subcollection: Payees
       match /payees/{payeeId} {
@@ -33,6 +33,12 @@ service cloud.firestore {
         allow create, update: if isOwner(userId)
                               && request.resource.data.name is string
                               && request.resource.data.type is string;
+      }
+      
+      // Subcollection: Rewards
+      match /rewards/{rewardId} {
+        allow read, delete: if isOwner(userId);
+        allow create, update: if isOwner(userId);
       }
     }
 
