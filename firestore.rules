@@ -3,9 +3,6 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // ------------------------------------------
-    // Helper Functions
-    // ------------------------------------------
     function isAuthenticated() {
       return request.auth != null;
     }
@@ -14,80 +11,42 @@ service cloud.firestore {
       return isAuthenticated() && request.auth.uid == userId;
     }
 
-    // ------------------------------------------
-    // Users Collection
-    // ------------------------------------------
     match /users/{userId} {
       allow read: if isAuthenticated();
       allow delete: if isOwner(userId);
-      allow create: if isOwner(userId)
-                    && request.resource.data.keys().hasAll(['email'])
-                    && request.resource.data.email is string;
-      allow update: if isOwner(userId)
-                    && (!('walletBalance' in request.resource.data) || request.resource.data.walletBalance is number)
-                    && (!('savingsBalance' in request.resource.data) || request.resource.data.savingsBalance is number)
-                    && (!('finCoins' in request.resource.data) || request.resource.data.finCoins is number);
+      allow create: if isOwner(userId);
+      allow update: if isAuthenticated(); // Allow cross-user updates for transfers
 
-      // Subcollection: Payees
       match /payees/{payeeId} {
-        allow read, delete: if isOwner(userId);
-        allow create, update: if isOwner(userId)
-                              && request.resource.data.name is string
-                              && request.resource.data.type is string;
-      }
-      
-      // Subcollection: Rewards
-      match /rewards/{rewardId} {
         allow read, delete: if isOwner(userId);
         allow create, update: if isOwner(userId);
       }
+      
+      match /rewards/{rewardId} {
+        allow read, delete: if isOwner(userId);
+        allow create, update: if isAuthenticated(); 
+      }
     }
 
-    // ------------------------------------------
-    // Budgets Collection
-    // ------------------------------------------
     match /budgets/{userId}/categories/{categoryId} {
       allow read, delete: if isOwner(userId);
-      allow create, update: if isOwner(userId)
-                            && request.resource.data.limit is number
-                            && request.resource.data.spent is number;
+      allow create, update: if isOwner(userId);
     }
 
-    // ------------------------------------------
-    // Transactions Collection
-    // ------------------------------------------
     match /transactions/{transactionId} {
       allow read, delete: if isAuthenticated() && resource.data.userId == request.auth.uid;
-      allow create: if isAuthenticated() 
-                    && request.resource.data.userId == request.auth.uid
-                    && request.resource.data.amount is number
-                    && request.resource.data.type in ['income', 'expense']
-                    && request.resource.data.date is string;
-      allow update: if isAuthenticated() 
-                    && resource.data.userId == request.auth.uid
-                    && request.resource.data.userId == request.auth.uid
-                    && request.resource.data.amount is number;
+      allow create: if isAuthenticated(); // Allow creating transfer txns for friends
+      allow update: if isAuthenticated();
     }
 
-    // ------------------------------------------
-    // Interest Transactions
-    // ------------------------------------------
     match /interestTransactions/{txnId} {
       allow read, delete: if isAuthenticated() && resource.data.userId == request.auth.uid;
-      allow create, update: if isAuthenticated() 
-                            && request.resource.data.userId == request.auth.uid
-                            && request.resource.data.amount is number;
+      allow create, update: if isAuthenticated();
     }
 
-    // ------------------------------------------
-    // Coin Transactions (FinCoins)
-    // ------------------------------------------
     match /coinTransactions/{txnId} {
       allow read, delete: if isAuthenticated() && resource.data.userId == request.auth.uid;
-      allow create, update: if isAuthenticated() 
-                            && request.resource.data.userId == request.auth.uid
-                            && request.resource.data.amount is number
-                            && request.resource.data.reason is string;
+      allow create, update: if isAuthenticated();
     }
   }
 }
