@@ -126,17 +126,6 @@ const Transactions = () => {
     }
   };
 
-  const handleDelete = async (txn) => {
-    if (!window.confirm('Are you sure you want to delete this transaction?')) return;
-    
-    try {
-      await deleteTransaction(txn.id, txn.userId, txn.amount, txn.type, txn.category);
-      fetchData(auth.currentUser.uid);
-    } catch (error) {
-      alert('Error deleting transaction');
-    }
-  };
-
   // Filter Logic
   const filteredTransactions = useMemo(() => {
     return transactions.filter(txn => {
@@ -244,7 +233,6 @@ const Transactions = () => {
                   </td>
                   <td className="text-center">
                     <button className="icon-btn edit-btn" onClick={() => openEditModal(txn)}>✏️</button>
-                    <button className="icon-btn delete-btn" onClick={() => handleDelete(txn)}>🗑️</button>
                   </td>
                 </tr>
               ))}
