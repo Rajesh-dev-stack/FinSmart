@@ -1,8 +1,7 @@
 # 💸 FinSmart - Smart Money Management
 
-![FinSmart Banner](https://img.shields.io/badge/FinSmart-Ocean_Blue_Glassmorphism-00D4FF?style=for-the-badge)
 
-FinSmart is a modern, AI-powered personal finance and budgeting application designed for college students and young professionals. Featuring a stunning **Ocean Blue Glassmorphism** design system, FinSmart makes tracking your money, saving for the future, and analyzing your spending a premium, enjoyable experience.
+FinSmart is a modern, AI-powered personal finance and budgeting application designed for college students and young professionals. FinSmart makes tracking your money, saving for the future, and analyzing your spending a premium, enjoyable experience.
 
 ## ✨ Features
 
@@ -19,7 +18,7 @@ FinSmart is a modern, AI-powered personal finance and budgeting application desi
 * **Frontend:** React, Vite
 * **Design:** Custom Vanilla CSS with advanced Glassmorphism utilities
 * **Database & Auth:** Firebase / Firestore
-* **AI Integration:** Groq API (for AI Spending Insights)
+* **AI Integration:** NVIDIA API (for AI Spending Insights)
 * **Icons & Avatars:** SimpleIcons, UI-Avatars
 
 ## 🚀 Getting Started
@@ -50,7 +49,7 @@ You will need [Node.js](https://nodejs.org/) installed on your machine.
    VITE_FIREBASE_STORAGE_BUCKET="your_storage_bucket"
    VITE_FIREBASE_MESSAGING_SENDER_ID="your_sender_id"
    VITE_FIREBASE_APP_ID="your_app_id"
-   VITE_GROQ_API_KEY="your_groq_api_key"
+   VITE_NVIDIA_API_KEY="your_NVIDIA_api_key"
    ```
 
 4. **Start the development server**
