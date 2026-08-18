@@ -1,30 +1,31 @@
-const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
+const NVIDIA_API_KEY = import.meta.env.VITE_NVIDIA_API_KEY;
 
-async function askGemini(prompt, isJsonResponse = false) {
+async function askNvidia(prompt, isJsonResponse = false) {
   try {
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+    const response = await fetch('/api/nvidia/v1/chat/completions', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${NVIDIA_API_KEY}`
       },
       body: JSON.stringify({
-        contents: [{ parts: [{ text: prompt }] }],
-        generationConfig: {
-          responseMimeType: isJsonResponse ? "application/json" : "text/plain",
-          temperature: 0.7
-        }
+        model: 'meta/llama-3.1-8b-instruct',
+        messages: [{ role: 'user', content: prompt }],
+        temperature: 0.7,
+        max_tokens: 1024,
+        response_format: isJsonResponse ? { type: "json_object" } : { type: "text" }
       })
     });
 
     const data = await response.json();
     
     if (!response.ok) {
-      throw new Error(data.error?.message || "Gemini API request failed");
+      throw new Error(data.error?.message || "NVIDIA API request failed");
     }
 
-    return data.candidates[0].content.parts[0].text;
+    return data.choices[0].message.content;
   } catch (error) {
-    console.error("Gemini API Error:", error);
+    console.error("NVIDIA API Error:", error);
     throw error;
   }
 }
@@ -42,7 +43,7 @@ ${summary}
 
 Give 3 insights:`;
 
-  return await askGemini(prompt);
+  return await askNvidia(prompt);
 };
 
 // 2. BUDGET ADVISOR
@@ -60,7 +61,7 @@ ${budgetStr}
 
 Give 4 specific, actionable pieces of advice with emojis:`;
 
-  return await askGemini(prompt);
+  return await askNvidia(prompt);
 };
 
 // 3. NEXT MONTH PREDICTOR
@@ -78,7 +79,7 @@ ${summary}
 
 JSON prediction:`;
 
-  const raw = await askGemini(prompt, true);
+  const raw = await askNvidia(prompt, true);
   
   try {
     return JSON.parse(raw);
@@ -100,7 +101,7 @@ ${patternStr}
 
 5 specific saving tips:`;
 
-  return await askGemini(prompt);
+  return await askNvidia(prompt);
 };
 
-export default askGemini;
+export default askNvidia;
