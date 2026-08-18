@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { Bar } from 'react-chartjs-2';
 import { auth } from '../firebase/firebaseClient';
 import { getTransactions, getBudgets, getUser } from '../firebase/dbFunctions';
-import { analyzeSpending, getBudgetAdvice, predictNextMonth, getSavingTips } from '../ai/groqHelper';
+import { analyzeSpending, getBudgetAdvice, predictNextMonth, getSavingTips } from '../ai/geminiHelper';
 import './AIInsights.css';
 
 const AIInsights = () => {
@@ -169,7 +169,7 @@ const AIInsights = () => {
   return (
     <div className="page ai-insights-page">
       <div className="ai-header">
-        <p className="ai-subtitle">Powered by Llama 3 via Groq — Get personalized, AI-driven financial advice.</p>
+        <p className="ai-subtitle">Powered by Google Gemini — Get personalized, AI-driven financial advice.</p>
       </div>
 
       <div className="ai-grid">

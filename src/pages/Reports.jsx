@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { auth } from '../firebase/firebaseClient';
 import { getUser, getTransactionsByMonth, getBudgets } from '../firebase/dbFunctions';
-import { analyzeSpending } from '../ai/groqHelper';
+import { analyzeSpending } from '../ai/geminiHelper';
 import './Reports.css';
 
 const MONTH_NAMES = [
