@@ -1,22 +1,28 @@
-import { GoogleGenAI } from '@google/genai';
-
 const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
-
-// Initialize the SDK. We use 'gemini-2.5-flash' since that's standard for `@google/genai` but fallback to 1.5 if needed.
-const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
 
 async function askGemini(prompt, isJsonResponse = false) {
   try {
-    const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
-      contents: prompt,
-      config: {
-        responseMimeType: isJsonResponse ? 'application/json' : 'text/plain',
-        temperature: 0.7,
-      }
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: prompt }] }],
+        generationConfig: {
+          responseMimeType: isJsonResponse ? "application/json" : "text/plain",
+          temperature: 0.7
+        }
+      })
     });
 
-    return response.text;
+    const data = await response.json();
+    
+    if (!response.ok) {
+      throw new Error(data.error?.message || "Gemini API request failed");
+    }
+
+    return data.candidates[0].content.parts[0].text;
   } catch (error) {
     console.error("Gemini API Error:", error);
     throw error;
