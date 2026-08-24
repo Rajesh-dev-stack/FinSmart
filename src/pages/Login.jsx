@@ -119,8 +119,8 @@ const Login = () => {
         <div className="auth-brand-block">
           <img src="/logo.png?v=2" alt="FinSmart" className="auth-brand-icon" />
           <div className="auth-brand-text">
-            <h2 className="auth-brand-title gradient-text">
-              FinSmart
+            <h2 className="auth-brand-title">
+              <span className="brand-fin">Fin</span><span className="brand-smart">Smart</span>
             </h2>
             <span className="auth-brand-subtitle">Digital Wallet</span>
           </div>
