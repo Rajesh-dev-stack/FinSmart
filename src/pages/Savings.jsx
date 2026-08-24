@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getUser, transferToSavings, transferFromSavings, getInterestTransactions, setSavingsGoal } from '../firebase/dbFunctions';
+import { getUser, transferToSavings, transferFromSavings, getInterestTransactions } from '../firebase/dbFunctions';
 import { useTheme } from '../context/ThemeProvider';
 import { Line } from 'react-chartjs-2';
 import {
@@ -29,11 +29,7 @@ const Savings = ({ user }) => {
   const [transferring, setTransferring] = useState(false);
   const [msg, setMsg] = useState({ text: '', type: '' });
   
-  const [projectorAmount, setProjectorAmount] = useState(10000);
-  const [goalAmount, setGoalAmount] = useState('');
-  const [weeklyTarget, setWeeklyTarget] = useState('');
-  const [savingGoalMsg, setSavingGoalMsg] = useState('');
-  const [settingGoal, setSettingGoal] = useState(false);
+
 
   const { theme } = useTheme();
   const isDark = theme === 'dark';
@@ -89,25 +85,7 @@ const Savings = ({ user }) => {
     }
   };
 
-  const handleSetGoal = async (e) => {
-    e.preventDefault();
-    setSavingGoalMsg('');
-    const ga = parseFloat(goalAmount);
-    const wt = parseFloat(weeklyTarget);
-    if (isNaN(ga) || ga <= 0 || isNaN(wt) || wt <= 0) {
-      return setSavingGoalMsg('Enter valid amounts.');
-    }
-    setSettingGoal(true);
-    try {
-      await setSavingsGoal(user.uid, ga, wt);
-      setSavingGoalMsg('Goals updated successfully! 🌱');
-      loadData();
-    } catch (err) {
-      setSavingGoalMsg('Failed to update goals.');
-    } finally {
-      setSettingGoal(false);
-    }
-  };
+
 
   if (loading) {
     return (
@@ -234,95 +212,7 @@ const Savings = ({ user }) => {
               </form>
             </div>
 
-            {/* Savings Goal Tracker */}
-            <div className="card">
-              <h3 style={{ marginBottom: '1.5rem' }}>Savings Goals 🎯</h3>
-              {savingsData?.goal ? (
-                <div style={{ marginBottom: '1.5rem' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-                    <span style={{ color: 'var(--text-secondary)' }}>Goal Progress</span>
-                    <span style={{ fontWeight: 600, color: 'var(--primary)' }}>
-                      ₹{balance.toLocaleString()} / ₹{savingsData.goal.toLocaleString()}
-                    </span>
-                  </div>
-                  <div style={{ width: '100%', height: '8px', background: 'var(--bg)', borderRadius: '4px', overflow: 'hidden' }}>
-                    <div style={{ width: `${Math.min(100, (balance / savingsData.goal) * 100)}%`, height: '100%', background: 'var(--gradient-primary)', transition: 'width 0.5s ease' }}></div>
-                  </div>
-                  <p style={{ marginTop: '0.75rem', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-                    Weekly Target: ₹{savingsData.weeklyTarget?.toLocaleString()}
-                  </p>
-                  
-                  {savingsData.goalAchieved && (
-                    <div style={{ marginTop: '1rem', padding: '0.75rem', borderRadius: 'var(--r-sm)', background: 'rgba(0,201,167,0.1)', color: 'var(--success)', fontSize: '0.9rem', textAlign: 'center' }}>
-                      🎉 Goal Achieved! You earned 150 FinCoins!
-                    </div>
-                  )}
-                </div>
-              ) : (
-                <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginBottom: '1rem' }}>
-                  Set a goal to unlock FinCoin rewards and track your progress!
-                </p>
-              )}
 
-              <form onSubmit={handleSetGoal} style={{ borderTop: '1px solid var(--border)', paddingTop: '1.5rem', marginTop: '1rem' }}>
-                <h4 style={{ fontSize: '1rem', marginBottom: '1rem' }}>{savingsData?.goal ? 'Update Goal' : 'Create Goal'}</h4>
-                {savingGoalMsg && (
-                  <p style={{ color: 'var(--primary)', fontSize: '0.9rem', marginBottom: '1rem' }}>{savingGoalMsg}</p>
-                )}
-                <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem' }}>
-                  <div style={{ flex: 1 }}>
-                    <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '0.25rem' }}>Total Goal (₹)</label>
-                    <input type="number" value={goalAmount} onChange={e=>setGoalAmount(e.target.value)} placeholder={savingsData?.goal || "50000"} required style={{ width: '100%', padding: '0.6rem', borderRadius: '6px', border: '1px solid var(--border)', background: 'var(--bg)', color: 'var(--text-primary)' }} />
-                  </div>
-                  <div style={{ flex: 1 }}>
-                    <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '0.25rem' }}>Weekly Target (₹)</label>
-                    <input type="number" value={weeklyTarget} onChange={e=>setWeeklyTarget(e.target.value)} placeholder={savingsData?.weeklyTarget || "1000"} required style={{ width: '100%', padding: '0.6rem', borderRadius: '6px', border: '1px solid var(--border)', background: 'var(--bg)', color: 'var(--text-primary)' }} />
-                  </div>
-                </div>
-                <button type="submit" className="btn btn-outline" style={{ width: '100%' }} disabled={settingGoal}>
-                  {settingGoal ? 'Saving...' : 'Set Goals & Earn 🪙'}
-                </button>
-              </form>
-            </div>
-
-            {/* AI Growth Projector */}
-            <div className="card">
-              <h3 style={{ marginBottom: '0.5rem' }}>AI Growth Projector ✦</h3>
-              <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginBottom: '1.5rem' }}>See how much your money will grow at 6% APY</p>
-              
-              <div style={{ marginBottom: '2rem' }}>
-                <label style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem' }}>
-                  <span style={{ color: 'var(--text-primary)', fontWeight: 600 }}>If you keep</span>
-                  <span style={{ color: 'var(--primary)', fontWeight: 700, fontSize: '1.2rem' }}>₹{projectorAmount.toLocaleString()}</span>
-                </label>
-                <input 
-                  type="range" 
-                  min="1000" max="1000000" step="1000"
-                  value={projectorAmount}
-                  onChange={e => setProjectorAmount(Number(e.target.value))}
-                  style={{ width: '100%', accentColor: 'var(--primary)' }}
-                />
-              </div>
-
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: '0.5rem', borderBottom: '1px solid var(--border)' }}>
-                  <span style={{ color: 'var(--text-secondary)' }}>After 1 month</span>
-                  <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>→ ₹{A1.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</span>
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: '0.5rem', borderBottom: '1px solid var(--border)' }}>
-                  <span style={{ color: 'var(--text-secondary)' }}>After 6 months</span>
-                  <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>→ ₹{A6.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</span>
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: '0.5rem', borderBottom: '1px solid var(--border)' }}>
-                  <span style={{ color: 'var(--text-secondary)' }}>After 1 year</span>
-                  <span style={{ fontWeight: 600, color: 'var(--primary)' }}>→ ₹{A12.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</span>
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <span style={{ color: 'var(--text-secondary)' }}>After 3 years</span>
-                  <span style={{ fontWeight: 700, color: 'var(--primary)' }}>→ ₹{A36.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</span>
-                </div>
-              </div>
-            </div>
           </div>
 
           {/* Chart & History Column */}
