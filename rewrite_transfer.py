@@ -1,4 +1,6 @@
+import re
 
+css = """
 .transfer-page {
   animation: pageIn 0.35s ease forwards;
 }
@@ -145,3 +147,56 @@
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
   }
 }
+"""
+
+with open('src/pages/Transfer.css', 'w', encoding='utf-8') as f:
+    f.write(css)
+
+with open('src/pages/Transfer.jsx', 'r', encoding='utf-8') as f:
+    code = f.read()
+
+new_ui = """    <div className="page transfer-page">
+      {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
+      
+      <div className="transfer-page-header">
+        <div>
+          <h2 style={{ marginBottom: '0.25rem', fontSize: '2rem' }}>Transfer Money</h2>
+          <p style={{ color: 'var(--text-secondary)' }}>Instantly send funds to your saved contacts.</p>
+        </div>
+        <button className="btn btn-primary" onClick={() => setShowAddPayeeModal(true)} style={{ padding: '0.8rem 1.5rem', fontWeight: 'bold' }}>
+          + Add Contact
+        </button>
+      </div>
+
+      <div className="wallet-balance-card">
+        <div style={{ position: 'relative', zIndex: 2 }}>
+          <p style={{ opacity: 0.85, fontSize: '0.95rem', margin: 0, fontWeight: 500 }}>Available Wallet Balance</p>
+          <h2>₹{balance.toLocaleString(undefined, { minimumFractionDigits: 2 })}</h2>
+        </div>
+        <div style={{ fontSize: '4.5rem', opacity: 0.2, position: 'relative', zIndex: 2 }}>
+          💸
+        </div>
+      </div>
+
+      <h3 style={{ marginBottom: '1.25rem' }}>Your Contacts</h3>
+      <div className="contacts-grid">
+        {contacts.map(c => (
+          <div key={c.id} className="contact-card" onClick={() => handleOpenSend(c)}>
+            {c.isCustom && (
+              <button className="delete-contact-btn" onClick={(e) => handleDeletePayee(e, c)} title="Delete Contact">
+                ✕
+              </button>
+            )}
+            <img src={c.avatar} alt={c.name} className="contact-avatar" onError={(e) => { e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(c.name)}&background=random&color=fff` }} />
+            <div className="contact-name">{c.name}</div>
+            <div className="contact-detail">{c.detail || 'Saved Contact'}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* Send Modal */}"""
+
+code = re.sub(r'<div className="page transfer-page">.*?\{/\* Send Modal \*/\}', new_ui, code, flags=re.DOTALL)
+
+with open('src/pages/Transfer.jsx', 'w', encoding='utf-8') as f:
+    f.write(code)

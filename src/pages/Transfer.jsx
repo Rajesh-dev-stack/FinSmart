@@ -20,15 +20,9 @@ const INITIAL_CONTACTS = [
   { id: 'c1', type: 'contact', name: 'Self Transfer', avatar: 'https://ui-avatars.com/api/?name=Self+Transfer&background=0D8ABC&color=fff' },
 ];
 
-const INITIAL_BRANDS = [
-  { id: 'b1', type: 'brand', name: 'Netflix', detail: 'Subscription', avatar: 'https://ui-avatars.com/api/?name=Netflix&background=E50914&color=fff' },
-  { id: 'b2', type: 'brand', name: 'Amazon', detail: 'Shopping', avatar: 'https://ui-avatars.com/api/?name=Amazon&background=FF9900&color=fff' },
-  { id: 'b3', type: 'brand', name: 'Spotify', detail: 'Music', avatar: 'https://ui-avatars.com/api/?name=Spotify&background=1ED760&color=fff' },
-];
-
 const Transfer = () => {
   const [contacts, setContacts] = useState(INITIAL_CONTACTS);
-  const [brands, setBrands] = useState(INITIAL_BRANDS);
+  
   
   const [toast, setToast] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -58,10 +52,9 @@ const Transfer = () => {
           const savedPayees = await getPayees(auth.currentUser.uid);
           
           const customContacts = savedPayees.filter(p => p.type === 'contact');
-          const customBrands = savedPayees.filter(p => p.type === 'brand');
           
           setContacts([...customContacts, ...INITIAL_CONTACTS]);
-          setBrands([...customBrands, ...INITIAL_BRANDS]);
+          
         }
       } catch (error) {
         console.error("Transfer load error:", error);
@@ -132,13 +125,8 @@ const Transfer = () => {
       const docId = await addPayee(auth.currentUser.uid, newPayeeData);
       const savedPayee = { id: docId, ...newPayeeData };
 
-      if (newPayeeType === 'contact') {
-        setContacts([savedPayee, ...contacts]);
-        showToast(`Added contact ${newPayeeName}`);
-      } else {
-        setBrands([savedPayee, ...brands]);
-        showToast(`Added brand ${newPayeeName}`);
-      }
+      setContacts([savedPayee, ...contacts]);
+      showToast(`Added contact ${newPayeeName}`);
 
       setShowAddPayeeModal(false);
       setNewPayeeName('');
@@ -160,11 +148,7 @@ const Transfer = () => {
       if (payee.isCustom) {
         await deletePayee(auth.currentUser.uid, payee.id);
       }
-      if (payee.type === 'contact') {
-        setContacts(contacts.filter(c => c.id !== payee.id));
-      } else {
-        setBrands(brands.filter(b => b.id !== payee.id));
-      }
+      setContacts(contacts.filter(c => c.id !== payee.id));
       showToast(`Deleted ${payee.name}`);
     } catch (error) {
       showToast('Failed to delete payee', 'error');
@@ -174,69 +158,43 @@ const Transfer = () => {
   if (loading) return <div className="page"><div className="global-spinner"></div></div>;
 
   return (
-    <div className="page transfer-page">
+        <div className="page transfer-page">
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
       
-      <div className="page-header" style={{ marginBottom: '1rem', justifyContent: 'flex-end' }}>
-        <button className="btn btn-primary" onClick={() => setShowAddPayeeModal(true)}>
-          + Add New Payee
+      <div className="transfer-page-header">
+        <div>
+          <h2 style={{ marginBottom: '0.25rem', fontSize: '2rem' }}>Transfer Money</h2>
+          <p style={{ color: 'var(--text-secondary)' }}>Instantly send funds to your saved contacts.</p>
+        </div>
+        <button className="btn btn-primary" onClick={() => setShowAddPayeeModal(true)} style={{ padding: '0.8rem 1.5rem', fontWeight: 'bold' }}>
+          + Add Contact
         </button>
       </div>
 
-      <div style={{ marginBottom: '1.5rem' }}>
-        <p style={{ color: 'var(--text-secondary)' }}>
-          Available Wallet Balance: <strong style={{ color: 'var(--text-primary)' }}>₹{balance.toLocaleString(undefined, { minimumFractionDigits: 2 })}</strong>
-        </p>
+      <div className="wallet-balance-card">
+        <div style={{ position: 'relative', zIndex: 2 }}>
+          <p style={{ opacity: 0.85, fontSize: '0.95rem', margin: 0, fontWeight: 500 }}>Available Wallet Balance</p>
+          <h2>₹{balance.toLocaleString(undefined, { minimumFractionDigits: 2 })}</h2>
+        </div>
+        <div style={{ fontSize: '4.5rem', opacity: 0.2, position: 'relative', zIndex: 2 }}>
+          💸
+        </div>
       </div>
 
-      <div className="transfer-grid">
-        {/* Contacts */}
-        <div className="payee-section">
-          <div className="payee-header">
-            <h3>Recent Contacts</h3>
+      <h3 style={{ marginBottom: '1.25rem' }}>Your Contacts</h3>
+      <div className="contacts-grid">
+        {contacts.map(c => (
+          <div key={c.id} className="contact-card" onClick={() => handleOpenSend(c)}>
+            {c.isCustom && (
+              <button className="delete-contact-btn" onClick={(e) => handleDeletePayee(e, c)} title="Delete Contact">
+                ✕
+              </button>
+            )}
+            <img src={c.avatar} alt={c.name} className="contact-avatar" onError={(e) => { e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(c.name)}&background=random&color=fff` }} />
+            <div className="contact-name">{c.name}</div>
+            <div className="contact-detail">{c.detail || 'Saved Contact'}</div>
           </div>
-          <div className="payee-list">
-            {contacts.map(c => (
-              <div key={c.id} className="payee-card" onClick={() => handleOpenSend(c)}>
-                <img src={c.avatar} alt={c.name} className="payee-avatar" />
-                <div className="payee-info">
-                  <h4>{c.name}</h4>
-                  <p>{c.detail}</p>
-                </div>
-                {c.isCustom && (
-                  <button className="payee-delete-btn" onClick={(e) => handleDeletePayee(e, c)} title="Delete Payee">
-                    🗑️
-                  </button>
-                )}
-                <div className="payee-action">Send ↗</div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Brands */}
-        <div className="payee-section">
-          <div className="payee-header">
-            <h3>Brands & Services</h3>
-          </div>
-          <div className="payee-list">
-            {brands.map(b => (
-              <div key={b.id} className="payee-card" onClick={() => handleOpenSend(b)}>
-                <img src={b.avatar} alt={b.name} className="payee-avatar" onError={(e) => { e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(b.name)}&background=random&color=fff` }} />
-                <div className="payee-info">
-                  <h4>{b.name}</h4>
-                  <p>{b.detail}</p>
-                </div>
-                {b.isCustom && (
-                  <button className="payee-delete-btn" onClick={(e) => handleDeletePayee(e, b)} title="Delete Payee">
-                    🗑️
-                  </button>
-                )}
-                <div className="payee-action">Pay ↗</div>
-              </div>
-            ))}
-          </div>
-        </div>
+        ))}
       </div>
 
       {/* Send Modal */}
@@ -291,20 +249,14 @@ const Transfer = () => {
               <button className="close-btn" onClick={() => setShowAddPayeeModal(false)}>✕</button>
             </div>
             <form onSubmit={handleAddPayee} className="modal-form">
-              <div className="form-group">
-                <label>Type</label>
-                <select value={newPayeeType} onChange={(e) => setNewPayeeType(e.target.value)}>
-                  <option value="contact">Contact (Person)</option>
-                  <option value="brand">Brand (Service)</option>
-                </select>
-              </div>
+              
               <div className="form-group">
                 <label>Name</label>
                 <input 
                   type="text" 
                   value={newPayeeName} 
                   onChange={(e) => setNewPayeeName(e.target.value)} 
-                  placeholder={newPayeeType === 'contact' ? "e.g., Alex Johnson" : "e.g., Hulu"}
+                  placeholder="e.g., Alex Johnson"
                   required
                 />
               </div>
@@ -314,12 +266,12 @@ const Transfer = () => {
                   type="text" 
                   value={newPayeeDetail} 
                   onChange={(e) => setNewPayeeDetail(e.target.value)} 
-                  placeholder={newPayeeType === 'contact' ? "alex@example.com" : "Subscription ID"}
+                  placeholder="alex@example.com"
                   required
                 />
               </div>
               <button type="submit" className="btn btn-primary full-width" disabled={processing}>
-                {processing ? 'Saving...' : `Add ${newPayeeType === 'contact' ? 'Contact' : 'Brand'}`}
+                {processing ? 'Saving...' : 'Add Contact'}
               </button>
             </form>
           </div>
