@@ -48,5 +48,10 @@ service cloud.firestore {
       allow read, delete: if isAuthenticated() && resource.data.userId == request.auth.uid;
       allow create, update: if isAuthenticated();
     }
+
+    match /support/{ticketId} {
+      allow create: if true;
+      allow read, update, delete: if isAuthenticated();
+    }
   }
 }

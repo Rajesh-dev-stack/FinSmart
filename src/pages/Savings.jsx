@@ -104,12 +104,7 @@ const Savings = ({ user }) => {
   const interestMonth = balance * dailyRate * 30; // rough estimate for display
   const interestYearly = balance * 0.06;
 
-  // Projector Math
-  const P = projectorAmount;
-  const A1 = P * Math.pow(1 + dailyRate, 30);
-  const A6 = P * Math.pow(1 + dailyRate, 182);
-  const A12 = P * Math.pow(1 + dailyRate, 365);
-  const A36 = P * Math.pow(1 + dailyRate, 1095);
+
 
   // Chart Setup
   const chartLabels = txns.slice(0, 14).reverse().map(t => new Date(t.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }));

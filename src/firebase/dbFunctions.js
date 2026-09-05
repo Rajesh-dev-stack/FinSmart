@@ -789,3 +789,46 @@ export const evaluateMonthlyRewards = async (userId) => {
     console.error("Error evaluating monthly rewards:", e);
   }
 };
+
+// ==========================================
+// SUPPORT TICKETS
+// ==========================================
+export const submitSupportTicket = async (ticketData) => {
+  try {
+    await setDoc(doc(db, "support", ticketData.ticketId), ticketData);
+  } catch (error) {
+    console.error("Error submitting support ticket:", error);
+    throw error;
+  }
+};
+
+export const getAllTickets = async () => {
+  try {
+    const q = query(collection(db, "support"));
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map(doc => doc.data());
+  } catch (error) {
+    console.error("Error fetching all tickets:", error);
+    throw error;
+  }
+};
+
+export const updateTicketStatus = async (ticketId, status) => {
+  try {
+    await updateDoc(doc(db, "support", ticketId), { status });
+  } catch (error) {
+    console.error("Error updating ticket status:", error);
+    throw error;
+  }
+};
+
+export const getUserTickets = async (userId) => {
+  try {
+    const q = query(collection(db, "support"), where("userId", "==", userId));
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map(doc => doc.data());
+  } catch (error) {
+    console.error("Error fetching user tickets:", error);
+    throw error;
+  }
+};

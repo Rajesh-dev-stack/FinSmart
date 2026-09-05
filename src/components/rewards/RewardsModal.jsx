@@ -5,14 +5,14 @@ import { auth } from '../../firebase/firebaseClient';
 import './RewardsModal.css';
 
 const GIFT_CARDS = [
-  { id: 'amz1', brand: 'Amazon', value: '₹100', cost: 500, emoji: '📦' },
-  { id: 'amz2', brand: 'Amazon', value: '₹250', cost: 1200, emoji: '📦' },
-  { id: 'swig', brand: 'Swiggy', value: '₹100', cost: 450, emoji: '🍔' },
-  { id: 'zom', brand: 'Zomato', value: '₹100', cost: 450, emoji: '🍕' },
-  { id: 'flip', brand: 'Flipkart', value: '₹100', cost: 480, emoji: '🛍️' },
-  { id: 'myn', brand: 'Myntra', value: '₹150', cost: 600, emoji: '👕' },
-  { id: 'bms', brand: 'BookMyShow', value: '₹100', cost: 400, emoji: '🍿' },
-  { id: 'uber', brand: 'Uber', value: '₹50 cashback', cost: 200, emoji: '🚗' },
+  { id: 'amz1', brand: 'Amazon', value: '₹50', cost: 500, emoji: '📦' },
+  { id: 'amz2', brand: 'Amazon', value: '₹120', cost: 1200, emoji: '📦' },
+  { id: 'swig', brand: 'Swiggy', value: '₹50', cost: 450, emoji: '🍔' },
+  { id: 'zom', brand: 'Zomato', value: '₹50', cost: 450, emoji: '🍕' },
+  { id: 'flip', brand: 'Flipkart', value: '₹50', cost: 500, emoji: '🛍️' },
+  { id: 'myn', brand: 'Myntra', value: '₹75', cost: 600, emoji: '👕' },
+  { id: 'bms', brand: 'BookMyShow', value: '₹50', cost: 500, emoji: '🍿' },
+  { id: 'uber', brand: 'Uber', value: '₹50', cost: 400, emoji: '🚗' },
 ];
 
 const RewardsModal = ({ onClose }) => {

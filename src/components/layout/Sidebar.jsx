@@ -15,6 +15,7 @@ const accountItems = [
   { to: '/transfer', icon: '💸', label: 'Transfer Money', isSub: true },
   { to: '/ai-insights', icon: '✦', label: 'AI Insights' },
   { to: '/profile', icon: '◉', label: 'Profile' },
+  { to: '/support', icon: '🎧', label: 'Support' },
 ];
 
 const Sidebar = ({ onLogout }) => {

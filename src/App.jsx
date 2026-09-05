@@ -16,6 +16,8 @@ import Login from './pages/Login';
 import Signup from './pages/Signup';
 import Profile from './pages/Profile';
 import Transfer from './pages/Transfer';
+import Support from './pages/Support';
+import AdminSupport from './pages/AdminSupport';
 
 // Layout Components
 import Sidebar from './components/layout/Sidebar';
@@ -134,6 +136,8 @@ function App() {
       case '/ai-insights': return 'AI Insights';
       case '/reports': return 'Reports';
       case '/profile': return 'Profile';
+      case '/support': return 'Customer Support';
+      case '/admin-support': return 'Admin Support';
       default: return 'FinSmart';
     }
   };
@@ -155,6 +159,8 @@ function App() {
           <Route path="/ai-insights" element={<AIInsights />} />
           <Route path="/reports" element={<Reports />} />
           <Route path="/profile" element={<Profile user={user} onProfileUpdate={(updates) => setUser(prev => ({ ...prev, ...updates }))} onLogout={handleLogout} />} />
+          <Route path="/support" element={<Support user={user} />} />
+          <Route path="/admin-support" element={<AdminSupport user={user} />} />
         </Routes>
         </div>
       </main>

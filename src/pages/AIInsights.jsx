@@ -169,7 +169,7 @@ const AIInsights = () => {
   return (
     <div className="page ai-insights-page">
       <div className="ai-header">
-        <p className="ai-subtitle">Powered by Llama 3.1 via NVIDIA — Get personalized, AI-driven financial advice.</p>
+        <p className="ai-subtitle">Powered by Llama 3.2 via NVIDIA — Get personalized, AI-driven financial advice.</p>
       </div>
 
       <div className="ai-grid">

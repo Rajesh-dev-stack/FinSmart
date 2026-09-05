@@ -18,7 +18,7 @@ FinSmart is a modern, AI-powered personal finance and budgeting application desi
 * **Frontend:** React, Vite
 * **Design:** Custom Vanilla CSS with advanced Glassmorphism utilities
 * **Database & Auth:** Firebase / Firestore
-* **AI Integration:** NVIDIA API (for AI Spending Insights)
+* **AI Integration:** Llama 3.2 powereded by NVIDIA (for AI Spending Insights)
 * **Icons & Avatars:** SimpleIcons, UI-Avatars
 
 ## 🚀 Getting Started

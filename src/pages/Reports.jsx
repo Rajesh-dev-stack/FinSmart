@@ -100,7 +100,7 @@ const Reports = () => {
     <div className="page reports-page">
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
 
-      <p className="page-subtitle">Generate and download professional monthly financial reports as PDF.</p>
+      <p className="page-subtitle">Generates monthly financial reports:</p>
 
       {/* Selector Section */}
       <div className="card report-selector-card">

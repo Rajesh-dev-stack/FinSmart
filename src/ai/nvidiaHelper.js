@@ -9,11 +9,10 @@ async function askNvidia(prompt, isJsonResponse = false) {
         'Authorization': `Bearer ${NVIDIA_API_KEY}`
       },
       body: JSON.stringify({
-        model: 'meta/llama-3.1-8b-instruct',
+        model: 'meta/llama-3.2-11b-vision-instruct',
         messages: [{ role: 'user', content: prompt }],
         temperature: 0.7,
-        max_tokens: 1024,
-        response_format: isJsonResponse ? { type: "json_object" } : { type: "text" }
+        max_tokens: 1024
       })
     });
 
@@ -36,7 +35,7 @@ export const analyzeSpending = async (transactions) => {
     `${t.date} | ${t.type} | ${t.category} | ₹${t.amount} | ${t.description || ''}`
   ).join('\n');
 
-  const prompt = `You are a personal finance analyst. Analyze these transactions and give exactly 3 specific, personalized insights about spending habits. Be specific with actual numbers and percentages from the data. Use simple, friendly language. Format each insight with an emoji bullet point.
+  const prompt = `You are a personal finance analyst. Analyze these transactions and give exactly 3 specific, personalized insights about spending habits. Be specific with actual numbers and percentages from the data. Use simple, friendly language. Format each insight with an emoji bullet point and keep the paragraph small not big for easy readability.
 
 Transactions:
 ${summary}
@@ -52,7 +51,7 @@ export const getBudgetAdvice = async (income, expenses, budgets) => {
     `${b.category}: limit ₹${b.limit}, spent ₹${b.spent || 0}`
   ).join('\n');
 
-  const prompt = `You are a friendly financial advisor. Based on this data, give specific budget improvement advice using the 50/30/20 rule (50% needs, 30% wants, 20% savings). Be practical, specific with numbers, and encouraging.
+  const prompt = `You are a friendly financial advisor. Based on this data, give specific budget improvement advice using the 50/30/20 rule (50% needs, 30% wants, 20% savings). Be practical, specific with numbers, and encouraging and keep the paragraph small not big for easy readability.
 
 Monthly Income: ₹${income}
 Monthly Expenses: ₹${expenses}
@@ -70,7 +69,7 @@ export const predictNextMonth = async (last3MonthsTransactions) => {
     `${t.date} | ${t.type} | ${t.category} | ₹${t.amount}`
   ).join('\n');
 
-  const prompt = `Based on these last 3 months of expense transactions, predict next month's expenses by category. Return ONLY a valid JSON object with category names as keys and predicted rupee amounts as numbers. No explanation, no markdown, just the JSON object.
+  const prompt = `Based on these last 3 months of expense transactions, predict next month's expenses by category. Return ONLY a valid JSON object with category names as keys and predicted rupee amounts as numbers. No explanation, no markdown, just the JSON objects.
 
 Example format: {"Food": 2000, "Transport": 500}
 
@@ -82,7 +81,10 @@ JSON prediction:`;
   const raw = await askNvidia(prompt, true);
   
   try {
-    return JSON.parse(raw);
+    // If the model wrapped it in markdown like ```json ... ```, extract it
+    const jsonMatch = raw.match(/```(?:json)?\s*([\s\S]*?)\s*```/);
+    const jsonString = jsonMatch ? jsonMatch[1] : raw;
+    return JSON.parse(jsonString);
   } catch (e) {
     console.error("Failed to parse prediction JSON:", raw);
     return null;
@@ -94,7 +96,7 @@ export const getSavingTips = async (spendingPatterns) => {
     .map(([cat, amount]) => `${cat}: ₹${amount}`)
     .join('\n');
 
-  const prompt = `You are a smart money-saving advisor for a college student in India. Based on these monthly spending patterns, give exactly 5 specific, practical money-saving tips. Each tip should reference the actual spending data and suggest a concrete action with a potential savings amount in rupees. Use numbered format with emojis.
+  const prompt = `You are a smart money-saving advisor for a college student in India. Based on these monthly spending patterns, give exactly 5 specific, practical money-saving tips. Each tip should reference the actual spending data and suggest a concrete action with a potential savings amount in rupees. Use numbered format with emojis  and keep the paragraph small not big for easy readability.
 
 Monthly Spending:
 ${patternStr}
