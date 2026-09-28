@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { Bar } from 'react-chartjs-2';
 import { auth } from '../firebase/firebaseClient';
 import { getTransactions, getBudgets, getUser } from '../firebase/dbFunctions';
-import { analyzeSpending, getBudgetAdvice, predictNextMonth, getSavingTips } from '../ai/nvidiaHelper';
+import { analyzeSpending, getBudgetAdvice, predictNextMonth, getSavingTips } from '../ai/groqHelper';
 import './AIInsights.css';
 
 const AIInsights = () => {

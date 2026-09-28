@@ -1,15 +1,15 @@
-const NVIDIA_API_KEY = import.meta.env.VITE_NVIDIA_API_KEY;
+const GROQ_API_KEY = import.meta.env.VITE_GROQ_API_KEY;
 
-async function askNvidia(prompt, isJsonResponse = false) {
+async function askGroq(prompt, isJsonResponse = false) {
   try {
-    const response = await fetch('/api/nvidia/v1/chat/completions', {
+    const response = await fetch('/api/groq/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${NVIDIA_API_KEY}`
+        'Authorization': `Bearer ${GROQ_API_KEY}`
       },
       body: JSON.stringify({
-        model: 'meta/llama-3.2-11b-vision-instruct',
+        model: 'qwen/qwen3.8-27b',
         messages: [{ role: 'user', content: prompt }],
         temperature: 0.7,
         max_tokens: 1024
@@ -19,12 +19,12 @@ async function askNvidia(prompt, isJsonResponse = false) {
     const data = await response.json();
     
     if (!response.ok) {
-      throw new Error(data.error?.message || "NVIDIA API request failed");
+      throw new Error(data.error?.message || "Groq API request failed");
     }
 
     return data.choices[0].message.content;
   } catch (error) {
-    console.error("NVIDIA API Error:", error);
+    console.error("Groq API Error:", error);
     throw error;
   }
 }
@@ -42,7 +42,7 @@ ${summary}
 
 Give 3 insights:`;
 
-  return await askNvidia(prompt);
+  return await askGroq(prompt);
 };
 
 // 2. BUDGET ADVISOR
@@ -60,7 +60,7 @@ ${budgetStr}
 
 Give 4 specific, actionable pieces of advice with emojis:`;
 
-  return await askNvidia(prompt);
+  return await askGroq(prompt);
 };
 
 // 3. NEXT MONTH PREDICTOR
@@ -78,10 +78,10 @@ ${summary}
 
 JSON prediction:`;
 
-  const raw = await askNvidia(prompt, true);
+  const raw = await askGroq(prompt, true);
   
   try {
-    // If the model wrapped it in markdown like ```json ... ```, extract it
+    // If the model wrapped it in markdown like ```json ... ```,extract it
     const jsonMatch = raw.match(/```(?:json)?\s*([\s\S]*?)\s*```/);
     const jsonString = jsonMatch ? jsonMatch[1] : raw;
     return JSON.parse(jsonString);
@@ -103,7 +103,7 @@ ${patternStr}
 
 5 specific saving tips:`;
 
-  return await askNvidia(prompt);
+  return await askGroq(prompt);
 };
 
-export default askNvidia;
+export default askGroq;
