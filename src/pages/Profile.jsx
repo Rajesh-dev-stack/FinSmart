@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { auth } from '../firebase/firebaseClient';
 import { updateEmail, reauthenticateWithCredential, EmailAuthProvider } from 'firebase/auth';
 import { updateAuthProfile, deleteUserAccount, resetPassword } from '../firebase/authFunctions';
-import { getUser } from '../firebase/dbFunctions';
+import { getUser, generateUniqueFinSmartId, updateUserProfile } from '../firebase/dbFunctions';
 import './Profile.css';
 
 const Profile = ({ user, onLogout, onProfileUpdate }) => {
@@ -33,7 +33,12 @@ const Profile = ({ user, onLogout, onProfileUpdate }) => {
       if (u) {
         setName(u.displayName || '');
                 try {
-          const doc = await getUser(u.uid);
+          let doc = await getUser(u.uid);
+          if (doc && !doc.finsmartId) {
+            const newId = await generateUniqueFinSmartId(u.uid, doc.name || u.displayName || 'User', doc.email || u.email);
+            await updateUserProfile(u.uid, { finsmartId: newId });
+            doc.finsmartId = newId; // Update locally
+          }
           setUserDoc(doc);
         } catch (e) { console.error(e); }
       }
