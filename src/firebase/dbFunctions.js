@@ -982,3 +982,32 @@ export const listenToWalletBalance = (userId, callback) => {
     }
   });
 };
+
+
+export const replyToTicket = async (ticketId, replyMessage) => {
+  const ticketRef = doc(db, 'support', ticketId);
+  await updateDoc(ticketRef, {
+    reply: replyMessage,
+    status: 'resolved',
+    resolvedAt: new Date().toISOString()
+  });
+};
+
+
+export const listenForNewTransactions = (userId, callback) => {
+  const q = query(collection(db, 'transactions'), where('userId', '==', userId));
+  let isInitialLoad = true;
+  
+  return onSnapshot(q, (snapshot) => {
+    if (isInitialLoad) {
+      isInitialLoad = false;
+      return;
+    }
+    
+    snapshot.docChanges().forEach((change) => {
+      if (change.type === 'added') {
+        callback(change.doc.data());
+      }
+    });
+  });
+};

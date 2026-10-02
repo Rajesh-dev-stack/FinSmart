@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Routes, Route, useLocation, Navigate, Link, useNavigate } from 'react-router-dom';
 import { auth } from './firebase/firebaseClient';
 import { signOut } from 'firebase/auth';
-import { processDailyInterest } from './firebase/dbFunctions';
+import { processDailyInterest, listenForNewTransactions } from './firebase/dbFunctions';
 
 
 // Pages
@@ -64,9 +64,28 @@ function App() {
   const [user, setUser] = useState(null);
   const [authReady, setAuthReady] = useState(false);
   const [interestMsg, setInterestMsg] = useState(null);
+  const [transferToast, setTransferToast] = useState(null);
   const location = useLocation();
 
   const isAuthPage = AUTH_ROUTES.includes(location.pathname);
+
+  useEffect(() => {
+    if (!user) return;
+
+    const unsubTxns = listenForNewTransactions(user.uid, (txn) => {
+      if (txn.category === 'Money Received') {
+         const senderName = txn.description.replace('Received from ', '');
+         setTransferToast(`💸 ₹${txn.amount} received from ${senderName}!`);
+         setTimeout(() => setTransferToast(null), 6000);
+      } else if (txn.category === 'Money Sent') {
+         const receiverName = txn.description.replace('Sent to ', '');
+         setTransferToast(`✅ ₹${txn.amount} sent to ${receiverName}! +5 FinCoins 🪙`);
+         setTimeout(() => setTransferToast(null), 6000);
+      }
+    });
+
+    return () => unsubTxns();
+  }, [user]);
 
   useEffect(() => {
     if (!user) return;
@@ -182,6 +201,19 @@ function App() {
           fontWeight: 600, animation: 'slideUp 0.3s ease'
         }}>
           🏦 {interestMsg}
+        </div>
+      )}
+
+      {/* Transfer Notification Toast */}
+      {transferToast && (
+        <div style={{
+          position: 'fixed', bottom: '6rem', right: '2rem',
+          background: 'var(--primary)', color: '#fff',
+          padding: '1rem 1.5rem', borderRadius: 'var(--r-md)',
+          boxShadow: 'var(--shadow-lg)', zIndex: 9999,
+          fontWeight: 600, animation: 'slideUp 0.3s ease'
+        }}>
+          {transferToast}
         </div>
       )}
 

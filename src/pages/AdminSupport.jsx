@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getAllTickets, updateTicketStatus } from '../firebase/dbFunctions';
+import { getAllTickets, updateTicketStatus, replyToTicket } from '../firebase/dbFunctions';
 import { useTheme } from '../context/ThemeProvider';
 
 const SpinnerInline = ({ size = 28 }) => (
@@ -19,6 +19,9 @@ const AdminSupport = ({ user }) => {
   const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('all'); // all, open, resolved
+  
+  const [replyText, setReplyText] = useState({});
+  const [replyingTo, setReplyingTo] = useState(null);
 
   // Admin email check
   const isAdmin = user?.email === "rajesh.professional817@gmail.com";
@@ -50,6 +53,20 @@ const AdminSupport = ({ user }) => {
     } catch (err) {
       console.error(err);
       alert('Failed to update ticket status');
+    }
+  };
+
+  const handleReplySubmit = async (ticketId) => {
+    const text = replyText[ticketId];
+    if (!text || text.trim() === '') return;
+    
+    try {
+      await replyToTicket(ticketId, text);
+      setTickets(tickets.map(t => t.ticketId === ticketId ? { ...t, reply: text, status: 'resolved' } : t));
+      setReplyingTo(null);
+    } catch (err) {
+      console.error(err);
+      alert('Failed to send reply');
     }
   };
 
@@ -110,7 +127,10 @@ const AdminSupport = ({ user }) => {
             }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
                 <div>
-                  <h3 style={{ fontSize: '1.1rem', marginBottom: '0.25rem' }}>{ticket.category}</h3>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '0.25rem' }}>
+                    <h3 style={{ fontSize: '1.1rem', margin: 0 }}>{ticket.category}</h3>
+                    <span style={{ fontFamily: 'monospace', color: 'var(--primary)', fontWeight: 'bold' }}>{ticket.ticketId}</span>
+                  </div>
                   <div style={{ display: 'flex', gap: '1rem', color: 'var(--text-secondary)', fontSize: '0.85rem' }}>
                     <span>👤 {ticket.name}</span>
                     <span>✉️ {ticket.email}</span>
@@ -131,14 +151,23 @@ const AdminSupport = ({ user }) => {
                     {ticket.status}
                   </span>
                   
-                  {ticket.status === 'open' && (
-                    <button 
-                      className="btn btn-outline" 
-                      style={{ padding: '0.3rem 0.8rem', fontSize: '0.8rem', borderColor: 'var(--success)', color: 'var(--success)' }}
-                      onClick={() => handleResolve(ticket.ticketId)}
-                    >
-                      Mark Resolved
-                    </button>
+                  {ticket.status === 'open' && replyingTo !== ticket.ticketId && (
+                    <div style={{ display: 'flex', gap: '0.5rem' }}>
+                      <button 
+                        className="btn btn-primary" 
+                        style={{ padding: '0.3rem 0.8rem', fontSize: '0.8rem' }}
+                        onClick={() => setReplyingTo(ticket.ticketId)}
+                      >
+                        Reply
+                      </button>
+                      <button 
+                        className="btn btn-outline" 
+                        style={{ padding: '0.3rem 0.8rem', fontSize: '0.8rem', borderColor: 'var(--success)', color: 'var(--success)' }}
+                        onClick={() => handleResolve(ticket.ticketId)}
+                      >
+                        Mark Resolved
+                      </button>
+                    </div>
                   )}
                 </div>
               </div>
@@ -150,10 +179,43 @@ const AdminSupport = ({ user }) => {
                 border: '1px solid var(--border)',
                 whiteSpace: 'pre-wrap',
                 fontSize: '0.95rem',
-                color: 'var(--text-primary)'
+                color: 'var(--text-primary)',
+                marginBottom: '1rem'
               }}>
+                <strong style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>USER MESSAGE:</strong>
                 {ticket.message}
               </div>
+
+              {ticket.reply && (
+                <div style={{ 
+                  background: isDark ? 'rgba(0, 201, 167, 0.1)' : 'rgba(0, 201, 167, 0.05)', 
+                  padding: '1rem', 
+                  borderRadius: 'var(--r-sm)',
+                  borderLeft: '4px solid var(--primary)',
+                  whiteSpace: 'pre-wrap',
+                  fontSize: '0.95rem',
+                  color: 'var(--text-primary)'
+                }}>
+                  <strong style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.8rem', color: 'var(--primary)' }}>ADMIN REPLY:</strong>
+                  {ticket.reply}
+                </div>
+              )}
+
+              {replyingTo === ticket.ticketId && (
+                <div style={{ marginTop: '1rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                  <textarea 
+                    rows={4} 
+                    style={{ width: '100%', padding: '0.75rem', borderRadius: 'var(--r-sm)', border: '1px solid var(--border)', background: 'var(--bg)', color: 'var(--text-primary)', resize: 'vertical' }}
+                    placeholder="Type your reply here..."
+                    value={replyText[ticket.ticketId] || ''}
+                    onChange={(e) => setReplyText({ ...replyText, [ticket.ticketId]: e.target.value })}
+                  />
+                  <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
+                    <button className="btn btn-outline" style={{ padding: '0.4rem 1rem' }} onClick={() => setReplyingTo(null)}>Cancel</button>
+                    <button className="btn btn-primary" style={{ padding: '0.4rem 1rem' }} onClick={() => handleReplySubmit(ticket.ticketId)}>Send Reply & Resolve</button>
+                  </div>
+                </div>
+              )}
             </div>
           ))}
         </div>
