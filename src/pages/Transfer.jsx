@@ -75,47 +75,6 @@ const Transfer = () => {
     setShowSendModal(true);
   };
 
-  const [receiverUser, setReceiverUser] = useState(null);
-  const [currentUserDoc, setCurrentUserDoc] = useState(null);
-
-  useEffect(() => {
-    if (auth.currentUser) {
-      getUser(auth.currentUser.uid).then(setCurrentUserDoc);
-    }
-  }, []);
-
-  const handleInitiateSend = async (e) => {
-    e.preventDefault();
-    if (!sendAmount || Number(sendAmount) <= 0) {
-      showToast("Enter a valid amount", "error");
-      return;
-    }
-    if (Number(sendAmount) > balance) {
-      showToast("Insufficient wallet balance", "error");
-      return;
-    }
-
-    setProcessing(true);
-    try {
-      const receiverData = await getUserByFinSmartId(selectedPayee.detail);
-      if (!receiverData) {
-        showToast("Invalid FinSmart ID for this contact!", "error");
-        setProcessing(false);
-        return;
-      }
-      
-      setReceiverUser({
-        uid: receiverData.userId,
-        finsmartId: selectedPayee.detail,
-        name: receiverData.name
-      });
-      // processing remains true to show modal
-    } catch (error) {
-      showToast("Failed to lookup receiver", "error");
-      setProcessing(false);
-    }
-  };
-
   const handleAddPayee = async (e) => {
     e.preventDefault();
     if (!auth.currentUser) return;
@@ -205,67 +164,28 @@ const Transfer = () => {
         ))}
       </div>
 
-      {/* Send Modal Step 1 */}
-      {showSendModal && selectedPayee && !receiverUser && (
-        <div className="modal-overlay">
-          <div className="modal card">
-            <div className="modal-header">
-              <h3>Transfer to {selectedPayee.name}</h3>
-              <button className="close-btn" onClick={() => setShowSendModal(false)} disabled={processing}>✕</button>
-            </div>
-            
-            <form onSubmit={handleInitiateSend} className="modal-form">
-              <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
-                 <img src={selectedPayee.avatar} alt={selectedPayee.name} style={{ width: '64px', height: '64px', borderRadius: '50%', objectFit: 'cover' }} />
-                 <h4 style={{ marginTop: '0.5rem' }}>{selectedPayee.name}</h4>
-                 <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>FinSmart ID: {selectedPayee.detail}</p>
-              </div>
-              
-              <div className="form-group">
-                <label>Amount (₹)</label>
-                <input 
-                  type="number" 
-                  step="0.01" 
-                  value={sendAmount} 
-                  onChange={(e) => setSendAmount(e.target.value)} 
-                  placeholder="Enter amount to send"
-                  required
-                />
-              </div>
-              <button type="submit" className="btn btn-primary full-width" disabled={processing}>
-                {processing ? 'Verifying...' : 'Next'}
-              </button>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* Secure Token Modal */}
-      {receiverUser && currentUserDoc && (
+            {/* Send Modal */}
+      {showSendModal && (
         <SendMoneyModal 
-          sender={{
-            uid: auth.currentUser.uid,
-            name: currentUserDoc.name,
-            finsmartId: currentUserDoc.finsmartId
-          }}
-          receiver={receiverUser}
-          amount={sendAmount}
+          senderUid={auth.currentUser.uid}
+          senderBalance={balance}
+          initialFinSmartId={selectedPayee?.detail}
           onClose={() => {
-            setReceiverUser(null);
-            setProcessing(false);
-          }}
-          onSuccess={() => {
-            setReceiverUser(null);
             setShowSendModal(false);
-            setSendAmount('');
-            setProcessing(false);
-            showToast(`Successfully transferred ₹${sendAmount} to ${selectedPayee.name}`);
-            setBalance(prev => prev - Number(sendAmount));
+            setSelectedPayee(null);
+          }}
+          onSuccess={(amt) => {
+            setShowSendModal(false);
+            setSelectedPayee(null);
+            showToast(`Successfully sent ₹${amt}!`);
+            // balance updates automatically in Wallet, but in Transfer we manually fetch on mount.
+            // Let's just update local balance manually.
+            setBalance(prev => prev - Number(amt));
           }}
         />
       )}
-
-      {/* Add Payee Modal */}
+      
+{/* Add Payee Modal */}
       {showAddPayeeModal && (
         <div className="modal-overlay">
           <div className="modal card">

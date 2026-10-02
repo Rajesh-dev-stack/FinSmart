@@ -3,7 +3,6 @@ import { Routes, Route, useLocation, Navigate, Link, useNavigate } from 'react-r
 import { auth } from './firebase/firebaseClient';
 import { signOut } from 'firebase/auth';
 import { processDailyInterest } from './firebase/dbFunctions';
-import { listenForIncomingTransfer, cleanExpiredTokens } from './utils/tokenTransfer';
 
 
 // Pages
@@ -65,7 +64,6 @@ function App() {
   const [user, setUser] = useState(null);
   const [authReady, setAuthReady] = useState(false);
   const [interestMsg, setInterestMsg] = useState(null);
-  const [transferMsg, setTransferMsg] = useState(null);
   const location = useLocation();
 
   const isAuthPage = AUTH_ROUTES.includes(location.pathname);
@@ -73,25 +71,6 @@ function App() {
   useEffect(() => {
     if (!user) return;
 
-    // Listen for incoming transfers
-    const unsubscribe = listenForIncomingTransfer(
-      user.uid,
-      (transfer) => {
-        // Show instant notification
-        setTransferMsg(`💸 ₹${transfer.amount} received from ${transfer.from}!`);
-        setTimeout(() => setTransferMsg(null), 8000);
-        
-        // Refresh wallet balance could be added here if App tracks it
-      }
-    );
-
-    // Clean expired tokens every 5 min
-    const cleanupInterval = setInterval(() => cleanExpiredTokens(user.uid), 300000);
-
-    return () => {
-      unsubscribe();
-      clearInterval(cleanupInterval);
-    };
   }, [user]);
 
   useEffect(() => {
@@ -206,19 +185,7 @@ function App() {
         </div>
       )}
 
-      {/* Incoming Transfer Toast */}
-      {transferMsg && (
-        <div style={{
-          position: 'fixed', bottom: '6rem', right: '2rem',
-          background: 'var(--primary)', color: '#fff',
-          padding: '1rem 1.5rem', borderRadius: 'var(--r-md)',
-          boxShadow: 'var(--shadow-lg)', zIndex: 9999,
-          fontWeight: 600, animation: 'slideUp 0.3s ease'
-        }}>
-          {transferMsg}
-        </div>
-      )}
-      <style>{`@keyframes slideUp { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }`}</style>
+            <style>{`@keyframes slideUp { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }`}</style>
     </div>
   );
 }

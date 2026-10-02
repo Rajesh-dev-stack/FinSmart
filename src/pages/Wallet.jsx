@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { auth } from '../firebase/firebaseClient';
+import SendMoneyModal from '../components/SendMoneyModal';
+import { listenToWalletBalance } from '../firebase/dbFunctions';
 import { 
   getUser, 
   getTransactions, 
@@ -54,14 +56,21 @@ const Wallet = () => {
       setLoading(false);
       return;
     }
+    let unsubBalance;
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
         fetchWalletData(user.uid);
+        unsubBalance = listenToWalletBalance(user.uid, (newBal) => {
+          setBalance(newBal);
+        });
       } else {
         setLoading(false);
       }
     });
-    return () => unsubscribe();
+    return () => {
+      unsubscribe();
+      if (unsubBalance) unsubBalance();
+    };
   }, []);
 
   const fetchWalletData = async (userId, quiet = false) => {
@@ -115,69 +124,6 @@ const Wallet = () => {
     }
   };
 
-  const handleSendMoney = async (e) => {
-    e.preventDefault();
-    if (!sendEmail || !sendAmount || Number(sendAmount) <= 0) {
-      showToast("Please fill all fields correctly", "error");
-      return;
-    }
-    
-    if (Number(sendAmount) > balance) {
-      showToast("Insufficient balance", "error");
-      return;
-    }
-
-    const currentUser = auth.currentUser;
-    if (sendEmail === currentUser.email) {
-      showToast("You cannot send money to yourself", "error");
-      return;
-    }
-
-    setProcessing(true);
-    try {
-      // 1. Find recipient by email
-      const recipient = await getUserByEmail(sendEmail);
-      if (!recipient) {
-        showToast("User not found", "error");
-        setProcessing(false);
-        return;
-      }
-
-      const currentDate = new Date().toISOString().split('T')[0];
-
-      // 2. Deduct from sender
-      await addTransaction({
-        userId: currentUser.uid,
-        type: 'expense',
-        amount: Number(sendAmount),
-        category: 'Transfer',
-        description: `Sent to ${recipient.name} (${sendDesc})`,
-        date: currentDate
-      });
-
-      // 3. Add to recipient
-      await addTransaction({
-        userId: recipient.id,
-        type: 'income',
-        amount: Number(sendAmount),
-        category: 'Transfer',
-        description: `Received from ${currentUser.displayName || 'a user'} (${sendDesc})`,
-        date: currentDate
-      });
-
-      showToast(`Successfully sent ₹${sendAmount} to ${recipient.name}`);
-      setShowSendModal(false);
-      setSendEmail('');
-      setSendAmount('');
-      setSendDesc('');
-      fetchWalletData(currentUser.uid, true);
-    } catch (error) {
-      showToast("Failed to send money", "error");
-    } finally {
-      setProcessing(false);
-    }
-  };
-
   if (loading) {
     return <div className="page"><div className="global-spinner"></div></div>;
   }
@@ -187,9 +133,9 @@ const Wallet = () => {
   }
 
   const currentMonthPrefix = new Date().toISOString().slice(0, 7);
-  const filteredTransactions = filterMonth === 'this-month' 
+  const filteredTransactions = (filterMonth === 'this-month' 
     ? transactions.filter(t => t.date.startsWith(currentMonthPrefix))
-    : transactions;
+    : transactions).filter(t => t.category === 'Money Sent' || t.category === 'Money Received' || t.category === 'Transfer');
 
   return (
     <div className="page wallet-page">
@@ -208,7 +154,7 @@ const Wallet = () => {
             <button className="btn btn-primary" onClick={() => setShowAddModal(true)}>
               + Add Money
             </button>
-            <button className="btn btn-secondary" onClick={() => navigate('/transfer')}>
+            <button className="btn btn-secondary" onClick={() => setShowSendModal(true)}>
               ↗ Transfer Money
             </button>
           </div>
@@ -285,49 +231,15 @@ const Wallet = () => {
 
       {/* 3. Send Money Modal */}
       {showSendModal && (
-        <div className="modal-overlay">
-          <div className="modal card">
-            <div className="modal-header">
-              <h3>Send Money</h3>
-              <button className="close-btn" onClick={() => setShowSendModal(false)}>✕</button>
-            </div>
-            <form onSubmit={handleSendMoney} className="modal-form">
-              <div className="form-group">
-                <label>Recipient Email</label>
-                <input 
-                  type="email" 
-                  value={sendEmail} 
-                  onChange={(e) => setSendEmail(e.target.value)} 
-                  placeholder="user@example.com"
-                  required
-                />
-              </div>
-              <div className="form-group">
-                <label>Amount (₹)</label>
-                <input 
-                  type="number" 
-                  step="0.01" 
-                  value={sendAmount} 
-                  onChange={(e) => setSendAmount(e.target.value)} 
-                  placeholder="0.00"
-                  required
-                />
-              </div>
-              <div className="form-group">
-                <label>Description (Optional)</label>
-                <input 
-                  type="text" 
-                  value={sendDesc} 
-                  onChange={(e) => setSendDesc(e.target.value)} 
-                  placeholder="What's this for?"
-                />
-              </div>
-              <button type="submit" className="btn btn-primary full-width" disabled={processing}>
-                {processing ? 'Sending...' : 'Send Securely'}
-              </button>
-            </form>
-          </div>
-        </div>
+        <SendMoneyModal 
+          senderUid={auth.currentUser.uid}
+          senderBalance={balance}
+          onClose={() => setShowSendModal(false)}
+          onSuccess={(amt) => {
+            setShowSendModal(false);
+            fetchWalletData(auth.currentUser.uid, true);
+          }}
+        />
       )}
 
     </div>

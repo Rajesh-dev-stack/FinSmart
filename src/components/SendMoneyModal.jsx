@@ -1,140 +1,178 @@
-import { useState, useEffect } from 'react';
-import { initiateTransfer } from '../utils/tokenTransfer';
-import { onSnapshot, doc } from 'firebase/firestore';
-import { db } from '../firebase/firebaseClient';
-import { awardCoins } from '../firebase/dbFunctions';
+import { useState } from 'react';
+import { findUserByFinSmartId, sendMoneyByFinSmartId } from '../firebase/dbFunctions';
 
-const SendMoneyModal = ({ sender, receiver, amount, onClose, onSuccess }) => {
-  const [step, setStep] = useState(1); // 1 = confirm, 2 = token/wait, 3 = success
-  const [token, setToken] = useState(null);
-  const [timeLeft, setTimeLeft] = useState(60);
+const SendMoneyModal = ({ senderUid, senderBalance, initialFinSmartId, onClose, onSuccess }) => {
+  const [step, setStep] = useState(1);
+  const [finSmartId, setFinSmartId] = useState(initialFinSmartId || '');
+  const [receiver, setReceiver] = useState(null);
+  const [amount, setAmount] = useState('');
+  const [note, setNote] = useState('');
   const [error, setError] = useState(null);
-  const [processing, setProcessing] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [successData, setSuccessData] = useState(null);
 
-  // Step 2: Confirm & Send -> generates token
-  const handleConfirm = async () => {
-    setProcessing(true);
+  const handleSearch = async (e) => {
+    e.preventDefault();
+    if (!finSmartId) return;
+    setLoading(true);
     setError(null);
     try {
-      const generatedToken = await initiateTransfer(
-        sender,
-        receiver,
-        Number(amount),
-        ''
-      );
-      setToken(generatedToken);
+      const data = await findUserByFinSmartId(finSmartId);
+      if (data.userId === senderUid) {
+        throw new Error('❌ Cannot send money to yourself!');
+      }
+      setReceiver(data);
       setStep(2);
     } catch (err) {
-      setError(err.message || 'Failed to initiate secure transfer.');
+      setError(err.message);
     } finally {
-      setProcessing(false);
+      setLoading(false);
     }
   };
 
-  // Listen to token changes to detect redemption
-  useEffect(() => {
-    if (step === 2 && token) {
-      const unsub = onSnapshot(doc(db, 'transferTokens', token), async (docSnap) => {
-        if (docSnap.exists()) {
-          const data = docSnap.data();
-          if (data.status === 'redeemed') {
-            // Reward sender!
-            try { await awardCoins(sender.uid, 5, 'Secure transfer completed'); } catch(e){}
-            setStep(3); // success!
-          }
-        } else {
-          // If token was deleted without being redeemed, or it expired
-          // Wait, if it expires, it gets deleted.
-          if (step === 2) {
-             setError('Token expired or transfer was cancelled.');
-             setStep(1); // fallback
-          }
-        }
-      });
-      return () => unsub();
+  const handleSend = async (e) => {
+    e.preventDefault();
+    const amountNum = Number(amount);
+    if (!amountNum || amountNum <= 0) {
+      setError('❌ Cannot send 0 or negative amount');
+      return;
     }
-  }, [step, token, sender.uid]);
+    if (amountNum > senderBalance) {
+      setError('❌ Insufficient balance!');
+      return;
+    }
 
-  // Timer for step 2
-  useEffect(() => {
-    let timer;
-    if (step === 2) {
-      setTimeLeft(60);
-      timer = setInterval(() => {
-        setTimeLeft(prev => {
-          if (prev <= 1) {
-            clearInterval(timer);
-            setError('Transfer timed out.');
-            setStep(1);
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
+    setLoading(true);
+    setError(null);
+    try {
+      await sendMoneyByFinSmartId(senderUid, receiver.userId === finSmartId ? receiver.finsmartId : finSmartId, amountNum, note);
+      
+      setSuccessData({
+        amount: amountNum,
+        name: receiver.name,
+        newBalance: senderBalance - amountNum
+      });
+      setStep(3);
+      if (onSuccess) onSuccess(amountNum);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
     }
-    return () => clearInterval(timer);
-  }, [step]);
+  };
 
   return (
     <div className="modal-overlay">
-      <div className="modal card" style={{ maxWidth: '400px', textAlign: 'center' }}>
+      <div className="modal card" style={{ maxWidth: '400px', width: '100%' }}>
         <div className="modal-header">
           <h3>
-            {step === 1 && '🔐 Secure Transfer'}
-            {step === 2 && '⏳ Processing Transfer...'}
-            {step === 3 && '✅ Transfer Complete!'}
+            {step === 1 && '💸 Send Money'}
+            {step === 2 && '💸 Send Money'}
+            {step === 3 && '✅ Transfer Successful!'}
           </h3>
-          {step !== 2 && (
-            <button className="close-btn" onClick={step === 3 ? onSuccess : onClose}>✕</button>
+          {step !== 3 && (
+            <button className="close-btn" onClick={onClose} disabled={loading}>✕</button>
           )}
         </div>
 
         <div style={{ padding: '1.5rem' }}>
-          {error && <div style={{ color: 'var(--danger)', marginBottom: '1rem', background: 'rgba(239, 68, 68, 0.1)', padding: '0.5rem', borderRadius: '8px' }}>{error}</div>}
+          {error && (
+            <div style={{ color: 'var(--danger)', marginBottom: '1.5rem', background: 'rgba(239, 68, 68, 0.1)', padding: '0.75rem', borderRadius: '8px' }}>
+              {error}
+            </div>
+          )}
 
           {step === 1 && (
-            <>
-              <p style={{ fontSize: '1.25rem', marginBottom: '0.5rem' }}>
-                Sending: <strong>₹{amount}</strong>
-              </p>
-              <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>
-                To: {receiver.name} ({receiver.finsmartId})
-              </p>
-              <div style={{ background: 'var(--bg)', padding: '1rem', borderRadius: '8px', marginBottom: '1.5rem', fontSize: '0.9rem' }}>
-                🛡️ One-time secure token will be generated.<br/><br/>
-                <span style={{ color: 'var(--warning)' }}>Token expires in: 60 seconds</span>
+            <form onSubmit={handleSearch}>
+              <div className="form-group">
+                <label>Enter FinSmart ID:</label>
+                <input
+                  type="text"
+                  placeholder="FIN2026..."
+                  value={finSmartId}
+                  onChange={(e) => setFinSmartId(e.target.value.toUpperCase())}
+                  maxLength={13}
+                  required
+                />
               </div>
-              <div style={{ display: 'flex', gap: '1rem' }}>
-                <button className="btn profile-btn-outline" style={{ flex: 1 }} onClick={onClose} disabled={processing}>Cancel</button>
-                <button className="btn btn-primary" style={{ flex: 1 }} onClick={handleConfirm} disabled={processing}>
-                  {processing ? 'Processing...' : 'Confirm & Send 🔐'}
+              <div style={{ display: 'flex', gap: '1rem', marginTop: '1.5rem' }}>
+                <button type="button" className="btn profile-btn-outline" style={{ flex: 1 }} onClick={onClose} disabled={loading}>Cancel</button>
+                <button type="submit" className="btn btn-primary" style={{ flex: 1 }} disabled={loading}>
+                  {loading ? 'Searching...' : 'Search 🔍'}
                 </button>
               </div>
-            </>
+            </form>
           )}
 
-          {step === 2 && (
-            <>
-              <h2 style={{ color: 'var(--primary)', marginBottom: '1rem' }}>🔐 Token Generated!</h2>
-              <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>Waiting for auto redemption on receiver's device...</p>
-              
-              <div style={{ background: 'var(--bg)', height: '12px', borderRadius: '6px', overflow: 'hidden', marginBottom: '0.5rem' }}>
-                <div style={{ background: 'var(--primary)', height: '100%', width: `${(timeLeft / 60) * 100}%`, transition: 'width 1s linear' }}></div>
+          {step === 2 && receiver && (
+            <form onSubmit={handleSend}>
+              <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
+                <h4 style={{ fontSize: '1.2rem', marginBottom: '0.25rem' }}>✅ {receiver.name}</h4>
+                <p style={{ color: 'var(--text-secondary)', fontFamily: 'monospace' }}>{finSmartId}</p>
               </div>
-              <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>{timeLeft} seconds remaining</p>
-              <p style={{ fontSize: '0.8rem', opacity: 0.7, marginTop: '1.5rem' }}>Token auto redeems on receiver's device instantly!</p>
-            </>
+
+              <div className="form-group">
+                <label>Amount (₹)</label>
+                <input
+                  type="number"
+                  step="0.01"
+                  value={amount}
+                  onChange={(e) => setAmount(e.target.value)}
+                  placeholder="0.00"
+                  required
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Note (optional)</label>
+                <input
+                  type="text"
+                  value={note}
+                  onChange={(e) => setNote(e.target.value)}
+                  placeholder="What's this for?"
+                  maxLength={50}
+                />
+              </div>
+
+              <div style={{ background: 'var(--bg)', padding: '1rem', borderRadius: '8px', marginBottom: '1.5rem', fontSize: '0.9rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                  <span style={{ color: 'var(--text-secondary)' }}>Your Balance:</span>
+                  <strong>₹{senderBalance.toLocaleString()}</strong>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span style={{ color: 'var(--text-secondary)' }}>After Transfer:</span>
+                  <strong>
+                    ₹{amount ? Math.max(0, senderBalance - Number(amount)).toLocaleString() : senderBalance.toLocaleString()}
+                  </strong>
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', gap: '1rem' }}>
+                <button type="button" className="btn profile-btn-outline" style={{ flex: 1 }} onClick={() => setStep(1)} disabled={loading}>Back</button>
+                <button type="submit" className="btn btn-primary" style={{ flex: 1 }} disabled={loading || !amount || Number(amount) <= 0}>
+                  {loading ? 'Sending...' : 'Send Money 💸'}
+                </button>
+              </div>
+            </form>
           )}
 
-          {step === 3 && (
-            <>
+          {step === 3 && successData && (
+            <div style={{ textAlign: 'center' }}>
               <div style={{ fontSize: '4rem', marginBottom: '1rem' }}>🎉</div>
-              <p style={{ fontSize: '1.1rem', marginBottom: '0.5rem' }}>₹{amount} sent to {receiver.name}!</p>
-              <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginBottom: '0.5rem' }}>🔐 Token redeemed & destroyed</p>
-              <p style={{ color: 'var(--warning)', fontWeight: 'bold', marginBottom: '2rem' }}>+5 FinCoins earned! 🪙</p>
-              
-              <button className="btn btn-primary full-width" onClick={onSuccess}>Done</button>
-            </>
+              <p style={{ fontSize: '1.2rem', marginBottom: '0.5rem' }}>
+                ₹{successData.amount.toLocaleString()} sent to {successData.name}
+              </p>
+              <p style={{ color: 'var(--warning)', fontWeight: 'bold', marginBottom: '1.5rem' }}>
+                +5 FinCoins earned! 🪙
+              </p>
+
+              <div style={{ background: 'var(--bg)', padding: '1rem', borderRadius: '8px', marginBottom: '2rem' }}>
+                <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginBottom: '0.25rem' }}>New Balance</p>
+                <p style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>₹{successData.newBalance.toLocaleString()}</p>
+              </div>
+
+              <button className="btn btn-primary full-width" onClick={onClose}>Done</button>
+            </div>
           )}
         </div>
       </div>
