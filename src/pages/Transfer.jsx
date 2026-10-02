@@ -1,4 +1,7 @@
 import { useState, useEffect } from 'react';
+import SendMoneyModal from '../components/SendMoneyModal';
+import { getUserByFinSmartId } from '../firebase/dbFunctions';
+
 import { auth } from '../firebase/firebaseClient';
 import { getUser, addTransaction, addPayee, getPayees, deletePayee } from '../firebase/dbFunctions';
 import './Transfer.css';
@@ -72,7 +75,16 @@ const Transfer = () => {
     setShowSendModal(true);
   };
 
-  const handleSendMoney = async (e) => {
+  const [receiverUser, setReceiverUser] = useState(null);
+  const [currentUserDoc, setCurrentUserDoc] = useState(null);
+
+  useEffect(() => {
+    if (auth.currentUser) {
+      getUser(auth.currentUser.uid).then(setCurrentUserDoc);
+    }
+  }, []);
+
+  const handleInitiateSend = async (e) => {
     e.preventDefault();
     if (!sendAmount || Number(sendAmount) <= 0) {
       showToast("Enter a valid amount", "error");
@@ -85,25 +97,21 @@ const Transfer = () => {
 
     setProcessing(true);
     try {
-      const user = auth.currentUser;
-      await addTransaction({
-        userId: user.uid,
-        type: 'expense',
-        amount: Number(sendAmount),
-        category: 'Transfer',
-        description: `Sent to ${selectedPayee.name}`,
-        date: new Date().toISOString().split('T')[0]
-      });
-
-      // Update local balance state immediately for UI consistency
-      setBalance(prev => prev - Number(sendAmount));
+      const receiverData = await getUserByFinSmartId(selectedPayee.detail);
+      if (!receiverData) {
+        showToast("Invalid FinSmart ID for this contact!", "error");
+        setProcessing(false);
+        return;
+      }
       
-      showToast(`Successfully transferred ₹${sendAmount} to ${selectedPayee.name}`);
-      setShowSendModal(false);
-      setSendAmount('');
+      setReceiverUser({
+        uid: receiverData.userId,
+        finsmartId: selectedPayee.detail,
+        name: receiverData.name
+      });
+      // processing remains true to show modal
     } catch (error) {
-      showToast("Failed to transfer money", "error");
-    } finally {
+      showToast("Failed to lookup receiver", "error");
       setProcessing(false);
     }
   };
@@ -197,8 +205,8 @@ const Transfer = () => {
         ))}
       </div>
 
-      {/* Send Modal */}
-      {showSendModal && selectedPayee && (
+      {/* Send Modal Step 1 */}
+      {showSendModal && selectedPayee && !receiverUser && (
         <div className="modal-overlay">
           <div className="modal card">
             <div className="modal-header">
@@ -206,38 +214,55 @@ const Transfer = () => {
               <button className="close-btn" onClick={() => setShowSendModal(false)} disabled={processing}>✕</button>
             </div>
             
-            {processing ? (
-              <div style={{ padding: '3rem 1rem', textAlign: 'center' }}>
-                <div className="global-spinner" style={{ margin: '0 auto 1.5rem' }}></div>
-                <h4 style={{ color: 'var(--text-primary)' }}>Securely processing transfer...</h4>
-                <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginTop: '0.5rem' }}>Please do not close this window or press back</p>
+            <form onSubmit={handleInitiateSend} className="modal-form">
+              <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
+                 <img src={selectedPayee.avatar} alt={selectedPayee.name} style={{ width: '64px', height: '64px', borderRadius: '50%', objectFit: 'cover' }} />
+                 <h4 style={{ marginTop: '0.5rem' }}>{selectedPayee.name}</h4>
+                 <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>FinSmart ID: {selectedPayee.detail}</p>
               </div>
-            ) : (
-              <form onSubmit={handleSendMoney} className="modal-form">
-                <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
-                   <img src={selectedPayee.avatar} alt={selectedPayee.name} style={{ width: '64px', height: '64px', borderRadius: '50%', objectFit: 'cover' }} />
-                   <h4 style={{ marginTop: '0.5rem' }}>{selectedPayee.name}</h4>
-                   <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>{selectedPayee.detail}</p>
-                </div>
-                
-                <div className="form-group">
-                  <label>Amount (₹)</label>
-                  <input 
-                    type="number" 
-                    step="0.01" 
-                    value={sendAmount} 
-                    onChange={(e) => setSendAmount(e.target.value)} 
-                    placeholder="Enter amount to send"
-                    required
-                  />
-                </div>
-                <button type="submit" className="btn btn-primary full-width">
-                  Confirm Transfer
-                </button>
-              </form>
-            )}
+              
+              <div className="form-group">
+                <label>Amount (₹)</label>
+                <input 
+                  type="number" 
+                  step="0.01" 
+                  value={sendAmount} 
+                  onChange={(e) => setSendAmount(e.target.value)} 
+                  placeholder="Enter amount to send"
+                  required
+                />
+              </div>
+              <button type="submit" className="btn btn-primary full-width" disabled={processing}>
+                {processing ? 'Verifying...' : 'Next'}
+              </button>
+            </form>
           </div>
         </div>
+      )}
+
+      {/* Secure Token Modal */}
+      {receiverUser && currentUserDoc && (
+        <SendMoneyModal 
+          sender={{
+            uid: auth.currentUser.uid,
+            name: currentUserDoc.name,
+            finsmartId: currentUserDoc.finsmartId
+          }}
+          receiver={receiverUser}
+          amount={sendAmount}
+          onClose={() => {
+            setReceiverUser(null);
+            setProcessing(false);
+          }}
+          onSuccess={() => {
+            setReceiverUser(null);
+            setShowSendModal(false);
+            setSendAmount('');
+            setProcessing(false);
+            showToast(`Successfully transferred ₹${sendAmount} to ${selectedPayee.name}`);
+            setBalance(prev => prev - Number(sendAmount));
+          }}
+        />
       )}
 
       {/* Add Payee Modal */}
@@ -261,12 +286,12 @@ const Transfer = () => {
                 />
               </div>
               <div className="form-group">
-                <label>Detail (Email/Account No)</label>
+                <label>Detail (Receiver's FinSmart ID)</label>
                 <input 
                   type="text" 
                   value={newPayeeDetail} 
                   onChange={(e) => setNewPayeeDetail(e.target.value)} 
-                  placeholder="alex@example.com"
+                  placeholder="FIN2026..."
                   required
                 />
               </div>

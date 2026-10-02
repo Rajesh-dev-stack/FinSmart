@@ -861,3 +861,17 @@ export const generateUniqueFinSmartId = async (userId, name, email) => {
   
   return id;
 };
+
+export const getUserByFinSmartId = async (finSmartId) => {
+  try {
+    const docRef = doc(db, "finsmartIds", finSmartId);
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+      return docSnap.data();
+    }
+    return null;
+  } catch (e) {
+    console.error("Error looking up FinSmart ID:", e);
+    return null;
+  }
+};

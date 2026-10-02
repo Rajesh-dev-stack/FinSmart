@@ -55,6 +55,14 @@ service cloud.firestore {
       allow create, update: if isAuthenticated();
     }
 
+    
+    match /transferTokens/{tokenId} {
+      allow create: if request.auth != null && request.auth.uid == request.resource.data.senderId;
+      allow read: if request.auth != null && (request.auth.uid == resource.data.senderId || request.auth.uid == resource.data.receiverId);
+      allow update: if request.auth != null && request.auth.uid == resource.data.receiverId;
+      allow delete: if request.auth != null && (request.auth.uid == resource.data.senderId || request.auth.uid == resource.data.receiverId);
+    }
+
     match /support/{ticketId} {
       allow create: if true;
       allow read, update, delete: if isAuthenticated();
