@@ -832,3 +832,32 @@ export const getUserTickets = async (userId) => {
     throw error;
   }
 };
+
+
+// ==========================================
+// FINSMART IDs
+// ==========================================
+export const generateUniqueFinSmartId = async (userId, name, email) => {
+  let isUnique = false;
+  let id = "";
+  const year = new Date().getFullYear();
+  
+  while (!isUnique) {
+    const random = Math.floor(100000 + Math.random() * 900000);
+    id = `FIN${year}${random}`;
+    
+    const docRef = doc(db, "finsmartIds", id);
+    const docSnap = await getDoc(docRef);
+    if (!docSnap.exists()) {
+      isUnique = true;
+    }
+  }
+  
+  await setDoc(doc(db, "finsmartIds", id), {
+    userId,
+    name,
+    email
+  });
+  
+  return id;
+};

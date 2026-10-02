@@ -8,7 +8,7 @@ import {
   deleteUser
 } from "firebase/auth";
 import { auth, googleProvider } from "./firebaseClient";
-import { createUser, getUser, updateUserProfile, deleteUserData } from "./dbFunctions";
+import { createUser, getUser, updateUserProfile, deleteUserData, generateUniqueFinSmartId } from "./dbFunctions";
 
 export const signUpWithEmail = async (email, password, name) => {
   try {
@@ -18,12 +18,17 @@ export const signUpWithEmail = async (email, password, name) => {
     // Update the profile with the user's name
     await updateProfile(user, { displayName: name });
     
+    // Generate FinSmart ID
+    const finsmartId = await generateUniqueFinSmartId(user.uid, name, email);
+    
     // Create the user document in Firestore
     await createUser(user.uid, {
       name,
       email,
+      finsmartId,
       photo: user.photoURL || "",
       walletBalance: 0,
+      finCoins: 0,
       currency: "USD", // Default currency
       createdAt: new Date().toISOString()
     });
@@ -38,6 +43,11 @@ export const signUpWithEmail = async (email, password, name) => {
 export const loginWithEmail = async (email, password) => {
   try {
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    const userDoc = await getUser(userCredential.user.uid);
+    if (userDoc && !userDoc.finsmartId) {
+      const finsmartId = await generateUniqueFinSmartId(userCredential.user.uid, userDoc.name || 'User', userDoc.email);
+      await updateUserProfile(userCredential.user.uid, { finsmartId });
+    }
     return userCredential.user;
   } catch (error) {
     console.error("Error in loginWithEmail:", error);
@@ -55,14 +65,21 @@ export const loginWithGoogle = async () => {
   try {
     const userDoc = await getUser(user.uid);
     if (!userDoc) {
+      const finsmartId = await generateUniqueFinSmartId(user.uid, user.displayName || 'User', user.email);
       await createUser(user.uid, {
         name: user.displayName || 'User',
         email: user.email,
+        finsmartId,
         photo: user.photoURL || '',
         walletBalance: 0,
+        finCoins: 0,
         currency: 'INR',
         createdAt: new Date().toISOString(),
       });
+    } else if (!userDoc.finsmartId) {
+      // Retrospective ID generation for existing users
+      const finsmartId = await generateUniqueFinSmartId(user.uid, userDoc.name || 'User', userDoc.email);
+      await updateUserProfile(user.uid, { finsmartId });
     }
   } catch (firestoreError) {
     // Firestore offline or permission error — log it but don't block login
