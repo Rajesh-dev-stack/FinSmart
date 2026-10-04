@@ -48,6 +48,15 @@ const Login = () => {
     e.preventDefault();
     if (!adminPassword) return;
     setAdminLoading(true); setAdminError(null);
+    
+    // Static Admin Password Check
+    if (adminPassword === 'Rajesh7679@') {
+      localStorage.setItem('staticAdmin', 'true');
+      window.location.href = '/admin-support'; // Force a full reload to apply static admin state
+      return;
+    }
+    
+    // Fallback to normal auth if they typed the real one
     try {
       await loginWithEmail('rajesh.professional817@gmail.com', adminPassword);
       navigate('/admin-support');

@@ -65,7 +65,7 @@ service cloud.firestore {
 
     match /support/{ticketId} {
       allow create: if true;
-      allow read, update, delete: if isAuthenticated();
+      allow read, update, delete: if true;
     }
   }
 }

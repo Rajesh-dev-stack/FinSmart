@@ -60,6 +60,7 @@ const MobileNav = () => {
 
 function App() {
   const [user, setUser] = useState(null);
+  const [staticAdmin, setStaticAdmin] = useState(() => localStorage.getItem('staticAdmin') === 'true');
   const [authReady, setAuthReady] = useState(false);
   const [interestMsg, setInterestMsg] = useState(null);
   const [transferToast, setTransferToast] = useState(null);
@@ -126,13 +127,15 @@ function App() {
     return <LoadingScreen />;
   }
 
+  const effectiveUser = staticAdmin ? { email: 'rajesh.professional817@gmail.com', uid: 'static-admin-uid', name: 'Admin', photo: '' } : user;
+  
   // Redirect unauthenticated users
-  if (!user && !isAuthPage) {
+  if (!effectiveUser && !isAuthPage) {
     return <Navigate to="/login" replace />;
   }
 
   // Redirect authenticated users away from auth pages
-  if (user && isAuthPage) {
+  if (effectiveUser && isAuthPage) {
     return <Navigate to="/dashboard" replace />;
   }
 
@@ -168,24 +171,24 @@ function App() {
 
   return (
     <div className="app-shell">
-      <Sidebar onLogout={handleLogout} user={user} />
+      <Sidebar onLogout={handleLogout} user={effectiveUser} />
       <MobileNav />
       <main className="main-content" style={{ display: 'flex', flexDirection: 'column' }}>
-        <Navbar title={getPageTitle(location.pathname)} user={user} onLogout={handleLogout} />
+        <Navbar title={getPageTitle(location.pathname)} user={effectiveUser} onLogout={handleLogout} />
         <div style={{ flex: 1 }}>
           <Routes>
-          <Route path="/dashboard" element={<Dashboard user={user} />} />
-          <Route path="/wallet" element={<Wallet user={user} />} />
-          <Route path="/savings" element={<Savings user={user} />} />
+          <Route path="/dashboard" element={<Dashboard user={effectiveUser} />} />
+          <Route path="/wallet" element={<Wallet user={effectiveUser} />} />
+          <Route path="/savings" element={<Savings user={effectiveUser} />} />
           <Route path="/transfer" element={<Transfer />} />
           <Route path="/transactions" element={<Transactions />} />
           <Route path="/budget" element={<Budget />} />
           <Route path="/ai-insights" element={<AIInsights />} />
           <Route path="/reports" element={<Reports />} />
-          <Route path="/profile" element={<Profile user={user} onProfileUpdate={(updates) => setUser(prev => ({ ...prev, ...updates }))} onLogout={handleLogout} />} />
-          <Route path="/settings" element={<Settings user={user} onLogout={handleLogout} />} />
-          <Route path="/support" element={<Support user={user} />} />
-          <Route path="/admin-support" element={<AdminSupport user={user} />} />
+          <Route path="/profile" element={<Profile user={effectiveUser} onProfileUpdate={(updates) => setUser(prev => ({ ...prev, ...updates }))} onLogout={handleLogout} />} />
+          <Route path="/settings" element={<Settings user={effectiveUser} onLogout={handleLogout} />} />
+          <Route path="/support" element={<Support user={effectiveUser} />} />
+          <Route path="/admin-support" element={<AdminSupport user={effectiveUser} />} />
         </Routes>
         </div>
       </main>
