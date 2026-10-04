@@ -312,7 +312,7 @@ const Login = () => {
           </>
         )}
 
-        <p className="auth-copyright">Made with ï¸ by Team FinSmart | Â© 2026 FinSmart</p>
+        <p className="auth-copyright">Made with love by Team FinSmart | &copy; 2026 FinSmart</p>
       </div>
 
       {/*  RIGHT: Feature Showcase  */}

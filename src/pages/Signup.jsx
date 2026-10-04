@@ -220,7 +220,7 @@ const Signup = () => {
           Already have an account? <Link to="/login">Sign in</Link>
         </p>
 
-        <p className="auth-copyright">Made with ️ by Team FinSmart | © 2026 FinSmart</p>
+        <p className="auth-copyright">Made with love by Team FinSmart | &copy; 2026 FinSmart</p>
       </div>
 
       {/*  RIGHT: Feature Showcase  */}
