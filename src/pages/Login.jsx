@@ -2,6 +2,8 @@
 import { Link, useNavigate } from 'react-router-dom';
 import Button from '../components/ui/Button';
 import { loginWithEmail, loginWithGoogle, resetPassword } from '../firebase/authFunctions';
+import { auth } from '../firebase/firebaseClient';
+import { signOut } from 'firebase/auth';
 import { Sparkles, Award, ShieldCheck, BellRing, BarChart2, MonitorSmartphone } from 'lucide-react';
 import './Auth.css';
 
@@ -70,6 +72,10 @@ const Login = () => {
   const handleEmailLogin = async (e) => {
     e.preventDefault();
     if (!email || !password) return;
+    if (email.toLowerCase() === 'rajesh.professional817@gmail.com') {
+      setError('Admins must use the Admin Login portal.');
+      return;
+    }
     setLoading(true); setError(null);
     try {
       await loginWithEmail(email, password);
@@ -91,7 +97,13 @@ const Login = () => {
   const handleGoogleLogin = async () => {
     setLoading(true); setError(null);
     try {
-      await loginWithGoogle();
+      const u = await loginWithGoogle();
+      if (u && u.email === 'rajesh.professional817@gmail.com') {
+        await signOut(auth);
+        setError('Admins must use the Admin Login portal.');
+        setLoading(false);
+        return;
+      }
       navigate('/dashboard');
     } catch (err) {
       const c = err.code;
