@@ -178,11 +178,14 @@ const Login = () => {
               <div style={{ position: 'relative' }}>
                 <input
                   type="password"
+                  name="admin-secret-key"
                   className="input-field"
                   placeholder="Enter admin password"
                   value={adminPassword}
                   onChange={e => setAdminPassword(e.target.value)}
-                  required autoFocus
+                  required 
+                  autoFocus
+                  autoComplete="new-password"
                 />
               </div>
 
