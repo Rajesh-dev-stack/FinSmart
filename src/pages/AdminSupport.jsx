@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { getAllTickets, updateTicketStatus, replyToTicket } from '../firebase/dbFunctions';
+import { sendTicketEmail } from '../emailService';
 import { useTheme } from '../context/ThemeProvider';
 
 const SpinnerInline = ({ size = 28 }) => (
@@ -46,9 +47,26 @@ const AdminSupport = ({ user }) => {
     }
   };
 
-  const handleResolve = async (ticketId) => {
+  const handleResolve = async (ticketId, ticket) => {
     try {
       await updateTicketStatus(ticketId, 'resolved');
+      
+      // Send email
+      if (ticket && ticket.email) {
+        try {
+          await sendTicketEmail({
+            to_email: ticket.email,
+            to_name: ticket.name,
+            reply_to: 'admin@finsmart.com',
+            subject: 'Support Ticket Resolved: ' + ticketId,
+            message: 'Hello ' + ticket.name + ',\n\nYour support ticket (' + ticketId + ') regarding "' + ticket.category + '" has been marked as resolved by our team.\n\nIf you still need help, please submit a new ticket.',
+            ticket_id: ticketId
+          });
+        } catch (e) {
+          console.error("Failed to send email", e);
+        }
+      }
+      
       setTickets(tickets.map(t => t.ticketId === ticketId ? { ...t, status: 'resolved' } : t));
     } catch (err) {
       console.error(err);
@@ -56,12 +74,29 @@ const AdminSupport = ({ user }) => {
     }
   };
 
-  const handleReplySubmit = async (ticketId) => {
+  const handleReplySubmit = async (ticketId, ticket) => {
     const text = replyText[ticketId];
     if (!text || text.trim() === '') return;
     
     try {
       await replyToTicket(ticketId, text);
+      
+      // Send email
+      if (ticket && ticket.email) {
+        try {
+          await sendTicketEmail({
+            to_email: ticket.email,
+            to_name: ticket.name,
+            reply_to: 'admin@finsmart.com',
+            subject: 'Re: Support Ticket ' + ticketId,
+            message: 'Hello ' + ticket.name + ',\n\nOur team has responded to your ticket (' + ticketId + ') regarding "' + ticket.category + '".\n\nAdmin Reply:\n' + text,
+            ticket_id: ticketId
+          });
+        } catch (e) {
+          console.error("Failed to send email", e);
+        }
+      }
+      
       setTickets(tickets.map(t => t.ticketId === ticketId ? { ...t, reply: text, status: 'resolved' } : t));
       setReplyingTo(null);
     } catch (err) {
@@ -163,7 +198,7 @@ const AdminSupport = ({ user }) => {
                       <button 
                         className="btn btn-outline" 
                         style={{ padding: '0.3rem 0.8rem', fontSize: '0.8rem', borderColor: 'var(--success)', color: 'var(--success)' }}
-                        onClick={() => handleResolve(ticket.ticketId)}
+                        onClick={() => handleResolve(ticket.ticketId, ticket)}
                       >
                         Mark Resolved
                       </button>
@@ -212,7 +247,7 @@ const AdminSupport = ({ user }) => {
                   />
                   <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
                     <button className="btn btn-outline" style={{ padding: '0.4rem 1rem' }} onClick={() => setReplyingTo(null)}>Cancel</button>
-                    <button className="btn btn-primary" style={{ padding: '0.4rem 1rem' }} onClick={() => handleReplySubmit(ticket.ticketId)}>Send Reply & Resolve</button>
+                    <button className="btn btn-primary" style={{ padding: '0.4rem 1rem' }} onClick={() => handleReplySubmit(ticket.ticketId, ticket)}>Send Reply & Resolve</button>
                   </div>
                 </div>
               )}

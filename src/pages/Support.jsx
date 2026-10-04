@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useTheme } from '../context/ThemeProvider';
 import { submitSupportTicket, getUserTickets } from '../firebase/dbFunctions';
+import { sendTicketEmail } from '../emailService';
 
 const SpinnerInline = ({ size = 20 }) => (
   <div style={{
@@ -84,6 +85,20 @@ const Support = ({ user }) => {
         reply: '',
         createdAt: new Date().toISOString()
       });
+
+      // Send email to user acknowledging the ticket
+      try {
+        await sendTicketEmail({
+          to_email: formData.email,
+          to_name: formData.name,
+          reply_to: 'admin@finsmart.com', 
+          subject: 'Support Ticket Received: ' + ticketId,
+          message: 'Thank you for reaching out! Your support ticket (' + ticketId + ') regarding "' + formData.category + '" has been received. Our team will review it and get back to you shortly.\n\nYour message:\n' + formData.message,
+          ticket_id: ticketId
+        });
+      } catch (e) {
+        console.error("Failed to send email", e);
+      }
 
       setCreatedTicketId(ticketId);
       setSuccess(true);
