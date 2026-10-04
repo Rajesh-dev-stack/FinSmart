@@ -1,7 +1,7 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { signUpWithEmail, loginWithGoogle } from '../firebase/authFunctions';
-import { Sparkles, Wallet, BellRing, PieChart, Award, BarChart2 } from 'lucide-react';
+import { signUpWithEmail, loginWithGoogle, loginWithEmail } from '../firebase/authFunctions';
+import { Sparkles, Wallet, BellRing, PieChart, Award, BarChart2, ShieldCheck } from 'lucide-react';
 import './Auth.css';
 
 /*  Inline Chart / Growth SVG illustration  */
@@ -77,12 +77,47 @@ const Signup = () => {
   const [emailExists, setEmailExists] = useState(false); 
   const navigate = useNavigate();
 
+  // Admin Modal states
+  const [showAdminModal, setShowAdminModal] = useState(false);
+  const [adminPassword, setAdminPassword]   = useState('');
+  const [adminLoading, setAdminLoading]     = useState(false);
+  const [adminError, setAdminError]         = useState(null);
+
   const passwordStrength = useMemo(() => {
     if (!password) return { level: 0, text: '', color: 'transparent' };
     if (password.length < 6) return { level: 1, text: 'Weak', color: '#FF5252' };
     if (password.length < 10 || !/\d/.test(password)) return { level: 2, text: 'Medium', color: '#FFD740' };
     return { level: 3, text: 'Strong', color: '#00E676' };
   }, [password]);
+
+    const handleAdminShortcut = () => {
+    setShowAdminModal(true);
+    setAdminError(null);
+    setAdminPassword('');
+  };
+
+  const handleAdminLoginSubmit = async (e) => {
+    e.preventDefault();
+    if (!adminPassword) return;
+    setAdminLoading(true); setAdminError(null);
+    
+    // Static Admin Password Check
+    if (adminPassword === 'Rajesh7679@') {
+      localStorage.setItem('staticAdmin', 'true');
+      window.location.href = '/admin-support'; 
+      return;
+    }
+    
+    // Fallback
+    try {
+      await loginWithEmail('rajesh.professional817@gmail.com', adminPassword);
+      navigate('/admin-support');
+    } catch (err) {
+      setAdminError('Invalid admin password.');
+    } finally { 
+      setAdminLoading(false); 
+    }
+  };
 
   const handleEmailSignup = async (e) => {
     e.preventDefault();
@@ -134,7 +169,9 @@ const Signup = () => {
           </div>
         </div>
 
-        <h2 className="auth-heading">Create your account</h2>
+        {!showAdminModal ? (
+          <>
+            <h2 className="auth-heading">Create your account</h2>
         <p className="auth-subheading">Smart money management for college students </p>
 
         {/*  Existing User Banner  */}
@@ -217,8 +254,51 @@ const Signup = () => {
         </button>
 
         <p className="auth-form-footer" style={{ marginTop: '1.5rem' }}>
-          Already have an account? <Link to="/login">Sign in</Link>
-        </p>
+            Already have an account? <Link to="/login">Sign in</Link>
+          </p>
+
+          <div style={{ textAlign: 'center', marginTop: '1.5rem' }}>
+            <button 
+              type="button" 
+              onClick={handleAdminShortcut} 
+              style={{ background: 'transparent', border: '1px solid var(--border-subtle)', color: 'var(--text-secondary)', padding: '0.4rem 1rem', borderRadius: '20px', fontSize: '0.8rem', cursor: 'pointer', transition: 'all 0.2s ease', display: 'inline-flex', alignItems: 'center', gap: '6px' }}
+              onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--text-primary)'; e.currentTarget.style.borderColor = 'var(--text-secondary)'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--text-secondary)'; e.currentTarget.style.borderColor = 'var(--border-subtle)'; }}
+            >
+              <ShieldCheck size={14} /> Admin Login
+            </button>
+          </div>
+        </>
+        ) : (
+          <div className="forgot-panel">
+            <button type="button" className="forgot-back-btn" onClick={() => setShowAdminModal(false)}>
+               Back to Registration
+            </button>
+            <div style={{ textAlign: 'center', marginBottom: '2rem', marginTop: '1rem' }}>
+              <ShieldCheck size={48} style={{ color: 'var(--danger)', marginBottom: '1rem' }} />
+              <h2 className="auth-heading">Admin Access</h2>
+            </div>
+
+            {adminError && <div className="auth-error"> {adminError}</div>}
+
+            <form className="auth-form" onSubmit={handleAdminLoginSubmit}>
+              <div style={{ position: 'relative' }}>
+                <input
+                  type="password"
+                  className="input-field"
+                  placeholder="Enter admin password"
+                  value={adminPassword}
+                  onChange={e => setAdminPassword(e.target.value)}
+                  required autoFocus
+                />
+              </div>
+
+              <button type="submit" className="btn btn-primary full-width" disabled={adminLoading} style={{ marginTop: '1.5rem', background: 'var(--danger)', borderColor: 'var(--danger)', color: 'white' }}>
+                {adminLoading ? 'Authenticating...' : 'Access Dashboard'}
+              </button>
+            </form>
+          </div>
+        )}
 
         <p className="auth-copyright">Made with love by Team FinSmart | &copy; 2026 FinSmart</p>
       </div>
