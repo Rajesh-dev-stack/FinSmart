@@ -29,14 +29,32 @@ const Login = () => {
   const [resetLoading, setResetLoading]     = useState(false);
   const [resetSuccess, setResetSuccess]     = useState(false);
   const [resetError, setResetError]         = useState(null);
+  // Admin Modal states
+  const [showAdminModal, setShowAdminModal] = useState(false);
+  const [adminPassword, setAdminPassword]   = useState('');
+  const [adminLoading, setAdminLoading]     = useState(false);
+  const [adminError, setAdminError]         = useState(null);
 
   const navigate = useNavigate();
 
   /*  Login  */
     const handleAdminShortcut = () => {
-    setEmail('rajesh.professional817@gmail.com');
-    if (passwordRef.current) {
-      passwordRef.current.focus();
+    setShowAdminModal(true);
+    setAdminError(null);
+    setAdminPassword('');
+  };
+
+  const handleAdminLoginSubmit = async (e) => {
+    e.preventDefault();
+    if (!adminPassword) return;
+    setAdminLoading(true); setAdminError(null);
+    try {
+      await loginWithEmail('rajesh.professional817@gmail.com', adminPassword);
+      navigate('/admin-support');
+    } catch (err) {
+      setAdminError('Invalid admin password.');
+    } finally { 
+      setAdminLoading(false); 
     }
   };
 
@@ -135,8 +153,37 @@ const Login = () => {
           </div>
         </div>
 
-        {/*  FORGOT PASSWORD PANEL  */}
-        {showForgot ? (
+        {/*  ADMIN LOGIN PANEL  */}
+        {showAdminModal ? (
+          <div className="forgot-panel">
+            <button type="button" className="forgot-back-btn" onClick={() => setShowAdminModal(false)}>
+               Back to Sign In
+            </button>
+            <div style={{ textAlign: 'center', marginBottom: '2rem', marginTop: '1rem' }}>
+              <ShieldCheck size={48} style={{ color: 'var(--danger)', marginBottom: '1rem' }} />
+              <h2 className="auth-heading">Admin Access</h2>
+            </div>
+
+            {adminError && <div className="auth-error">,? {adminError}</div>}
+
+            <form className="auth-form" onSubmit={handleAdminLoginSubmit}>
+              <div style={{ position: 'relative' }}>
+                <input
+                  type="password"
+                  className="input-field"
+                  placeholder="Enter admin password"
+                  value={adminPassword}
+                  onChange={e => setAdminPassword(e.target.value)}
+                  required autoFocus
+                />
+              </div>
+
+              <Button type="submit" className="full-width" disabled={adminLoading} style={{ marginTop: '1.5rem', background: 'var(--danger)' }}>
+                {adminLoading ? 'Authenticating...' : 'Access Dashboard'}
+              </Button>
+            </form>
+          </div>
+        ) : showForgot ? (
           <div className="forgot-panel">
             <button className="forgot-back-btn" onClick={handleForgotClose}>
                Back to Sign In
