@@ -2,15 +2,16 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Button from '../components/ui/Button';
 import { loginWithEmail, loginWithGoogle, resetPassword } from '../firebase/authFunctions';
+import { Sparkles, Award, ShieldCheck, BellRing, BarChart2, MonitorSmartphone } from 'lucide-react';
 import './Auth.css';
 
 const features = [
-  { icon: '', text: 'AI Spending Analyzer' },
-  { icon: '', text: 'FinCoins Reward System' },
-  { icon: '', text: 'Firebase Secured' },
-  { icon: '', text: 'Smart Budget Alerts' },
-  { icon: '', text: 'Monthly Reports' },
-  { icon: '', text: 'Live across devices' },
+  { icon: <Sparkles size={18} />, text: 'AI Spending Analyzer' },
+  { icon: <Award size={18} />, text: 'FinCoins Reward System' },
+  { icon: <ShieldCheck size={18} />, text: 'Firebase Secured' },
+  { icon: <BellRing size={18} />, text: 'Smart Budget Alerts' },
+  { icon: <BarChart2 size={18} />, text: 'Monthly Reports' },
+  { icon: <MonitorSmartphone size={18} />, text: 'Live across devices' },
 ];
 
 const Login = () => {

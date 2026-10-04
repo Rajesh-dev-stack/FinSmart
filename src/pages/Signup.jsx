@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { signUpWithEmail, loginWithGoogle } from '../firebase/authFunctions';
+import { Sparkles, Wallet, BellRing, PieChart, Award, BarChart2 } from 'lucide-react';
 import './Auth.css';
 
 /*  Inline Chart / Growth SVG illustration  */
@@ -58,12 +59,12 @@ const GrowthSVG = () => (
 );
 
 const features = [
-  { icon: '', text: 'AI Spending Analyzer' },
-  { icon: '', text: 'Digital Wallet' },
-  { icon: '', text: 'Budget Alerts' },
-  { icon: '', text: 'Smart Budgeting' },
-  { icon: '', text: 'FinCoins Rewards' },
-  { icon: '', text: 'Expense Reports' },
+  { icon: <Sparkles size={18} />, text: 'AI Spending Analyzer' },
+  { icon: <Wallet size={18} />, text: 'Digital Wallet' },
+  { icon: <BellRing size={18} />, text: 'Budget Alerts' },
+  { icon: <PieChart size={18} />, text: 'Smart Budgeting' },
+  { icon: <Award size={18} />, text: 'FinCoins Rewards' },
+  { icon: <BarChart2 size={18} />, text: 'Expense Reports' },
 ];
 
 const Signup = () => {
