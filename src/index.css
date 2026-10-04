@@ -349,7 +349,7 @@ select option {
   cursor: pointer;
   transition: all 0.3s ease;
   box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3);
-  animation: pulseGlow 2s infinite;
+  
 }
 
 .btn-primary:hover {
