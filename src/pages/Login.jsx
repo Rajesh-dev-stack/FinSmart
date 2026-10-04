@@ -240,7 +240,7 @@ const Login = () => {
                   />
                 </div>
                 <Button type="submit" disabled={resetLoading}>
-                  {resetLoading ? 'Sendingâ€¦' : 'Send Reset Link'}
+                  {resetLoading ? 'Sending...' : 'Send Reset Link'}
                 </Button>
               </form>
             )}
