@@ -67,6 +67,7 @@ function App() {
   const location = useLocation();
 
   const isAuthPage = AUTH_ROUTES.includes(location.pathname);
+  const isAdminPage = location.pathname === '/admin-support';
 
   useEffect(() => {
     if (!user) return;
@@ -173,12 +174,12 @@ function App() {
   };
 
   return (
-    <div className="app-shell">
-      <Sidebar onLogout={handleLogout} user={effectiveUser} />
-      <MobileNav />
-      <main className="main-content" style={{ display: 'flex', flexDirection: 'column' }}>
-        <Navbar title={getPageTitle(location.pathname)} user={effectiveUser} onLogout={handleLogout} />
-        <div style={{ flex: 1 }}>
+    <div className="app-shell" style={{ display: isAdminPage ? 'block' : 'flex' }}>
+      {!isAdminPage && <Sidebar onLogout={handleLogout} user={effectiveUser} />}
+      {!isAdminPage && <MobileNav />}
+      <main className={isAdminPage ? "" : "main-content"} style={isAdminPage ? { minHeight: '100vh', background: 'var(--bg-main)' } : { display: 'flex', flexDirection: 'column' }}>
+        {!isAdminPage && <Navbar title={getPageTitle(location.pathname)} user={effectiveUser} onLogout={handleLogout} />}
+        <div style={{ flex: 1, padding: isAdminPage ? '2rem' : '0' }}>
           <Routes>
           <Route path="/dashboard" element={<Dashboard user={effectiveUser} />} />
           <Route path="/wallet" element={<Wallet user={effectiveUser} />} />
@@ -191,7 +192,7 @@ function App() {
           <Route path="/profile" element={<Profile user={effectiveUser} onProfileUpdate={(updates) => setUser(prev => ({ ...prev, ...updates }))} onLogout={handleLogout} />} />
           <Route path="/settings" element={<Settings user={effectiveUser} onLogout={handleLogout} />} />
           <Route path="/support" element={<Support user={effectiveUser} />} />
-          <Route path="/admin-support" element={<AdminSupport user={effectiveUser} />} />
+          <Route path="/admin-support" element={<AdminSupport user={effectiveUser} onLogout={handleLogout} />} />
         </Routes>
         </div>
       </main>

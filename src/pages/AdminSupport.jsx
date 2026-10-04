@@ -13,7 +13,9 @@ const SpinnerInline = ({ size = 28 }) => (
   }} />
 );
 
-const AdminSupport = ({ user }) => {
+import { LogOut } from 'lucide-react';
+
+const AdminSupport = ({ user, onLogout }) => {
   const { theme } = useTheme();
   const isDark = theme === 'dark';
   
