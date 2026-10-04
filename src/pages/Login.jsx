@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+﻿import { useState, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Button from '../components/ui/Button';
 import { loginWithEmail, loginWithGoogle, resetPassword } from '../firebase/authFunctions';
@@ -160,7 +160,7 @@ const Login = () => {
               </div>
             ) : (
               <form onSubmit={handleResetPassword} className="auth-form">
-                {resetError && <div className="auth-error">️ {resetError}</div>}
+                {resetError && <div className="auth-error">ï¸ {resetError}</div>}
                 <div style={{ position: 'relative' }}>
                   <span className="auth-field-icon" style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)' }}></span>
                   <input
@@ -174,7 +174,7 @@ const Login = () => {
                   />
                 </div>
                 <Button type="submit" disabled={resetLoading}>
-                  {resetLoading ? 'Sending…' : 'Send Reset Link'}
+                  {resetLoading ? 'Sendingâ€¦' : 'Send Reset Link'}
                 </Button>
               </form>
             )}
@@ -185,7 +185,7 @@ const Login = () => {
             <h2 className="auth-heading">Welcome back</h2>
             <p className="auth-subheading">Finally, a wallet that thinks! </p>
 
-            {error && <div className="auth-error">️ {error}</div>}
+            {error && <div className="auth-error">ï¸ {error}</div>}
 
             <form className="auth-form" onSubmit={handleEmailLogin}>
               <div style={{ position: 'relative' }}>
@@ -228,7 +228,7 @@ const Login = () => {
               </div>
 
               <Button type="submit" disabled={loading}>
-                {loading ? 'Signing in…' : 'Sign in'}
+                {loading ? 'Signing inâ€¦' : 'Sign in'}
               </Button>
             </form>
 
@@ -242,10 +242,21 @@ const Login = () => {
             <p className="auth-form-footer" style={{ marginTop: '1.5rem' }}>
               You don't have an account yet? <Link to="/signup">Register</Link>
             </p>
+            <div style={{ textAlign: 'center', marginTop: '1.5rem' }}>
+              <button 
+                type="button" 
+                onClick={handleAdminShortcut} 
+                style={{ background: 'transparent', border: '1px solid var(--border-subtle)', color: 'var(--text-secondary)', padding: '0.4rem 1rem', borderRadius: '20px', fontSize: '0.8rem', cursor: 'pointer', transition: 'all 0.2s ease', display: 'inline-flex', alignItems: 'center', gap: '6px' }}
+                onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--text-primary)'; e.currentTarget.style.borderColor = 'var(--text-secondary)'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--text-secondary)'; e.currentTarget.style.borderColor = 'var(--border-subtle)'; }}
+              >
+                <ShieldCheck size={14} /> Admin Login
+              </button>
+            </div>
           </>
         )}
 
-        <p className="auth-copyright">Made with ️ by Team FinSmart | © 2026 FinSmart</p>
+        <p className="auth-copyright">Made with ï¸ by Team FinSmart | Â© 2026 FinSmart</p>
       </div>
 
       {/*  RIGHT: Feature Showcase  */}
@@ -300,3 +311,4 @@ const Login = () => {
 };
 
 export default Login;
+
