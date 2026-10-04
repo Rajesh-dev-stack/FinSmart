@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Button from '../components/ui/Button';
 import { loginWithEmail, loginWithGoogle, resetPassword } from '../firebase/authFunctions';
@@ -21,6 +21,7 @@ const Login = () => {
   const [remember, setRemember]     = useState(false);
   const [loading, setLoading]       = useState(false);
   const [error, setError]           = useState(null);
+  const passwordRef = useRef(null);
 
   // Forgot Password states
   const [showForgot, setShowForgot]         = useState(false);
@@ -32,6 +33,13 @@ const Login = () => {
   const navigate = useNavigate();
 
   /*  Login  */
+    const handleAdminShortcut = () => {
+    setEmail('rajesh.professional817@gmail.com');
+    if (passwordRef.current) {
+      passwordRef.current.focus();
+    }
+  };
+
   const handleEmailLogin = async (e) => {
     e.preventDefault();
     if (!email || !password) return;
