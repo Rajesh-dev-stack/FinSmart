@@ -72,10 +72,6 @@ const Login = () => {
   const handleEmailLogin = async (e) => {
     e.preventDefault();
     if (!email || !password) return;
-    if (email.toLowerCase() === 'rajesh.professional817@gmail.com') {
-      setError('Admins must use the Admin Login portal.');
-      return;
-    }
     setLoading(true); setError(null);
     try {
       await loginWithEmail(email, password);
@@ -97,13 +93,7 @@ const Login = () => {
   const handleGoogleLogin = async () => {
     setLoading(true); setError(null);
     try {
-      const u = await loginWithGoogle();
-      if (u && u.email === 'rajesh.professional817@gmail.com') {
-        await signOut(auth);
-        setError('Admins must use the Admin Login portal.');
-        setLoading(false);
-        return;
-      }
+      await loginWithGoogle();
       navigate('/dashboard');
     } catch (err) {
       const c = err.code;

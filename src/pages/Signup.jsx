@@ -154,16 +154,7 @@ const Signup = () => {
 
   const handleGoogleSignup = async () => {
     setLoading(true); setError(null);
-    try { 
-      const u = await loginWithGoogle(); 
-      if (u && u.email === 'rajesh.professional817@gmail.com') {
-        await signOut(auth);
-        setError('Admins must use the Admin Login portal.');
-        setLoading(false);
-        return;
-      }
-      navigate('/dashboard'); 
-    }
+    try { await loginWithGoogle(); navigate('/dashboard'); }
     catch (err) { setError('Google sign-up failed. Please try again.'); }
     finally { setLoading(false); }
   };
