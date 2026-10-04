@@ -186,7 +186,7 @@ const Signup = () => {
           </div>
         )}
 
-        {error && !emailExists && <div className="auth-error">️ {error}</div>}
+        {error && !emailExists && <div className="auth-error">{error}</div>}
 
         <form className="auth-form" onSubmit={handleEmailSignup}>
           <div className="auth-field">
@@ -238,7 +238,7 @@ const Signup = () => {
           )}
 
           <button type="submit" className="auth-btn-primary" disabled={loading}>
-            {loading ? 'Creating account…' : 'Create Account'}
+            {loading ? 'Creating account...' : 'Create Account'}
           </button>
           
           <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textAlign: 'center', marginTop: '0.75rem' }}>

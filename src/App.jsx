@@ -146,11 +146,13 @@ function App() {
     return <Navigate to="/login" replace />;
   }
 
+  // Force admin to stay on admin-support
+  if (effectiveUser && effectiveUser.email === 'rajesh.professional817@gmail.com' && location.pathname !== '/admin-support') {
+    return <Navigate to="/admin-support" replace />;
+  }
+
   // Redirect authenticated users away from auth pages
   if (effectiveUser && isAuthPage) {
-    if (effectiveUser.email === 'rajesh.professional817@gmail.com') {
-      return <Navigate to="/admin-support" replace />;
-    }
     return <Navigate to="/dashboard" replace />;
   }
 

@@ -241,7 +241,7 @@ const Login = () => {
             <h2 className="auth-heading">Welcome back</h2>
             <p className="auth-subheading">Finally, a wallet that thinks! </p>
 
-            {error && <div className="auth-error">ï¸ {error}</div>}
+            {error && <div className="auth-error">{error}</div>}
 
             <form className="auth-form" onSubmit={handleEmailLogin}>
               <div style={{ position: 'relative' }}>
@@ -284,7 +284,7 @@ const Login = () => {
               </div>
 
               <Button type="submit" disabled={loading}>
-                {loading ? 'Signing inâ€¦' : 'Sign in'}
+                {loading ? 'Signing in...' : 'Sign in'}
               </Button>
             </form>
 
