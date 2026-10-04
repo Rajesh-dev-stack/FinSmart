@@ -120,7 +120,18 @@ function App() {
   }, []);
 
   const handleLogout = async () => {
-    if (auth) await signOut(auth);
+    try {
+      if (staticAdmin) {
+        setStaticAdmin(false);
+        localStorage.removeItem('staticAdmin');
+      }
+      if (auth) {
+        await signOut(auth);
+      }
+      setUser(null);
+    } catch (err) {
+      console.error('Logout error', err);
+    }
   };
 
   // Show spinning loading screen while Firebase resolves auth state
