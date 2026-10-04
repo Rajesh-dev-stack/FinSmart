@@ -185,7 +185,7 @@ const Login = () => {
               <h2 className="auth-heading">Admin Access</h2>
             </div>
 
-            {adminError && <div className="auth-error">,? {adminError}</div>}
+            {adminError && <div className="auth-error">{adminError}</div>}
 
             <form className="auth-form" onSubmit={handleAdminLoginSubmit}>
               <div style={{ position: 'relative' }}>

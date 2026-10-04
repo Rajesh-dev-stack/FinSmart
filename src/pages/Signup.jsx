@@ -294,7 +294,7 @@ const Signup = () => {
               <h2 className="auth-heading">Admin Access</h2>
             </div>
 
-            {adminError && <div className="auth-error"> {adminError}</div>}
+            {adminError && <div className="auth-error">{adminError}</div>}
 
             <form className="auth-form" onSubmit={handleAdminLoginSubmit}>
               <div style={{ position: 'relative' }}>
@@ -310,6 +310,14 @@ const Signup = () => {
 
               <button type="submit" className="btn btn-primary full-width" disabled={adminLoading} style={{ marginTop: '1.5rem', background: 'var(--danger)', borderColor: 'var(--danger)', color: 'white' }}>
                 {adminLoading ? 'Authenticating...' : 'Access Dashboard'}
+              </button>
+              <button 
+                type="button" 
+                onClick={() => setShowAdminModal(false)} 
+                className="auth-btn-google auth-glass-card" 
+                style={{ marginTop: '1rem', background: 'transparent', borderColor: 'rgba(255,255,255,0.2)', width: '100%', padding: '12px', color: 'var(--text-secondary)', borderRadius: 'var(--r-md)' }}
+              >
+                Back to Registration
               </button>
             </form>
           </div>
