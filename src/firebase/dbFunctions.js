@@ -1,17 +1,4 @@
-import { 
-  doc, 
-  setDoc, 
-  getDoc, 
-  collection, 
-  addDoc, 
-  query, 
-  where, 
-  getDocs, 
-  deleteDoc,
-  updateDoc,
-  increment,
-  runTransaction
-} from "firebase/firestore";
+import { doc, setDoc, getDoc, collection, addDoc, query, where, getDocs, deleteDoc, updateDoc, increment, runTransaction, onSnapshot } from 'firebase/firestore';
 import { db } from "./firebaseClient";
 
 // ==========================================
@@ -883,12 +870,12 @@ export const getUserByFinSmartId = async (finSmartId) => {
 
 export const findUserByFinSmartId = async (finsmartId) => {
   if (!finsmartId || !finsmartId.startsWith('FIN') || finsmartId.length !== 13) {
-    throw new Error('❌ FinSmart ID must be 13 characters starting with FIN');
+    throw new Error(' FinSmart ID must be 13 characters starting with FIN');
   }
   const docRef = doc(db, 'finsmartIds', finsmartId);
   const docSnap = await getDoc(docRef);
   if (!docSnap.exists()) {
-    throw new Error('❌ FinSmart ID not found!');
+    throw new Error(' FinSmart ID not found!');
   }
   return docSnap.data(); // { userId, name, email }
 };
@@ -897,34 +884,34 @@ export const findUserByFinSmartId = async (finsmartId) => {
 
 export const sendMoneyByFinSmartId = async (senderUID, receiverFinSmartId, amount, note) => {
   const amountNum = Number(amount);
-  if (amountNum <= 0) throw new Error('❌ Cannot send 0 or negative amount');
+  if (amountNum <= 0) throw new Error(' Cannot send 0 or negative amount');
 
   await runTransaction(db, async (transaction) => {
     // 1. Get Sender doc
     const senderRef = doc(db, 'users', senderUID);
     const senderSnap = await transaction.get(senderRef);
-    if (!senderSnap.exists()) throw new Error('❌ Sender not found');
+    if (!senderSnap.exists()) throw new Error(' Sender not found');
     
     // 2. Lookup Receiver FinSmart ID
     const finsmartRef = doc(db, 'finsmartIds', receiverFinSmartId);
     const finsmartSnap = await transaction.get(finsmartRef);
-    if (!finsmartSnap.exists()) throw new Error('❌ FinSmart ID not found!');
+    if (!finsmartSnap.exists()) throw new Error(' FinSmart ID not found!');
     
     const receiverData = finsmartSnap.data();
     if (receiverData.userId === senderUID) {
-      throw new Error('❌ Cannot send money to yourself!');
+      throw new Error(' Cannot send money to yourself!');
     }
     
     // 3. Get Receiver doc
     const receiverRef = doc(db, 'users', receiverData.userId);
     const receiverSnap = await transaction.get(receiverRef);
-    if (!receiverSnap.exists()) throw new Error('❌ Receiver account not found');
+    if (!receiverSnap.exists()) throw new Error(' Receiver account not found');
     
     const senderData = senderSnap.data();
     
     // 4. Check balance
     if (senderData.walletBalance < amountNum) {
-      throw new Error('❌ Insufficient balance!');
+      throw new Error(' Insufficient balance!');
     }
     
     // 5. Deduct from Sender

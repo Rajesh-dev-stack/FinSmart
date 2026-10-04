@@ -9,7 +9,7 @@ const StatCard = ({ icon, title, value, percentageChange, isPositive }) => {
         <h2 className="stat-value">{value}</h2>
         {percentageChange !== undefined && (
           <div className={`stat-change ${isPositive ? 'text-green' : 'text-red'}`}>
-            <span className="change-icon">{isPositive ? '▲' : '▼'}</span>
+            <span className="change-icon">{isPositive ? '' : ''}</span>
             <span>{Math.abs(percentageChange)}% from last month</span>
           </div>
         )}

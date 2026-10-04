@@ -34,7 +34,7 @@ const Savings = ({ user }) => {
   const { theme } = useTheme();
   const isDark = theme === 'dark';
 
-  const loadData = async () => {
+  async function loadData () {
     if (!user) return;
     try {
       const uDoc = await getUser(user.uid);
@@ -64,17 +64,17 @@ const Savings = ({ user }) => {
       return setMsg({ text: 'Enter a valid amount', type: 'error' });
     }
     if (transferDirection === 'to' && amt < 100) {
-      return setMsg({ text: 'Minimum transfer to savings is ₹100', type: 'error' });
+      return setMsg({ text: 'Minimum transfer to savings is 100', type: 'error' });
     }
     
     setTransferring(true);
     try {
       if (transferDirection === 'to') {
         await transferToSavings(user.uid, amt);
-        setMsg({ text: `Successfully moved ₹${amt} to Savings!`, type: 'success' });
+        setMsg({ text: `Successfully moved ${amt} to Savings!`, type: 'success' });
       } else {
         await transferFromSavings(user.uid, amt);
-        setMsg({ text: `Successfully withdrew ₹${amt} from Savings!`, type: 'success' });
+        setMsg({ text: `Successfully withdrew ${amt} from Savings!`, type: 'success' });
       }
       setTransferAmount('');
       loadData();
@@ -142,20 +142,20 @@ const Savings = ({ user }) => {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
           <div className="card" style={{ background: 'var(--primary)', color: '#fff' }}>
             <p style={{ opacity: 0.8, fontSize: '0.9rem' }}>Current Savings Balance</p>
-            <h2 style={{ fontSize: '2.5rem', margin: '0.5rem 0', color: '#fff' }}>₹{balance.toLocaleString(undefined, {maximumFractionDigits:2})}</h2>
+            <h2 style={{ fontSize: '2.5rem', margin: '0.5rem 0', color: '#fff' }}>{balance.toLocaleString(undefined, {maximumFractionDigits:2})}</h2>
             <p style={{ opacity: 0.9, fontSize: '0.85rem' }}>Earning 6% APY Compounded Daily</p>
           </div>
           
           <div className="card">
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Interest Earned Today</p>
-            <h3 style={{ fontSize: '1.8rem', color: 'var(--primary)', margin: '0.5rem 0' }}>+₹{interestToday.toFixed(2)}</h3>
-            <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>Projected Yearly: ₹{interestYearly.toFixed(2)}</p>
+            <h3 style={{ fontSize: '1.8rem', color: 'var(--primary)', margin: '0.5rem 0' }}>+{interestToday.toFixed(2)}</h3>
+            <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>Projected Yearly: {interestYearly.toFixed(2)}</p>
           </div>
 
           <div className="card">
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Total Interest Earned</p>
-            <h3 style={{ fontSize: '1.8rem', color: 'var(--text-primary)', margin: '0.5rem 0' }}>₹{totalInterest.toFixed(2)}</h3>
-            <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>Est. This Month: ₹{interestMonth.toFixed(2)}</p>
+            <h3 style={{ fontSize: '1.8rem', color: 'var(--text-primary)', margin: '0.5rem 0' }}>{totalInterest.toFixed(2)}</h3>
+            <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>Est. This Month: {interestMonth.toFixed(2)}</p>
           </div>
         </div>
 
@@ -189,7 +189,7 @@ const Savings = ({ user }) => {
                 
                 <div style={{ marginBottom: '1.5rem' }}>
                   <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
-                    Amount (Available: ₹{transferDirection === 'to' ? walletBalance.toLocaleString() : balance.toLocaleString()})
+                    Amount (Available: {transferDirection === 'to' ? walletBalance.toLocaleString() : balance.toLocaleString()})
                   </label>
                   <input 
                     type="number" 
@@ -236,8 +236,8 @@ const Savings = ({ user }) => {
                         <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>{new Date(txn.date).toLocaleDateString()} • {txn.daysCalculated} days</p>
                       </div>
                       <div style={{ textAlign: 'right' }}>
-                        <p style={{ fontWeight: 700, color: 'var(--primary)' }}>+₹{txn.amount.toFixed(2)}</p>
-                        <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Balance: ₹{txn.balanceAfter.toFixed(2)}</p>
+                        <p style={{ fontWeight: 700, color: 'var(--primary)' }}>+{txn.amount.toFixed(2)}</p>
+                        <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Balance: {txn.balanceAfter.toFixed(2)}</p>
                       </div>
                     </div>
                   ))}

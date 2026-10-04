@@ -5,12 +5,12 @@ import { loginWithEmail, loginWithGoogle, resetPassword } from '../firebase/auth
 import './Auth.css';
 
 const features = [
-  { icon: '🤖', text: 'AI Spending Analyzer' },
-  { icon: '🪙', text: 'FinCoins Reward System' },
-  { icon: '🔒', text: 'Firebase Secured' },
-  { icon: '🎯', text: 'Smart Budget Alerts' },
-  { icon: '📊', text: 'Monthly Reports' },
-  { icon: '⚡', text: 'Live across devices' },
+  { icon: '', text: 'AI Spending Analyzer' },
+  { icon: '', text: 'FinCoins Reward System' },
+  { icon: '', text: 'Firebase Secured' },
+  { icon: '', text: 'Smart Budget Alerts' },
+  { icon: '', text: 'Monthly Reports' },
+  { icon: '', text: 'Live across devices' },
 ];
 
 const Login = () => {
@@ -30,7 +30,7 @@ const Login = () => {
 
   const navigate = useNavigate();
 
-  /* ── Login ── */
+  /*  Login  */
   const handleEmailLogin = async (e) => {
     e.preventDefault();
     if (!email || !password) return;
@@ -51,7 +51,7 @@ const Login = () => {
     } finally { setLoading(false); }
   };
 
-  /* ── Google Login ── */
+  /*  Google Login  */
   const handleGoogleLogin = async () => {
     setLoading(true); setError(null);
     try {
@@ -64,7 +64,7 @@ const Login = () => {
       else if (c === 'auth/popup-blocked')
         setError('Popup was blocked. Please allow popups for this site and try again.');
       else if (c === 'auth/unauthorized-domain')
-        setError('Domain not authorized. Add localhost in Firebase Console → Authentication → Authorized Domains.');
+        setError('Domain not authorized. Add localhost in Firebase Console  Authentication  Authorized Domains.');
       else if (c === 'auth/network-request-failed')
         setError('Network error. Please check your internet connection and try again.');
       else if (c === 'auth/user-disabled')
@@ -75,7 +75,7 @@ const Login = () => {
     } finally { setLoading(false); }
   };
 
-  /* ── Forgot Password ── */
+  /*  Forgot Password  */
   const handleForgotOpen = () => {
     setShowForgot(true);
     setResetEmail(email); // pre-fill with whatever they typed
@@ -112,7 +112,7 @@ const Login = () => {
   return (
     <div className="auth-page">
 
-      {/* ── LEFT: Form ── */}
+      {/*  LEFT: Form  */}
       <div className="auth-left">
 
         {/* Brand */}
@@ -126,11 +126,11 @@ const Login = () => {
           </div>
         </div>
 
-        {/* ── FORGOT PASSWORD PANEL ── */}
+        {/*  FORGOT PASSWORD PANEL  */}
         {showForgot ? (
           <div className="forgot-panel">
             <button className="forgot-back-btn" onClick={handleForgotClose}>
-              ← Back to Sign In
+               Back to Sign In
             </button>
             <h2 className="auth-heading" style={{ marginTop: '1rem' }}>Reset Password</h2>
             <p className="auth-subheading">
@@ -139,7 +139,7 @@ const Login = () => {
 
             {resetSuccess ? (
               <div className="reset-success-box">
-                <div className="reset-success-icon">✅</div>
+                <div className="reset-success-icon"></div>
                 <strong>Email sent!</strong>
                 <p>Check your inbox at <span>{resetEmail}</span> for the password reset link.</p>
                 <p style={{ opacity: 0.6, fontSize: '0.8rem', marginTop: '0.5rem' }}>
@@ -151,9 +151,9 @@ const Login = () => {
               </div>
             ) : (
               <form onSubmit={handleResetPassword} className="auth-form">
-                {resetError && <div className="auth-error">⚠️ {resetError}</div>}
+                {resetError && <div className="auth-error">️ {resetError}</div>}
                 <div style={{ position: 'relative' }}>
-                  <span className="auth-field-icon" style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)' }}>✉</span>
+                  <span className="auth-field-icon" style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)' }}></span>
                   <input
                     type="email"
                     className="input-field"
@@ -171,16 +171,16 @@ const Login = () => {
             )}
           </div>
         ) : (
-          /* ── NORMAL LOGIN FORM ── */
+          /*  NORMAL LOGIN FORM  */
           <>
             <h2 className="auth-heading">Welcome back</h2>
-            <p className="auth-subheading">Finally, a wallet that thinks! 🧠</p>
+            <p className="auth-subheading">Finally, a wallet that thinks! </p>
 
-            {error && <div className="auth-error">⚠️ {error}</div>}
+            {error && <div className="auth-error">️ {error}</div>}
 
             <form className="auth-form" onSubmit={handleEmailLogin}>
               <div style={{ position: 'relative' }}>
-                <span className="auth-field-icon" style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)' }}>✉</span>
+                <span className="auth-field-icon" style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)' }}></span>
                 <input
                   type="email"
                   className="input-field"
@@ -193,7 +193,7 @@ const Login = () => {
               </div>
 
               <div style={{ position: 'relative' }}>
-                <span className="auth-field-icon" style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)' }}>🔒</span>
+                <span className="auth-field-icon" style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)' }}></span>
                 <input
                   type={showPass ? 'text' : 'password'}
                   className="input-field"
@@ -204,7 +204,7 @@ const Login = () => {
                   required autoComplete="current-password"
                 />
                 <span className="auth-field-suffix" style={{ position: 'absolute', right: '16px', top: '50%', transform: 'translateY(-50%)' }} onClick={() => setShowPass(!showPass)} role="button" tabIndex={0}>
-                  {showPass ? '🙈' : '👁'}
+                  {showPass ? '' : ''}
                 </span>
               </div>
 
@@ -236,10 +236,10 @@ const Login = () => {
           </>
         )}
 
-        <p className="auth-copyright">Made with ❤️ by Team FinSmart | © 2026 FinSmart</p>
+        <p className="auth-copyright">Made with ️ by Team FinSmart | © 2026 FinSmart</p>
       </div>
 
-      {/* ── RIGHT: Feature Showcase ── */}
+      {/*  RIGHT: Feature Showcase  */}
       <div className="auth-right">
         <div className="auth-right-blob blob-1"></div>
         <div className="auth-right-blob blob-2"></div>
@@ -254,17 +254,17 @@ const Login = () => {
         <div className="auth-right-top">
           <div className="auth-feature-cards-wrap">
             <div className="auth-glass-card card-1">
-              <div className="icon">🤖</div>
+              <div className="icon"></div>
               <h4>AI Insights</h4>
               <p>Get personalized spending tips</p>
             </div>
             <div className="auth-glass-card card-2">
-              <div className="icon">🪙</div>
+              <div className="icon"></div>
               <h4>Earn Rewards</h4>
               <p>Save money, earn FinCoins</p>
             </div>
             <div className="auth-glass-card card-3">
-              <div className="icon">📊</div>
+              <div className="icon"></div>
               <h4>Smart Budget</h4>
               <p>Never overspend again</p>
             </div>

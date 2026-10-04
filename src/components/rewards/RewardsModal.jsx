@@ -5,14 +5,14 @@ import { auth } from '../../firebase/firebaseClient';
 import './RewardsModal.css';
 
 const GIFT_CARDS = [
-  { id: 'amz1', brand: 'Amazon', value: '₹50', cost: 500, emoji: '📦' },
-  { id: 'amz2', brand: 'Amazon', value: '₹120', cost: 1200, emoji: '📦' },
-  { id: 'swig', brand: 'Swiggy', value: '₹50', cost: 450, emoji: '🍔' },
-  { id: 'zom', brand: 'Zomato', value: '₹50', cost: 450, emoji: '🍕' },
-  { id: 'flip', brand: 'Flipkart', value: '₹50', cost: 500, emoji: '🛍️' },
-  { id: 'myn', brand: 'Myntra', value: '₹75', cost: 600, emoji: '👕' },
-  { id: 'bms', brand: 'BookMyShow', value: '₹50', cost: 500, emoji: '🍿' },
-  { id: 'uber', brand: 'Uber', value: '₹50', cost: 400, emoji: '🚗' },
+  { id: 'amz1', brand: 'Amazon', value: '50', cost: 500, emoji: '' },
+  { id: 'amz2', brand: 'Amazon', value: '120', cost: 1200, emoji: '' },
+  { id: 'swig', brand: 'Swiggy', value: '50', cost: 450, emoji: '' },
+  { id: 'zom', brand: 'Zomato', value: '50', cost: 450, emoji: '' },
+  { id: 'flip', brand: 'Flipkart', value: '50', cost: 500, emoji: '️' },
+  { id: 'myn', brand: 'Myntra', value: '75', cost: 600, emoji: '' },
+  { id: 'bms', brand: 'BookMyShow', value: '50', cost: 500, emoji: '' },
+  { id: 'uber', brand: 'Uber', value: '50', cost: 400, emoji: '' },
 ];
 
 const RewardsModal = ({ onClose }) => {
@@ -47,7 +47,7 @@ const RewardsModal = ({ onClose }) => {
     try {
       const success = await redeemReward(auth.currentUser.uid, selectedCard.cost, `${selectedCard.brand} ${selectedCard.value}`);
       if (success) {
-        setSuccessMsg(`Success! Your ${selectedCard.brand} gift card has been sent to your email successfully. Fake Voucher Code: ${generateVoucherCode()}`);
+        setSuccessMsg(`Success! Your ${selectedCard.brand} gift card has been sent to your email successfully. Voucher Code: ${generateVoucherCode()}`);
         setSelectedCard(null); // close confirmation
       }
     } catch (error) {
@@ -74,12 +74,12 @@ const RewardsModal = ({ onClose }) => {
         
         <div className="rewards-header">
           <div className="rewards-balance-big">
-            <span className="rewards-coin-icon">🪙</span>
+            <span className="rewards-coin-icon"></span>
             <h2>{totalCoins}</h2>
           </div>
           <p className="rewards-subtitle">Total FinCoins</p>
           {coinsEarnedToday > 0 && (
-            <div className="rewards-earned-today">+{coinsEarnedToday} earned today! 🔥</div>
+            <div className="rewards-earned-today">+{coinsEarnedToday} earned today! </div>
           )}
         </div>
 
@@ -96,7 +96,7 @@ const RewardsModal = ({ onClose }) => {
           <div className="rewards-tab-content redeem-grid">
             {successMsg && (
               <div className="rewards-success-msg">
-                🎉 {successMsg}
+                 {successMsg}
                 <button className="btn btn-outline btn-sm mt-2" onClick={() => setSuccessMsg('')}>Dismiss</button>
               </div>
             )}
@@ -109,7 +109,7 @@ const RewardsModal = ({ onClose }) => {
                   <h4>{selectedCard.brand}</h4>
                   <p className="rewards-card-value">{selectedCard.value}</p>
                 </div>
-                <p>Are you sure you want to spend <strong>{selectedCard.cost} 🪙</strong>?</p>
+                <p>Are you sure you want to spend <strong>{selectedCard.cost} </strong>?</p>
                 <div className="rewards-confirm-actions">
                   <button className="btn btn-outline" onClick={() => setSelectedCard(null)} disabled={redeemLoading}>Cancel</button>
                   <button className="btn btn-primary" onClick={handleRedeem} disabled={redeemLoading}>
@@ -132,7 +132,7 @@ const RewardsModal = ({ onClose }) => {
                       disabled={!canAfford}
                       onClick={() => setSelectedCard(card)}
                     >
-                      {card.cost} 🪙
+                      {card.cost} 
                     </button>
                   </div>
                 );
@@ -155,7 +155,7 @@ const RewardsModal = ({ onClose }) => {
                     <span>{new Date(txn.date).toLocaleDateString()} {new Date(txn.date).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
                   </div>
                   <div className={`rewards-history-amount ${txn.type}`}>
-                    {txn.type === 'earned' ? '+' : '-'}{txn.amount} 🪙
+                    {txn.type === 'earned' ? '+' : '-'}{txn.amount} 
                   </div>
                 </div>
               ))

@@ -107,7 +107,7 @@ export const RewardsProvider = ({ children }) => {
       <div className="fincoins-toast-container">
         {toasts.map(toast => (
           <div key={toast.id} className="fincoins-toast">
-            <span className="fincoins-toast-icon">🪙</span>
+            <span className="fincoins-toast-icon"></span>
             <div className="fincoins-toast-content">
               <strong>+{toast.amount} FinCoins earned!</strong>
               <span>{toast.reason}</span>

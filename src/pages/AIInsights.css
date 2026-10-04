@@ -61,10 +61,10 @@
   font-size: 1.5rem;
 }
 
-.ai-card-icon.purple { background: #EDE9FE; }
-.ai-card-icon.green  { background: #D1FAE5; }
-.ai-card-icon.blue   { background: #DBEAFE; }
-.ai-card-icon.orange { background: #FEF3C7; }
+.ai-card-icon.purple { background: rgba(139, 92, 246, 0.15); color: #A78BFA; }
+.ai-card-icon.green  { background: rgba(16, 185, 129, 0.15); color: #34D399; }
+.ai-card-icon.blue   { background: rgba(59, 130, 246, 0.15); color: #60A5FA; }
+.ai-card-icon.orange { background: rgba(245, 158, 11, 0.15); color: #FBBF24; }
 
 /* AI Result */
 .ai-result {

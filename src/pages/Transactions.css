@@ -82,7 +82,8 @@
   justify-content: center;
   width: 32px;
   height: 32px;
-  background-color: white;
+  background-color: rgba(0, 212, 255, 0.1);
+  color: var(--accent-primary);
   border-radius: 50%;
   box-shadow: var(--shadow-sm);
   margin-right: 0.75rem;

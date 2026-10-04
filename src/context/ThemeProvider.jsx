@@ -3,28 +3,13 @@ import { createContext, useContext, useState, useEffect } from 'react';
 const ThemeContext = createContext();
 
 export const ThemeProvider = ({ children }) => {
-  const [theme, setTheme] = useState(() => {
-    // 1. Check local storage
-    const saved = localStorage.getItem('finsmart-theme');
-    if (saved) return saved;
-    // 2. Check OS preference
-    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-      return 'dark';
-    }
-    // 3. Fallback to light
-    return 'light';
-  });
+  const [theme] = useState('dark');
 
   useEffect(() => {
-    // Apply theme to document element
-    document.documentElement.setAttribute('data-theme', theme);
-    // Save preference
-    localStorage.setItem('finsmart-theme', theme);
-  }, [theme]);
+    document.documentElement.setAttribute('data-theme', 'dark');
+  }, []);
 
-  const toggleTheme = () => {
-    setTheme(prev => (prev === 'light' ? 'dark' : 'light'));
-  };
+  const toggleTheme = () => {};
 
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme }}>

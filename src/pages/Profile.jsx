@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Settings } from 'lucide-react';
 import { auth } from '../firebase/firebaseClient';
 import { updateEmail, reauthenticateWithCredential, EmailAuthProvider } from 'firebase/auth';
 import { updateAuthProfile, deleteUserAccount, resetPassword } from '../firebase/authFunctions';
@@ -10,12 +11,15 @@ const Profile = ({ user, onLogout, onProfileUpdate }) => {
   const [loading, setLoading]   = useState(true);
   const [userDoc, setUserDoc]   = useState(null);
   const [name, setName]         = useState('');
-    const [saving, setSaving]     = useState(false);
+  const [saving, setSaving]     = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [message, setMessage]   = useState(null);
 
+  // Settings Menu
+  const [showSettings, setShowSettings] = useState(false);
+  const [showEmailModal, setShowEmailModal] = useState(false);
+
   // Email change states
-  const [showEmailChange, setShowEmailChange] = useState(false);
   const [newEmail, setNewEmail]               = useState('');
   const [currentPassword, setCurrentPassword] = useState('');
   const [emailSaving, setEmailSaving]         = useState(false);
@@ -32,7 +36,7 @@ const Profile = ({ user, onLogout, onProfileUpdate }) => {
     const unsubscribe = auth.onAuthStateChanged(async (u) => {
       if (u) {
         setName(u.displayName || '');
-                try {
+        try {
           let doc = await getUser(u.uid);
           if (doc && !doc.finsmartId) {
             const newId = await generateUniqueFinSmartId(u.uid, doc.name || u.displayName || 'User', doc.email || u.email);
@@ -52,7 +56,7 @@ const Profile = ({ user, onLogout, onProfileUpdate }) => {
     setTimeout(() => setMessage(null), 4000);
   };
 
-  /* ── Update Name ── */
+  /*  Update Name  */
   const handleUpdateProfile = async (e) => {
     e.preventDefault();
     setSaving(true);
@@ -67,7 +71,7 @@ const Profile = ({ user, onLogout, onProfileUpdate }) => {
 
 
 
-  /* ── Change Email ── */
+  /*  Change Email  */
   const handleEmailChange = async (e) => {
     e.preventDefault();
     if (!newEmail.trim()) { showMsg('Please enter a new email address.', 'error'); return; }
@@ -81,7 +85,7 @@ const Profile = ({ user, onLogout, onProfileUpdate }) => {
       // Update email
       await updateEmail(user, newEmail.trim());
       showMsg(`Email changed to ${newEmail.trim()} successfully!`);
-      setShowEmailChange(false);
+      setShowEmailModal(false);
       setNewEmail('');
       setCurrentPassword('');
     } catch (err) {
@@ -99,7 +103,7 @@ const Profile = ({ user, onLogout, onProfileUpdate }) => {
     } finally { setEmailSaving(false); }
   };
 
-  /* ── Send Password Reset ── */
+  /*  Send Password Reset  */
   const handleSendPasswordReset = async () => {
     setResetLoading(true);
     try {
@@ -113,7 +117,7 @@ const Profile = ({ user, onLogout, onProfileUpdate }) => {
 
   const [showDeleteWarning, setShowDeleteWarning] = useState(false);
 
-  /* ── Delete Account ── */
+  /*  Delete Account  */
   const handleDeleteAccountClick = () => {
     if (userDoc?.walletBalance > 0) {
       setShowDeleteWarning(true);
@@ -153,19 +157,29 @@ const Profile = ({ user, onLogout, onProfileUpdate }) => {
   return (
     <div className="page-content profile-page">
       <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
-      <h1 style={{ marginBottom: '1.75rem' }}>Profile Settings</h1>
+      
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.75rem', position: 'relative' }}>
+        <h1 style={{ margin: 0 }}>Profile Settings</h1>
+        
+        <button 
+            onClick={() => navigate('/settings')}
+            style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 'var(--r-full)', width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.25rem', cursor: 'pointer', color: 'var(--text-secondary)' }}
+          >
+            <Settings size={20} />
+          </button>
+      </div>
 
       {message && (
         <div className={`profile-toast ${message.type}`}>
-          {message.type === 'success' ? '✅' : '⚠️'} {message.text}
+          {message.type === 'success' ? '' : '️'} {message.text}
         </div>
       )}
 
       <div className="profile-grid">
 
-        {/* ── FinSmart ID ── */}
+        {/*  FinSmart ID  */}
         <div className="card profile-card" style={{ background: 'linear-gradient(135deg, rgba(0, 201, 167, 0.05), rgba(0, 212, 255, 0.05))', borderColor: 'var(--primary)' }}>
-          <h3>🏦 Your FinSmart ID</h3>
+          <h3> Your FinSmart ID</h3>
           <p className="profile-card-sub">Share this ID to receive money from anyone!</p>
           
           <div style={{ background: 'var(--bg)', padding: '1rem', borderRadius: 'var(--r-md)', textAlign: 'center', margin: '1.5rem 0', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -189,11 +203,11 @@ const Profile = ({ user, onLogout, onProfileUpdate }) => {
               onClick={() => {
                 if (userDoc?.finsmartId) {
                   navigator.clipboard.writeText(userDoc.finsmartId);
-                  showMsg('Copied! ✅');
+                  showMsg('Copied! ');
                 }
               }}
             >
-              Copy ID 📋
+              Copy ID 
             </button>
             
             {navigator.share && (
@@ -209,14 +223,14 @@ const Profile = ({ user, onLogout, onProfileUpdate }) => {
                   }
                 }}
               >
-                Share 🔗
+                Share 
               </button>
             )}
           </div>
         </div>
 
 
-        {/* ── Edit Name & Photo ── */}
+        {/*  Edit Name & Photo  */}
         <div className="card profile-card">
           <h3>Personal Info</h3>
           <p className="profile-card-sub">Update your display name.</p>
@@ -239,76 +253,13 @@ const Profile = ({ user, onLogout, onProfileUpdate }) => {
           </form>
         </div>
 
-        {/* ── Email & Password ── */}
-        <div className="card profile-card">
-          <h3>Email &amp; Password</h3>
-          <p className="profile-card-sub">Manage your login credentials.</p>
-
-          {/* Current Email */}
-          <div className="profile-info-row">
-            <div>
-              <p className="profile-info-label">Current Email</p>
-              <p className="profile-info-value">{u.email}</p>
-            </div>
-            {isEmailProvider && (
-              <button
-                className="profile-btn-outline"
-                onClick={() => { setShowEmailChange(!showEmailChange); setCurrentPassword(''); setNewEmail(''); }}
-              >
-                {showEmailChange ? 'Cancel' : 'Change'}
-              </button>
-            )}
-          </div>
-
-          {/* Email Change Form */}
-          {showEmailChange && isEmailProvider && (
-            <form onSubmit={handleEmailChange} className="profile-form" style={{ marginTop: '1rem', borderTop: '1px solid var(--border)', paddingTop: '1rem' }}>
-              <div className="profile-field">
-                <label>New Email Address</label>
-                <input type="email" value={newEmail} onChange={e => setNewEmail(e.target.value)} placeholder="Enter new email" required />
-              </div>
-              <div className="profile-field">
-                <label>Current Password <span style={{ opacity: 0.6, fontWeight: 400 }}>(to verify identity)</span></label>
-                <input type="password" value={currentPassword} onChange={e => setCurrentPassword(e.target.value)} placeholder="Enter your current password" required />
-              </div>
-              <button type="submit" className="profile-btn-primary" disabled={emailSaving}>
-                {emailSaving ? 'Changing…' : 'Confirm Email Change'}
-              </button>
-            </form>
-          )}
-
-          {!isEmailProvider && (
-            <p className="profile-field-hint" style={{ marginTop: '0.5rem' }}>
-              Email changes are not available for Google sign-in accounts.
-            </p>
-          )}
-
-          {/* Password Reset */}
-          {isEmailProvider && (
-            <div className="profile-info-row" style={{ marginTop: '1rem', borderTop: '1px solid var(--border)', paddingTop: '1rem' }}>
-              <div>
-                <p className="profile-info-label">Password</p>
-                <p className="profile-info-value">••••••••••</p>
-              </div>
-              <button
-                className="profile-btn-outline"
-                onClick={handleSendPasswordReset}
-                disabled={resetLoading || resetSent}
-              >
-                {resetSent ? '✅ Sent!' : resetLoading ? 'Sending…' : 'Reset'}
-              </button>
-            </div>
-          )}
-          {resetSent && (
-            <p className="profile-field-hint" style={{ color: '#00C9A7', marginTop: '0.5rem' }}>
-              ✅ Password reset email sent to {u.email}. Check your inbox.
-            </p>
-          )}
-        </div>
-
-        {/* ── Account Info & Danger Zone ── */}
+        {/*  Account Info  */}
         <div className="card profile-card">
           <h3>Account Info</h3>
+          <div className="profile-info-row" style={{ borderBottom: '1px solid var(--border)', paddingBottom: '0.75rem', marginBottom: '0.75rem', marginTop: '1rem' }}>
+            <span style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>Current Email</span>
+            <strong style={{ fontSize: '0.875rem' }}>{u.email}</strong>
+          </div>
           <div className="profile-info-row" style={{ borderBottom: '1px solid var(--border)', paddingBottom: '0.75rem', marginBottom: '0.75rem' }}>
             <span style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>Member Since</span>
             <strong style={{ fontSize: '0.875rem' }}>
@@ -323,25 +274,41 @@ const Profile = ({ user, onLogout, onProfileUpdate }) => {
           <div className="profile-info-row" style={{ borderBottom: '1px solid var(--border)', paddingBottom: '0.75rem', marginBottom: '0.75rem' }}>
             <span style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>Sign-in Method</span>
             <strong style={{ fontSize: '0.875rem' }}>
-              {isEmailProvider ? '📧 Email & Password' : '🔵 Google'}
+              {isEmailProvider ? ' Email & Password' : ' Google'}
             </strong>
           </div>
           <div className="profile-info-row">
             <span style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>Account Status</span>
             <span style={{ background: 'rgba(0,201,167,0.12)', color: '#00C9A7', padding: '0.2rem 0.6rem', borderRadius: 99, fontSize: '0.75rem', fontWeight: 600 }}>Active</span>
           </div>
-
-          {/* Danger Zone */}
-          <div className="danger-zone">
-            <h4>⚠️ Danger Zone</h4>
-            <p>Permanently delete your account and all data. This cannot be undone.</p>
-            <button className="profile-btn-danger" onClick={handleDeleteAccountClick} disabled={deleting}>
-              {deleting ? 'Deleting…' : 'Delete My Account'}
-            </button>
-          </div>
         </div>
 
       </div>
+
+      {/* Email Change Modal */}
+      {showEmailModal && (
+        <div className="modal-overlay">
+          <div className="modal card">
+            <div className="modal-header">
+              <h3>Change Email Address</h3>
+              <button className="close-btn" onClick={() => setShowEmailModal(false)}></button>
+            </div>
+            <form onSubmit={handleEmailChange} className="profile-form" style={{ padding: '1.5rem' }}>
+              <div className="profile-field">
+                <label>New Email Address</label>
+                <input type="email" value={newEmail} onChange={e => setNewEmail(e.target.value)} placeholder="Enter new email" required />
+              </div>
+              <div className="profile-field">
+                <label>Current Password <span style={{ opacity: 0.6, fontWeight: 400 }}>(to verify identity)</span></label>
+                <input type="password" value={currentPassword} onChange={e => setCurrentPassword(e.target.value)} placeholder="Enter your current password" required />
+              </div>
+              <button type="submit" className="profile-btn-primary full-width" disabled={emailSaving} style={{ marginTop: '1rem' }}>
+                {emailSaving ? 'Changing…' : 'Confirm Email Change'}
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
 
       {/* Balance Warning Modal */}
       {showDeleteWarning && (
@@ -349,14 +316,14 @@ const Profile = ({ user, onLogout, onProfileUpdate }) => {
           <div className="modal card">
             <div className="modal-header">
               <h3>Action Required</h3>
-              <button className="close-btn" onClick={() => setShowDeleteWarning(false)}>✕</button>
+              <button className="close-btn" onClick={() => setShowDeleteWarning(false)}></button>
             </div>
             <div style={{ padding: '1.5rem', textAlign: 'center' }}>
               <p style={{ marginBottom: '1.5rem', fontSize: '1.05rem', color: 'var(--text-secondary)' }}>
                 You need transfer the remaining balance before account deletion.
               </p>
               <button className="btn btn-primary full-width" onClick={() => navigate('/transfer')}>
-                ↗ Transfer Money
+                 Transfer Money
               </button>
             </div>
           </div>

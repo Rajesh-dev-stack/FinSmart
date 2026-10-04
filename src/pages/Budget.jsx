@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
+import { Utensils, Car, BookOpen, Film, Home, HeartPulse, Smartphone, ShoppingBag, Plane, Send, MoreHorizontal, Edit2, X } from 'lucide-react';
 import { collection, query, where, onSnapshot } from 'firebase/firestore';
 import { auth, db } from '../firebase/firebaseClient';
 import { setBudget } from '../firebase/dbFunctions';
@@ -11,8 +12,8 @@ const EXPENSE_CATEGORIES = [
 ];
 
 const CATEGORY_ICONS = {
-  'Food & Canteen': '🍱', 'Transport & Auto': '🛺', 'Books & Stationery': '📚', 'Entertainment': '🎬', 
-  'Hostel & Rent': '🏠', 'Medical': '💊', 'Mobile Recharge': '📱', 'Shopping': '🛒', 'Travel': '✈️', 'Transfer': '🔄', 'Others': '🔧'
+  'Food & Canteen': <Utensils size={16}/>, 'Transport & Auto': <Car size={16}/>, 'Books & Stationery': <BookOpen size={16}/>, 'Entertainment': <Film size={16}/>, 
+  'Hostel & Rent': <Home size={16}/>, 'Medical': <HeartPulse size={16}/>, 'Mobile Recharge': <Smartphone size={16}/>, 'Shopping': <ShoppingBag size={16}/>, 'Travel': <Plane size={16}/>, 'Transfer': <Send size={16}/>, 'Others': <MoreHorizontal size={16}/>
 };
 
 const Toast = ({ message, type, onClose }) => {
@@ -108,7 +109,7 @@ const Budget = () => {
     setIsSaving(true);
     try {
       await setBudget(user.uid, selectedCategory, Number(limitInput));
-      showToast("Budget limit saved! 🎯", "success");
+      showToast("Budget limit saved! ", "success");
       setLimitInput('');
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (error) {
@@ -134,10 +135,10 @@ const Budget = () => {
       const limit = b.limit || 0;
       const percentage = limit > 0 ? (spent / limit) * 100 : (spent > 0 ? 100 : 0);
       
-      let statusMsg = "✅ On track!";
-      if (percentage >= 100) statusMsg = "❌ Budget exceeded!";
-      else if (percentage >= 80) statusMsg = "🚨 Near limit!";
-      else if (percentage >= 50) statusMsg = "⚠️ Moderate spending";
+      let statusMsg = " On track!";
+      if (percentage >= 100) statusMsg = " Budget exceeded!";
+      else if (percentage >= 80) statusMsg = " Near limit!";
+      else if (percentage >= 50) statusMsg = "️ Moderate spending";
 
       return { ...b, spent, percentage, statusMsg };
     });
@@ -164,7 +165,7 @@ const Budget = () => {
       } else {
         const spent = spentPerCategory[cat] || 0;
         finalMapped.push({
-          category: cat, limit: 0, spent, percentage: spent > 0 ? 100 : 0, statusMsg: spent > 0 ? "❌ No limit set!" : "✅ No spending"
+          category: cat, limit: 0, spent, percentage: spent > 0 ? 100 : 0, statusMsg: spent > 0 ? " No limit set!" : " No spending"
         });
       }
     });
@@ -203,7 +204,7 @@ const Budget = () => {
 
   const currentSelectedBudget = budgets.find(b => b.category === selectedCategory);
   const currentLimitText = currentSelectedBudget && currentSelectedBudget.limit > 0 
-    ? `Current limit: ₹${currentSelectedBudget.limit.toLocaleString()}` 
+    ? `Current limit: ${currentSelectedBudget.limit.toLocaleString()}` 
     : "e.g. 2000";
 
   if (loading && budgets.length === 0) return <div className="page-content"><div className="global-spinner" style={{margin: '4rem auto'}}></div></div>;
@@ -215,7 +216,7 @@ const Budget = () => {
       
       <div className="page-header" style={{ marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between' }}>
         <div>
-          <h1 style={{ fontSize: '1.8rem' }}>Smart Budgets 📊</h1>
+          <h1 style={{ fontSize: '1.8rem' }}>Smart Budgets </h1>
           <p className="text-secondary" style={{ fontSize: '0.95rem' }}>Control your monthly expenses</p>
         </div>
         <select 
@@ -236,11 +237,11 @@ const Budget = () => {
           <div className="summary-stats-fullwidth" style={{ flex: '1', minWidth: '200px' }}>
             <div className="stat" style={{ marginBottom: '1rem' }}>
               <span className="text-secondary">Total Budgeted</span>
-              <h4 style={{ fontSize: '2rem', color: 'var(--accent-primary)' }}>₹{summary.totalLimit.toLocaleString()}</h4>
+              <h4 style={{ fontSize: '2rem', color: 'var(--accent-primary)' }}>{summary.totalLimit.toLocaleString()}</h4>
             </div>
             <div className="stat">
               <span className="text-secondary">Total Spent</span>
-              <h4 style={{ fontSize: '2rem', color: summary.percentage >= 100 ? 'var(--danger)' : 'var(--text-primary)' }}>₹{summary.totalSpent.toLocaleString()}</h4>
+              <h4 style={{ fontSize: '2rem', color: summary.percentage >= 100 ? 'var(--danger)' : 'var(--text-primary)' }}>{summary.totalSpent.toLocaleString()}</h4>
             </div>
           </div>
           
@@ -259,7 +260,7 @@ const Budget = () => {
               }}/>
             </div>
             <p className="text-secondary" style={{ marginTop: '0.75rem', textAlign: 'right', fontSize: '0.9rem' }}>
-              ₹{Math.max(summary.totalLimit - summary.totalSpent, 0).toLocaleString()} remaining total
+              {Math.max(summary.totalLimit - summary.totalSpent, 0).toLocaleString()} remaining total
             </p>
           </div>
         </div>
@@ -285,7 +286,7 @@ const Budget = () => {
                 </select>
               </div>
               <div className="form-group" style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                <label className="text-secondary" style={{ fontSize: '0.85rem' }}>Monthly Limit (₹)</label>
+                <label className="text-secondary" style={{ fontSize: '0.85rem' }}>Monthly Limit ()</label>
                 <input 
                   type="number" 
                   step="0.01" 
@@ -314,15 +315,14 @@ const Budget = () => {
                   <button 
                     onClick={() => handleEditClick(b)}
                     style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: '0.25rem' }}
-                    title="Edit limit"
-                  >
-                    ✏️
+                    title="Edit limit">
+                    <Edit2 size={16}/>
                   </button>
                 </div>
                 
                 <div style={{ marginBottom: '1rem' }}>
                   <p style={{ fontSize: '1.25rem', fontWeight: 'bold' }}>
-                    ₹{b.spent.toLocaleString()} <span className="text-muted" style={{ fontSize: '0.9rem', fontWeight: 'normal' }}>of ₹{b.limit.toLocaleString()}</span>
+                    {b.spent.toLocaleString()} <span className="text-muted" style={{ fontSize: '0.9rem', fontWeight: 'normal' }}>of {b.limit.toLocaleString()}</span>
                   </p>
                 </div>
 

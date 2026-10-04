@@ -4,6 +4,7 @@ import { useTheme } from '../../context/ThemeProvider';
 import { useRewards } from '../../context/RewardsProvider';
 import RewardsModal from '../rewards/RewardsModal';
 import './Navbar.css';
+import { Coins, Settings } from 'lucide-react';
 
 const Navbar = ({ title = 'Overview', user, onLogout }) => {
   const navigate = useNavigate();
@@ -11,7 +12,7 @@ const Navbar = ({ title = 'Overview', user, onLogout }) => {
   const [notifications, setNotifications] = useState([]);
   const [loadingNotifs, setLoadingNotifs] = useState(false);
   const [showRewards, setShowRewards] = useState(false);
-  const { theme, toggleTheme } = useTheme();
+  const { theme } = useTheme();
   const { totalCoins, isGlowing } = useRewards();
 
   // Dynamic notification logic
@@ -25,7 +26,7 @@ const Navbar = ({ title = 'Overview', user, onLogout }) => {
       // 1. Check low balance
       const uDoc = await getUser(user.uid);
       if (uDoc && (uDoc.walletBalance || 0) < 100) {
-        notifs.push({ id: 'low_bal', type: 'warning', text: `Low wallet balance: ₹${uDoc.walletBalance || 0}. Consider depositing funds.` });
+        notifs.push({ id: 'low_bal', type: 'warning', text: `Low wallet balance: ${uDoc.walletBalance || 0}. Consider depositing funds.` });
       }
 
       // 2. Check budgets
@@ -87,19 +88,18 @@ const Navbar = ({ title = 'Overview', user, onLogout }) => {
               animation: isGlowing ? 'glow 1s infinite alternate' : 'none'
             }}
           >
-            <span style={{ fontSize: '1.2rem' }}>🪙</span>
+            <span style={{ fontSize: '1.2rem', display: 'flex', alignItems: 'center' }}><Coins size={18} fill="gold" /></span>
             <span style={{ fontWeight: 700, fontSize: '1rem', letterSpacing: '0.5px' }}>{totalCoins}</span>
           </button>
         </div>
 
-        {/* Theme Toggle */}
+        {/* Settings */}
         <button 
           className="navbar-icon-btn" 
-          title="Toggle Dark Mode" 
-          onClick={toggleTheme}
-          style={{ transition: 'transform 0.3s ease' }}
+          title="Settings" 
+          onClick={() => navigate('/settings')}
         >
-          {theme === 'dark' ? '☀️' : '🌙'}
+          <Settings size={18} />
         </button>
 
         {/* Notification */}
@@ -146,11 +146,6 @@ const Navbar = ({ title = 'Overview', user, onLogout }) => {
         </div>
 
 
-
-        {/* Add button */}
-        <button className="navbar-add-btn" title="Add Transaction" onClick={() => navigate('/transactions', { state: { openAdd: true } })}>
-          +
-        </button>
 
         {/* Avatar */}
         {user && (

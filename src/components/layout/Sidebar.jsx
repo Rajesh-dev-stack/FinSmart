@@ -1,21 +1,22 @@
 import { useState } from 'react';
 import { NavLink, Link, useNavigate } from 'react-router-dom';
+import { Home, PieChart, ListOrdered, BarChart2, Wallet, PiggyBank, Send, Sparkles, User, HelpCircle, LogOut } from 'lucide-react';
 import './Sidebar.css';
 
 const navItems = [
-  { to: '/dashboard', icon: '⊞', label: 'Overview' },
-  { to: '/budget', icon: '◎', label: 'Budget' },
-  { to: '/transactions', icon: '↕', label: 'Transactions' },
-  { to: '/reports', icon: '⊿', label: 'Reports' },
+  { to: '/dashboard', icon: <Home size={18} />, label: 'Overview' },
+  { to: '/budget', icon: <PieChart size={18} />, label: 'Budget' },
+  { to: '/transactions', icon: <ListOrdered size={18} />, label: 'Transactions' },
+  { to: '/reports', icon: <BarChart2 size={18} />, label: 'Reports' },
 ];
 
 const accountItems = [
-  { to: '/wallet', icon: '💳', label: 'Wallet' },
-  { to: '/savings', icon: '🏦', label: 'Savings & Interest', isSub: true },
-  { to: '/transfer', icon: '💸', label: 'Transfer Money', isSub: true },
-  { to: '/ai-insights', icon: '✦', label: 'AI Insights' },
-  { to: '/profile', icon: '◉', label: 'Profile' },
-  { to: '/support', icon: '🎧', label: 'Support' },
+  { to: '/wallet', icon: <Wallet size={18} />, label: 'Wallet' },
+  { to: '/savings', icon: <PiggyBank size={18} />, label: 'Savings & Interest', isSub: true },
+  { to: '/transfer', icon: <Send size={18} />, label: 'Transfer Money', isSub: true },
+  { to: '/ai-insights', icon: <Sparkles size={18} />, label: 'AI Insights' },
+  { to: '/profile', icon: <User size={18} />, label: 'Profile' },
+  { to: '/support', icon: <HelpCircle size={18} />, label: 'Support' },
 ];
 
 const Sidebar = ({ onLogout }) => {
@@ -54,7 +55,7 @@ const Sidebar = ({ onLogout }) => {
                 `sidebar-link ${isActive ? 'active' : ''}`
               }
             >
-              <span className="sidebar-icon">{item.icon}</span>
+              <span className="sidebar-icon" style={{display:'flex', alignItems:'center'}}>{item.icon}</span>
               <span className="sidebar-label">{item.label}</span>
             </NavLink>
           ))}
@@ -69,7 +70,7 @@ const Sidebar = ({ onLogout }) => {
               }
               style={item.isSub ? { marginLeft: '1.5rem', paddingLeft: '1rem', borderLeft: '2px solid var(--border)' } : {}}
             >
-              <span className="sidebar-icon">{item.icon}</span>
+              <span className="sidebar-icon" style={{display:'flex', alignItems:'center'}}>{item.icon}</span>
               <span className="sidebar-label">{item.label}</span>
             </NavLink>
           ))}
@@ -80,17 +81,11 @@ const Sidebar = ({ onLogout }) => {
             style={{ width: '100%', marginTop: '0.5rem', background: 'transparent', textAlign: 'left', color: 'var(--danger)' }} 
             onClick={() => setShowLogoutModal(true)}
           >
-            <span className="sidebar-icon">⎋</span>
+            <span className="sidebar-icon" style={{display:'flex', alignItems:'center'}}><LogOut size={18} /></span>
             <span className="sidebar-label">Logout</span>
           </button>
         </nav>
 
-        {/* Bottom Add Button */}
-        <div className="sidebar-footer">
-          <button className="sidebar-add-btn" title="Quick Add" onClick={() => navigate('/transactions', { state: { openAdd: true } })}>
-            +
-          </button>
-        </div>
       </aside>
 
       {/* Logout Confirmation Modal */}

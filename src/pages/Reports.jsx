@@ -119,7 +119,7 @@ const Reports = () => {
             </select>
           </div>
           <button className="btn btn-primary generate-btn" onClick={fetchReportData} disabled={loading}>
-            {loading ? 'Loading...' : '📊 Generate Preview'}
+            {loading ? 'Loading...' : ' Generate Preview'}
           </button>
         </div>
       </div>
@@ -137,16 +137,16 @@ const Reports = () => {
             <div className="preview-stats">
               <div className="preview-stat">
                 <span>Income</span>
-                <h4 className="text-green">₹{summary.income.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</h4>
+                <h4 className="text-green">{summary.income.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</h4>
               </div>
               <div className="preview-stat">
                 <span>Expenses</span>
-                <h4 className="text-red">₹{summary.expense.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</h4>
+                <h4 className="text-red">{summary.expense.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</h4>
               </div>
               <div className="preview-stat">
                 <span>Savings</span>
                 <h4 className={summary.savings >= 0 ? 'text-green' : 'text-red'}>
-                  ₹{summary.savings.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                  {summary.savings.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                 </h4>
               </div>
               <div className="preview-stat">
@@ -179,7 +179,7 @@ const Reports = () => {
                         <td>{t.category}</td>
                         <td className="desc-cell">{t.description || '—'}</td>
                         <td className={`text-right font-bold ${t.type === 'income' ? 'text-green' : 'text-red'}`}>
-                          {t.type === 'income' ? '+' : '-'}₹{t.amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                          {t.type === 'income' ? '+' : '-'}{t.amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                         </td>
                       </tr>
                     ))}
@@ -212,10 +212,10 @@ const Reports = () => {
                       return (
                         <tr key={i}>
                           <td>{b.category}</td>
-                          <td className="text-right">₹{b.limit.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
-                          <td className="text-right">₹{spent.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
+                          <td className="text-right">{b.limit.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
+                          <td className="text-right">{spent.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
                           <td className={`text-right font-bold ${b.limit - spent >= 0 ? 'text-green' : 'text-red'}`}>
-                            ₹{Math.max(b.limit - spent, 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                            {Math.max(b.limit - spent, 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                           </td>
                         </tr>
                       );
@@ -234,7 +234,7 @@ const Reports = () => {
                 onClick={handleIncludeAi}
                 disabled={loadingAi}
               >
-                {loadingAi ? '🤖 Generating...' : aiSummary ? '✅ AI Insights Included' : '🧠 Include AI Insights'}
+                {loadingAi ? ' Generating...' : aiSummary ? ' AI Insights Included' : ' Include AI Insights'}
               </button>
             </div>
             {aiSummary && (

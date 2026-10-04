@@ -16,6 +16,7 @@ import Reports from './pages/Reports';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import Profile from './pages/Profile';
+import Settings from './pages/Settings';
 import Transfer from './pages/Transfer';
 import Support from './pages/Support';
 import AdminSupport from './pages/AdminSupport';
@@ -28,6 +29,8 @@ import LoadingScreen from './components/layout/LoadingScreen';
 // Auth pages don't use sidebar
 const AUTH_ROUTES = ['/login', '/signup', '/'];
 
+import { Home, Wallet as WalletIcon, PieChart, User } from 'lucide-react';
+
 const MobileNav = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -36,24 +39,19 @@ const MobileNav = () => {
   return (
     <nav className="mobile-nav">
       <Link to="/dashboard" className={`mobile-nav-item ${path === '/dashboard' ? 'active' : ''}`}>
-        <span style={{ fontSize: '1.2rem' }}>🏠</span>
+        <Home size={20} />
         <span>Home</span>
       </Link>
       <Link to="/wallet" className={`mobile-nav-item ${path === '/wallet' ? 'active' : ''}`}>
-        <span style={{ fontSize: '1.2rem' }}>💳</span>
+        <WalletIcon size={20} />
         <span>Wallet</span>
       </Link>
-      
-      <button className="mobile-nav-fab" onClick={() => navigate('/transactions', { state: { openAdd: true } })}>
-        +
-      </button>
-
       <Link to="/budget" className={`mobile-nav-item ${path === '/budget' ? 'active' : ''}`}>
-        <span style={{ fontSize: '1.2rem' }}>📊</span>
+        <PieChart size={20} />
         <span>Budget</span>
       </Link>
       <Link to="/profile" className={`mobile-nav-item ${path === '/profile' ? 'active' : ''}`}>
-        <span style={{ fontSize: '1.2rem' }}>👤</span>
+        <User size={20} />
         <span>Profile</span>
       </Link>
     </nav>
@@ -75,11 +73,11 @@ function App() {
     const unsubTxns = listenForNewTransactions(user.uid, (txn) => {
       if (txn.category === 'Money Received') {
          const senderName = txn.description.replace('Received from ', '');
-         setTransferToast(`💸 ₹${txn.amount} received from ${senderName}!`);
+         setTransferToast(`${txn.amount} received from ${senderName}!`);
          setTimeout(() => setTransferToast(null), 6000);
       } else if (txn.category === 'Money Sent') {
          const receiverName = txn.description.replace('Sent to ', '');
-         setTransferToast(`✅ ₹${txn.amount} sent to ${receiverName}! +5 FinCoins 🪙`);
+         setTransferToast(`Success: ${txn.amount} sent to ${receiverName}! +5 FinCoins`);
          setTimeout(() => setTransferToast(null), 6000);
       }
     });
@@ -105,7 +103,7 @@ function App() {
       if (u) {
         processDailyInterest(u.uid).then(amount => {
           if (amount > 0) {
-            setInterestMsg(`+₹${amount.toFixed(2)} interest credited!`);
+            setInterestMsg(`+${amount.toFixed(2)} interest credited!`);
             setTimeout(() => setInterestMsg(null), 6000);
           }
         }).catch(err => console.error(err));
@@ -161,6 +159,7 @@ function App() {
       case '/ai-insights': return 'AI Insights';
       case '/reports': return 'Reports';
       case '/profile': return 'Profile';
+      case '/settings': return 'Settings';
       case '/support': return 'Customer Support';
       case '/admin-support': return 'Admin Support';
       default: return 'FinSmart';
@@ -184,6 +183,7 @@ function App() {
           <Route path="/ai-insights" element={<AIInsights />} />
           <Route path="/reports" element={<Reports />} />
           <Route path="/profile" element={<Profile user={user} onProfileUpdate={(updates) => setUser(prev => ({ ...prev, ...updates }))} onLogout={handleLogout} />} />
+          <Route path="/settings" element={<Settings user={user} onLogout={handleLogout} />} />
           <Route path="/support" element={<Support user={user} />} />
           <Route path="/admin-support" element={<AdminSupport user={user} />} />
         </Routes>
@@ -200,7 +200,7 @@ function App() {
           boxShadow: 'var(--shadow-lg)', zIndex: 9999,
           fontWeight: 600, animation: 'slideUp 0.3s ease'
         }}>
-          🏦 {interestMsg}
+           {interestMsg}
         </div>
       )}
 

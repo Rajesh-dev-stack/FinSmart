@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { auth } from '../firebase/firebaseClient';
 import SendMoneyModal from '../components/SendMoneyModal';
@@ -73,7 +74,7 @@ const Wallet = () => {
     };
   }, []);
 
-  const fetchWalletData = async (userId, quiet = false) => {
+  async function fetchWalletData (userId, quiet = false) {
     try {
       if (!quiet) setLoading(true);
       const userDoc = await getUser(userId);
@@ -112,7 +113,7 @@ const Wallet = () => {
         date: new Date().toISOString().split('T')[0]
       });
 
-      showToast(`Successfully add ₹${addAmount} in your wallet`);
+      showToast(`Successfully add ${addAmount} in your wallet`);
       setShowAddModal(false);
       setAddAmount('');
       fetchWalletData(user.uid, true);
@@ -148,14 +149,14 @@ const Wallet = () => {
         <div className="wallet-card-bg"></div>
         <div className="wallet-content">
           <p className="wallet-label">Available Balance</p>
-          <h1 className="wallet-amount">₹{balance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</h1>
+          <h1 className="wallet-amount">{balance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</h1>
           
           <div className="wallet-actions">
             <button className="btn btn-primary" onClick={() => setShowAddModal(true)}>
               + Add Money
             </button>
             <button className="btn btn-secondary" onClick={() => setShowSendModal(true)}>
-              ↗ Transfer Money
+               Transfer Money
             </button>
           </div>
         </div>
@@ -190,7 +191,7 @@ const Wallet = () => {
           <div className="modal card">
             <div className="modal-header">
               <h3>Add Money to Wallet</h3>
-              <button className="close-btn" onClick={() => setShowAddModal(false)} disabled={processing}>✕</button>
+              <button className="close-btn" onClick={() => setShowAddModal(false)} disabled={processing}><X size={18} /></button>
             </div>
             {processing ? (
               <div style={{ padding: '3rem 1rem', textAlign: 'center' }}>
@@ -201,7 +202,7 @@ const Wallet = () => {
             ) : (
               <form onSubmit={handleAddMoney} className="modal-form">
                 <div className="form-group">
-                  <label>Amount (₹)</label>
+                  <label>Amount ()</label>
                   <input 
                     type="number" 
                     step="0.01" 

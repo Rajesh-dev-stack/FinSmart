@@ -1,5 +1,10 @@
 import { useState, useEffect, useMemo } from 'react';
+import { Search, PiggyBank, Target, Lightbulb } from 'lucide-react';
 import { Bar } from 'react-chartjs-2';
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
+
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+
 import { auth } from '../firebase/firebaseClient';
 import { getTransactions, getBudgets, getUser } from '../firebase/dbFunctions';
 import { analyzeSpending, getBudgetAdvice, predictNextMonth, getSavingTips } from '../ai/groqHelper';
@@ -42,7 +47,7 @@ const AIInsights = () => {
     return () => unsubscribe();
   }, []);
 
-  const fetchData = async (userId) => {
+  async function fetchData (userId) {
     setLoading(true);
     try {
       const txns = await getTransactions(userId);
@@ -92,7 +97,7 @@ const AIInsights = () => {
     return {
       labels,
       datasets: [{
-        label: 'Predicted Spending (₹)',
+        label: 'Predicted Spending ()',
         data,
         backgroundColor: [
           '#065F46', '#10B981', '#34D399', '#6EE7B7',
@@ -177,7 +182,7 @@ const AIInsights = () => {
         {/* 1. Spending Analyzer */}
         <div className="card ai-card">
           <div className="ai-card-header">
-            <div className="ai-card-icon purple">📊</div>
+            <div className="ai-card-icon purple"><Search size={22} /></div>
             <div>
               <h3>Spending Analyzer</h3>
               <p>AI analyzes your transaction history for patterns.</p>
@@ -186,7 +191,7 @@ const AIInsights = () => {
 
           {!spendingInsights && !loadingInsights && (
             <button className="btn btn-primary full-width" onClick={handleAnalyze}>
-              ✨ Analyze My Spending
+               Analyze My Spending
             </button>
           )}
 
@@ -195,7 +200,7 @@ const AIInsights = () => {
           {spendingInsights && (
             <div className="ai-result">
               <div className="ai-result-text">{spendingInsights}</div>
-              <button className="btn btn-outline btn-sm mt-3" onClick={handleAnalyze}>🔄 Re-analyze</button>
+              <button className="btn btn-outline btn-sm mt-3" onClick={handleAnalyze}> Re-analyze</button>
             </div>
           )}
         </div>
@@ -203,7 +208,7 @@ const AIInsights = () => {
         {/* 2. Budget Advisor */}
         <div className="card ai-card">
           <div className="ai-card-header">
-            <div className="ai-card-icon green">💡</div>
+            <div className="ai-card-icon green"><PiggyBank size={22} /></div>
             <div>
               <h3>Budget Advisor</h3>
               <p>Personalized tips based on the 50/30/20 rule.</p>
@@ -212,7 +217,7 @@ const AIInsights = () => {
 
           {!budgetAdvice && !loadingAdvice && (
             <button className="btn btn-primary full-width" onClick={handleBudgetAdvice}>
-              🎯 Get Budget Advice
+               Get Budget Advice
             </button>
           )}
 
@@ -221,7 +226,7 @@ const AIInsights = () => {
           {budgetAdvice && (
             <div className="ai-result">
               <div className="ai-result-text">{budgetAdvice}</div>
-              <button className="btn btn-outline btn-sm mt-3" onClick={handleBudgetAdvice}>🔄 Refresh</button>
+              <button className="btn btn-outline btn-sm mt-3" onClick={handleBudgetAdvice}> Refresh</button>
             </div>
           )}
         </div>
@@ -229,7 +234,7 @@ const AIInsights = () => {
         {/* 3. Next Month Prediction */}
         <div className="card ai-card span-2">
           <div className="ai-card-header">
-            <div className="ai-card-icon blue">🔮</div>
+            <div className="ai-card-icon blue"><Target size={22} /></div>
             <div>
               <h3>Next Month Prediction</h3>
               <p>AI predicts your expenses for next month by category.</p>
@@ -238,7 +243,7 @@ const AIInsights = () => {
 
           {!predictions && !loadingPredictions && (
             <button className="btn btn-primary full-width" onClick={handlePredict}>
-              📈 Predict Next Month
+               Predict Next Month
             </button>
           )}
 
@@ -254,15 +259,15 @@ const AIInsights = () => {
                     maintainAspectRatio: false,
                     plugins: { legend: { display: false } },
                     scales: {
-                      y: { beginAtZero: true, ticks: { callback: (v) => `₹${v}` } }
+                      y: { beginAtZero: true, ticks: { callback: (v) => `${v}` } }
                     }
                   }} 
                 />
               </div>
               <div className="prediction-summary">
-                <p><strong>Total Predicted:</strong> ₹{Object.values(predictions).reduce((a, b) => a + b, 0).toFixed(2)}</p>
+                <p><strong>Total Predicted:</strong> {Object.values(predictions).reduce((a, b) => a + b, 0).toFixed(2)}</p>
               </div>
-              <button className="btn btn-outline btn-sm mt-3" onClick={handlePredict}>🔄 Re-predict</button>
+              <button className="btn btn-outline btn-sm mt-3" onClick={handlePredict}> Re-predict</button>
             </div>
           )}
         </div>
@@ -270,7 +275,7 @@ const AIInsights = () => {
         {/* 4. Saving Tips */}
         <div className="card ai-card span-2">
           <div className="ai-card-header">
-            <div className="ai-card-icon orange">💰</div>
+            <div className="ai-card-icon orange"><Lightbulb size={22} /></div>
             <div>
               <h3>Smart Saving Tips</h3>
               <p>Practical tips tailored to your actual spending habits.</p>
@@ -279,7 +284,7 @@ const AIInsights = () => {
 
           {!savingTips && !loadingTips && (
             <button className="btn btn-primary full-width" onClick={handleSavingTips}>
-              🪙 Get Saving Tips
+               Get Saving Tips
             </button>
           )}
 
@@ -288,7 +293,7 @@ const AIInsights = () => {
           {savingTips && (
             <div className="ai-result">
               <div className="ai-result-text">{savingTips}</div>
-              <button className="btn btn-outline btn-sm mt-3" onClick={handleSavingTips}>🔄 Refresh Tips</button>
+              <button className="btn btn-outline btn-sm mt-3" onClick={handleSavingTips}> Refresh Tips</button>
             </div>
           )}
         </div>
@@ -304,7 +309,7 @@ const LoadingSkeleton = () => (
     <div className="ai-loading-bar"></div>
     <div className="ai-loading-bar short"></div>
     <div className="ai-loading-bar"></div>
-    <p className="ai-loading-text">🤖 AI is thinking...</p>
+    <p className="ai-loading-text"> AI is thinking...</p>
   </div>
 );
 

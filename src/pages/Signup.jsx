@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { signUpWithEmail, loginWithGoogle } from '../firebase/authFunctions';
 import './Auth.css';
 
-/* ── Inline Chart / Growth SVG illustration ── */
+/*  Inline Chart / Growth SVG illustration  */
 const GrowthSVG = () => (
   <svg viewBox="0 0 260 240" fill="none" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
     {/* Shadow */}
@@ -16,7 +16,7 @@ const GrowthSVG = () => (
     <rect x="75" y="62" width="70" height="10" rx="4" fill="rgba(255,255,255,0.12)"/>
     {/* Balance */}
     <text x="75" y="95" fill="white" fontSize="11" fontWeight="700" opacity="0.6">Total Balance</text>
-    <text x="75" y="115" fill="white" fontSize="18" fontWeight="800">₹4,250</text>
+    <text x="75" y="115" fill="white" fontSize="18" fontWeight="800">4,250</text>
     {/* Mini chart bars */}
     <rect x="75"  y="145" width="14" height="35" rx="4" fill="url(#barGrad1)" opacity="0.7"/>
     <rect x="95"  y="130" width="14" height="50" rx="4" fill="url(#barGrad1)" opacity="0.85"/>
@@ -33,8 +33,8 @@ const GrowthSVG = () => (
     <rect x="110" y="24" width="40" height="6" rx="3" fill="rgba(255,255,255,0.15)"/>
     {/* Floating badge */}
     <rect x="110" y="50" width="100" height="36" rx="10" fill="white" opacity="0.95"/>
-    <text x="118" y="64" fill="#00C9A7" fontSize="9" fontWeight="800">Saved ₹850</text>
-    <text x="118" y="78" fill="#718096" fontSize="8">this month 🎉</text>
+    <text x="118" y="64" fill="#00C9A7" fontSize="9" fontWeight="800">Saved 850</text>
+    <text x="118" y="78" fill="#718096" fontSize="8">this month </text>
     {/* Floating coin */}
     <circle cx="58"  cy="150" r="20" fill="#FFD166"/>
     <circle cx="58"  cy="150" r="14" fill="#FFC233"/>
@@ -58,12 +58,12 @@ const GrowthSVG = () => (
 );
 
 const features = [
-  { icon: '🤖', text: 'AI Spending Analyzer' },
-  { icon: '👛', text: 'Digital Wallet' },
-  { icon: '🔔', text: 'Budget Alerts' },
-  { icon: '🎯', text: 'Smart Budgeting' },
-  { icon: '🪙', text: 'FinCoins Rewards' },
-  { icon: '📊', text: 'Expense Reports' },
+  { icon: '', text: 'AI Spending Analyzer' },
+  { icon: '', text: 'Digital Wallet' },
+  { icon: '', text: 'Budget Alerts' },
+  { icon: '', text: 'Smart Budgeting' },
+  { icon: '', text: 'FinCoins Rewards' },
+  { icon: '', text: 'Expense Reports' },
 ];
 
 const Signup = () => {
@@ -119,7 +119,7 @@ const Signup = () => {
 
   return (
     <div className="auth-page">
-      {/* ── LEFT: Form ── */}
+      {/*  LEFT: Form  */}
       <div className="auth-left">
 
         {/* Brand */}
@@ -134,12 +134,12 @@ const Signup = () => {
         </div>
 
         <h2 className="auth-heading">Create your account</h2>
-        <p className="auth-subheading">Smart money management for college students 🎓</p>
+        <p className="auth-subheading">Smart money management for college students </p>
 
-        {/* ── Existing User Banner ── */}
+        {/*  Existing User Banner  */}
         {emailExists && (
           <div className="auth-exists-banner">
-            <div className="auth-exists-icon">👤</div>
+            <div className="auth-exists-icon"></div>
             <div className="auth-exists-content">
               <strong>Account already exists!</strong>
               <p>An account with <span className="auth-exists-email">{email}</span> already exists.</p>
@@ -148,11 +148,11 @@ const Signup = () => {
           </div>
         )}
 
-        {error && !emailExists && <div className="auth-error">⚠️ {error}</div>}
+        {error && !emailExists && <div className="auth-error">️ {error}</div>}
 
         <form className="auth-form" onSubmit={handleEmailSignup}>
           <div className="auth-field">
-            <span className="auth-field-icon">👤</span>
+            <span className="auth-field-icon"></span>
             <input
               type="text"
               placeholder="Your full name"
@@ -164,7 +164,7 @@ const Signup = () => {
           </div>
 
           <div className="auth-field">
-            <span className="auth-field-icon">✉</span>
+            <span className="auth-field-icon"></span>
             <input
               type="email"
               placeholder="Enter your email address"
@@ -175,7 +175,7 @@ const Signup = () => {
           </div>
 
           <div className="auth-field" style={{ marginBottom: password ? '0.5rem' : '1.25rem' }}>
-            <span className="auth-field-icon">🔒</span>
+            <span className="auth-field-icon"></span>
             <input
               type={showPass ? 'text' : 'password'}
               placeholder="Create a password (min 6 chars)"
@@ -184,7 +184,7 @@ const Signup = () => {
               required autoComplete="new-password"
             />
             <span className="auth-field-suffix" onClick={() => setShowPass(!showPass)} role="button" tabIndex={0} style={{ cursor: 'pointer' }}>
-              {showPass ? '🙈' : '👁'}
+              {showPass ? '' : ''}
             </span>
           </div>
 
@@ -219,10 +219,10 @@ const Signup = () => {
           Already have an account? <Link to="/login">Sign in</Link>
         </p>
 
-        <p className="auth-copyright">Made with ❤️ by Team FinSmart | © 2026 FinSmart</p>
+        <p className="auth-copyright">Made with ️ by Team FinSmart | © 2026 FinSmart</p>
       </div>
 
-      {/* ── RIGHT: Feature Showcase ── */}
+      {/*  RIGHT: Feature Showcase  */}
       <div className="auth-right">
         <div className="auth-right-blob blob-1"></div>
         <div className="auth-right-blob blob-2"></div>

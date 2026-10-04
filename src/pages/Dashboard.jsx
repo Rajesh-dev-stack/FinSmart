@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Wallet, TrendingUp, TrendingDown, ShieldCheck, PieChart, Utensils, Car, BookOpen, Film, Home, HeartPulse, Smartphone, ShoppingBag, Plane, Send, MoreHorizontal, Briefcase, PenTool, DollarSign, Gift, ArrowRightLeft } from 'lucide-react';
 import {
   Chart as ChartJS,
   CategoryScale, LinearScale, PointElement, LineElement,
@@ -17,7 +18,7 @@ ChartJS.register(
   BarElement, ArcElement, Title, Tooltip, Legend, Filler
 );
 
-// ─── Mini Components ───────────────────────────────────────────
+//  Mini Components 
 const SpinnerInline = () => (
   <div style={{
     width: 28, height: 28, borderRadius: '50%',
@@ -30,7 +31,7 @@ const SpinnerInline = () => (
 
 const TransactionRow = ({ txn }) => (
   <div className="dash-txn-row glass-card" style={{ padding: '0.75rem 1rem', display: 'flex', alignItems: 'center', marginBottom: '0.5rem', border: '1px solid var(--border-subtle)' }}>
-    <div className="dash-txn-avatar" style={{ background: 'var(--gradient-primary)', color: '#0A1628' }}>{txn.category?.[0] || '💳'}</div>
+    <div className="dash-txn-avatar" style={{ background: 'var(--gradient-primary)', color: '#0A1628' }}>{txn.category?.[0] || ''}</div>
     <div className="dash-txn-info">
       <span className="dash-txn-name" style={{ color: 'var(--text-primary)' }}>{txn.description || txn.category}</span>
       <span className="dash-txn-date" style={{ color: 'var(--text-secondary)' }}>
@@ -38,7 +39,7 @@ const TransactionRow = ({ txn }) => (
       </span>
     </div>
     <span className={`dash-txn-amount`} style={{ color: txn.type === 'income' ? 'var(--success)' : 'var(--danger)' }}>
-      {txn.type === 'income' ? '+' : '-'}₹{(txn.amount || 0).toLocaleString()}
+      {txn.type === 'income' ? '+' : '-'}{(txn.amount || 0).toLocaleString()}
     </span>
   </div>
 );
@@ -51,7 +52,7 @@ const BudgetBar = ({ label, spent, limit }) => {
       <div className="dash-budget-top">
         <span className="dash-budget-label">{label}</span>
         <span className={`dash-budget-val ${over ? 'over' : ''}`}>
-          ₹{spent.toLocaleString()} / ₹{limit.toLocaleString()}
+          {spent.toLocaleString()} / {limit.toLocaleString()}
         </span>
       </div>
       <div className="dash-budget-track">
@@ -72,7 +73,7 @@ const EmptyChartPlaceholder = ({ text }) => (
   </div>
 );
 
-// ─── Dashboard Page ─────────────────────────────────────────────
+//  Dashboard Page 
 const Dashboard = ({ user }) => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
@@ -81,7 +82,7 @@ const Dashboard = ({ user }) => {
   const [walletBalance, setWalletBalance] = useState(0);
   const [incomeMonth, setIncomeMonth] = useState(0);
   const [expenseMonth, setExpenseMonth] = useState(0);
-  const [lineData, setLineData] = useState(null);
+  const [chartFilter, setChartFilter] = useState('6 Month'); // Day, Week, Month, 6 Month
   const [donutData, setDonutData] = useState(null);
 
   useEffect(() => {
@@ -102,49 +103,16 @@ const Dashboard = ({ user }) => {
         const cm = now.getMonth(), cy = now.getFullYear();
         let inc = 0, exp = 0;
         const catMap = {};
-        const last6Inc = Array(6).fill(0);
-        const last6Exp = Array(6).fill(0);
 
         (txns || []).forEach(t => {
           const d = t.date ? new Date(t.date) : new Date();
-          const diff = (cy - d.getFullYear()) * 12 + (cm - d.getMonth());
           if (d.getMonth() === cm && d.getFullYear() === cy) {
             if (t.type === 'income') inc += t.amount || 0;
             else { exp += t.amount || 0; catMap[t.category] = (catMap[t.category] || 0) + (t.amount || 0); }
           }
-          if (diff >= 0 && diff < 6) {
-            if (t.type === 'income') last6Inc[5 - diff] += t.amount || 0;
-            else last6Exp[5 - diff] += t.amount || 0;
-          }
         });
         setIncomeMonth(inc);
         setExpenseMonth(exp);
-
-        const months = [...Array(6)].map((_, i) => {
-          const d = new Date(); d.setMonth(d.getMonth() - (5 - i));
-          return d.toLocaleString('default', { month: 'short' });
-        });
-
-        // Check if there's any data to show
-        const hasData = last6Inc.some(v => v > 0) || last6Exp.some(v => v > 0);
-
-        if (hasData) {
-          setLineData({
-            labels: months,
-            datasets: [
-              {
-                label: 'Income', data: last6Inc,
-                borderColor: '#00E676', backgroundColor: 'rgba(0,230,118,0.1)',
-                tension: 0.4, fill: true, pointRadius: 4, pointBackgroundColor: '#00E676',
-              },
-              {
-                label: 'Expense', data: last6Exp,
-                borderColor: '#FF5252', backgroundColor: 'rgba(255,82,82,0.1)',
-                tension: 0.4, fill: true, pointRadius: 4, pointBackgroundColor: '#FF5252',
-              },
-            ],
-          });
-        }
 
         const cats = Object.keys(catMap);
         if (cats.length > 0) {
@@ -162,6 +130,98 @@ const Dashboard = ({ user }) => {
     });
     return () => unsub();
   }, []);
+
+  const lineData = useMemo(() => {
+    if (!transactions || transactions.length === 0) return null;
+
+    const now = new Date();
+    let labels = [];
+    let incData = [];
+    let expData = [];
+
+    if (chartFilter === 'Day') {
+      // Last 24 hours (grouped by every 4 hours or just hours? Let's do last 7 days)
+      labels = [...Array(7)].map((_, i) => {
+        const d = new Date(); d.setDate(d.getDate() - (6 - i));
+        return d.toLocaleDateString('en-IN', { weekday: 'short' });
+      });
+      incData = Array(7).fill(0);
+      expData = Array(7).fill(0);
+      
+      transactions.forEach(t => {
+        const d = new Date(t.date);
+        const diffDays = Math.floor((now - d) / (1000 * 60 * 60 * 24));
+        if (diffDays >= 0 && diffDays < 7) {
+          if (t.type === 'income') incData[6 - diffDays] += t.amount || 0;
+          else expData[6 - diffDays] += t.amount || 0;
+        }
+      });
+    } else if (chartFilter === 'Week') {
+      // Last 4 weeks
+      labels = ['Week 1', 'Week 2', 'Week 3', 'This Week'];
+      incData = Array(4).fill(0);
+      expData = Array(4).fill(0);
+
+      transactions.forEach(t => {
+        const d = new Date(t.date);
+        const diffDays = Math.floor((now - d) / (1000 * 60 * 60 * 24));
+        const diffWeeks = Math.floor(diffDays / 7);
+        if (diffWeeks >= 0 && diffWeeks < 4) {
+          if (t.type === 'income') incData[3 - diffWeeks] += t.amount || 0;
+          else expData[3 - diffWeeks] += t.amount || 0;
+        }
+      });
+    } else if (chartFilter === 'Month') {
+      // This Month (grouped by week?) Let's do last 4 weeks as well, or weeks of month
+      labels = ['Week 1', 'Week 2', 'Week 3', 'Week 4'];
+      incData = Array(4).fill(0);
+      expData = Array(4).fill(0);
+      
+      transactions.forEach(t => {
+        const d = new Date(t.date);
+        if (d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear()) {
+          const weekOfM = Math.min(Math.floor((d.getDate() - 1) / 7), 3);
+          if (t.type === 'income') incData[weekOfM] += t.amount || 0;
+          else expData[weekOfM] += t.amount || 0;
+        }
+      });
+    } else if (chartFilter === '6 Month') {
+      labels = [...Array(6)].map((_, i) => {
+        const d = new Date(); d.setMonth(d.getMonth() - (5 - i));
+        return d.toLocaleString('default', { month: 'short' });
+      });
+      incData = Array(6).fill(0);
+      expData = Array(6).fill(0);
+      
+      transactions.forEach(t => {
+        const d = new Date(t.date);
+        const diff = (now.getFullYear() - d.getFullYear()) * 12 + (now.getMonth() - d.getMonth());
+        if (diff >= 0 && diff < 6) {
+          if (t.type === 'income') incData[5 - diff] += t.amount || 0;
+          else expData[5 - diff] += t.amount || 0;
+        }
+      });
+    }
+
+    const hasData = incData.some(v => v > 0) || expData.some(v => v > 0);
+    if (!hasData) return null;
+
+    return {
+      labels,
+      datasets: [
+        {
+          label: 'Income', data: incData,
+          borderColor: '#00E676', backgroundColor: 'rgba(0,230,118,0.1)',
+          tension: 0.4, fill: true, pointRadius: 4, pointBackgroundColor: '#00E676',
+        },
+        {
+          label: 'Expense', data: expData,
+          borderColor: '#FF5252', backgroundColor: 'rgba(255,82,82,0.1)',
+          tension: 0.4, fill: true, pointRadius: 4, pointBackgroundColor: '#FF5252',
+        },
+      ],
+    };
+  }, [transactions, chartFilter]);
 
   const totalBudget = budgets.reduce((a, b) => a + (b.limit || 0), 0);
   const totalSpent  = budgets.reduce((a, b) => a + (b.spent || 0), 0);
@@ -227,46 +287,46 @@ const Dashboard = ({ user }) => {
       <div className="page-content dashboard">
         <div className="page-header" style={{ marginBottom: '1.5rem' }}>
           <div>
-            <h1 style={{ fontSize: '1.8rem' }}>{greeting}, {user?.name?.split(' ')[0] || 'User'}! 👋</h1>
+            <h1 style={{ fontSize: '1.8rem' }}>{greeting}, {user?.name?.split(' ')[0] || 'User'}! </h1>
             <p className="text-secondary" style={{ fontSize: '0.95rem' }}>Here's your summary for {dateStr}</p>
           </div>
         </div>
 
-        {/* ─── Stat Cards Row ─── */}
+        {/*  Stat Cards Row  */}
         <div className="dash-stats">
           <GlassCard className="dash-stat-card stat-card" style={{ background: 'linear-gradient(135deg, rgba(0,212,255,0.15), rgba(0,212,255,0.05))', borderTop: '1px solid var(--accent-primary)' }}>
-            <div className="dash-stat-icon" style={{ background: 'rgba(0,212,255,0.1)', color: 'var(--accent-primary)' }}>₹</div>
+            <div className="dash-stat-icon" style={{ background: 'rgba(0,212,255,0.1)', color: 'var(--accent-primary)' }}><Wallet size={24} /></div>
             <div>
               <p className="dash-stat-label">Total Balance</p>
-              <p className="dash-stat-val">₹{walletBalance.toLocaleString()}</p>
+              <p className="dash-stat-val">{walletBalance.toLocaleString()}</p>
             </div>
           </GlassCard>
           <GlassCard className="dash-stat-card stat-card" style={{ background: 'linear-gradient(135deg, rgba(0,230,118,0.15), rgba(0,230,118,0.05))', borderTop: '1px solid var(--success)' }}>
-            <div className="dash-stat-icon" style={{ background: 'rgba(0,230,118,0.1)', color: 'var(--success)' }}>↑</div>
+            <div className="dash-stat-icon" style={{ background: 'rgba(0,230,118,0.1)', color: 'var(--success)' }}><TrendingUp size={24} /></div>
             <div>
               <p className="dash-stat-label">Monthly Income</p>
-              <p className="dash-stat-val" style={{ color: 'var(--success)' }}>₹{incomeMonth.toLocaleString()}</p>
+              <p className="dash-stat-val" style={{ color: 'var(--success)' }}>{incomeMonth.toLocaleString()}</p>
             </div>
           </GlassCard>
           <GlassCard className="dash-stat-card stat-card" style={{ background: 'linear-gradient(135deg, rgba(255,82,82,0.15), rgba(255,82,82,0.05))', borderTop: '1px solid var(--danger)' }}>
-            <div className="dash-stat-icon" style={{ background: 'rgba(255,82,82,0.1)', color: 'var(--danger)' }}>↓</div>
+            <div className="dash-stat-icon" style={{ background: 'rgba(255,82,82,0.1)', color: 'var(--danger)' }}><TrendingDown size={24} /></div>
             <div>
               <p className="dash-stat-label">Monthly Expenses</p>
-              <p className="dash-stat-val" style={{ color: 'var(--danger)' }}>₹{expenseMonth.toLocaleString()}</p>
+              <p className="dash-stat-val" style={{ color: 'var(--danger)' }}>{expenseMonth.toLocaleString()}</p>
             </div>
           </GlassCard>
           <GlassCard className="dash-stat-card stat-card" style={{ background: 'linear-gradient(135deg, rgba(123,97,255,0.15), rgba(123,97,255,0.05))', borderTop: '1px solid var(--accent-purple)' }}>
-            <div className="dash-stat-icon" style={{ background: 'rgba(123,97,255,0.1)', color: 'var(--accent-purple)' }}>🛡</div>
+            <div className="dash-stat-icon" style={{ background: 'rgba(123,97,255,0.1)', color: 'var(--accent-purple)' }}><ShieldCheck size={24} /></div>
             <div>
               <p className="dash-stat-label">Savings</p>
               <p className="dash-stat-val" style={{ color: savings >= 0 ? 'var(--success)' : 'var(--danger)' }}>
-                ₹{Math.abs(savings).toLocaleString()}
+                {Math.abs(savings).toLocaleString()}
               </p>
             </div>
           </GlassCard>
         </div>
 
-        {/* ─── Main Grid ─── */}
+        {/*  Main Grid  */}
         <div className="dash-grid">
 
           {/* All Transactions Widget */}
@@ -288,16 +348,15 @@ const Dashboard = ({ user }) => {
           <GlassCard className="dash-widget">
             <div className="dash-widget-header">
               <h3>Reports</h3>
-              <button className="dash-widget-add" onClick={() => navigate('/reports')}>+</button>
             </div>
             <div className="dash-reports-summary">
               <div>
                 <p className="text-muted" style={{ fontSize: '0.75rem' }}>Worth</p>
-                <p style={{ fontWeight: 700, fontSize: '1.1rem', color: '#00C9A7' }}>₹{walletBalance.toLocaleString()}</p>
+                <p style={{ fontWeight: 700, fontSize: '1.1rem', color: '#00C9A7' }}>{walletBalance.toLocaleString()}</p>
               </div>
               <div>
                 <p className="text-muted" style={{ fontSize: '0.75rem' }}>Spent</p>
-                <p style={{ fontWeight: 700, fontSize: '1.1rem', color: '#FC5A5A' }}>₹{expenseMonth.toLocaleString()}</p>
+                <p style={{ fontWeight: 700, fontSize: '1.1rem', color: '#FC5A5A' }}>{expenseMonth.toLocaleString()}</p>
               </div>
             </div>
             <div style={{ height: 90, marginTop: '0.75rem' }}>
@@ -316,7 +375,6 @@ const Dashboard = ({ user }) => {
           <GlassCard className="dash-widget">
             <div className="dash-widget-header">
               <h3>Budget</h3>
-              <button className="dash-widget-add" onClick={() => navigate('/budget')}>+</button>
             </div>
             {budgets.length === 0 ? (
               <p className="text-muted" style={{ fontSize: '0.85rem', marginTop: '1rem' }}>No budgets set.</p>
@@ -331,9 +389,27 @@ const Dashboard = ({ user }) => {
 
           {/* Income vs Expense Chart */}
           <GlassCard className="dash-widget dash-widget-wide">
-            <div className="dash-widget-header">
+            <div className="dash-widget-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <h3>Income vs Expenses</h3>
-              <span className="text-muted" style={{ fontSize: '0.8rem' }}>Last 6 months</span>
+              <select 
+                value={chartFilter} 
+                onChange={(e) => setChartFilter(e.target.value)}
+                style={{ 
+                  background: 'rgba(255,255,255,0.05)', 
+                  border: '1px solid rgba(255,255,255,0.1)', 
+                  color: 'var(--text-primary)', 
+                  padding: '0.2rem 0.5rem', 
+                  borderRadius: 'var(--r-sm)',
+                  fontSize: '0.85rem',
+                  outline: 'none',
+                  cursor: 'pointer'
+                }}
+              >
+                <option value="Day">Day (Last 7 Days)</option>
+                <option value="Week">Week (Last 4 Weeks)</option>
+                <option value="Month">Month (This Month)</option>
+                <option value="6 Month">6 Months</option>
+              </select>
             </div>
             <div style={{ height: 180, marginTop: '0.75rem' }}>
               {lineData ? (
@@ -354,7 +430,7 @@ const Dashboard = ({ user }) => {
                 <Doughnut data={donutData} options={donutOpts} />
               ) : (
                 <div style={{ textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.85rem', opacity: 0.5 }}>
-                  <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>🍩</div>
+                  <div style={{ marginBottom: '0.5rem', color: 'var(--text-muted)' }}><PieChart size={40} /></div>
                   Add expenses to see breakdown
                 </div>
               )}
@@ -383,7 +459,7 @@ const Dashboard = ({ user }) => {
                 </svg>
               </div>
               <p className="text-muted" style={{ fontSize: '0.82rem', marginTop: '0.5rem' }}>
-                ₹{totalSpent.toLocaleString()} of ₹{totalBudget.toLocaleString()}
+                {totalSpent.toLocaleString()} of {totalBudget.toLocaleString()}
               </p>
             </div>
           </GlassCard>
@@ -395,4 +471,3 @@ const Dashboard = ({ user }) => {
 };
 
 export default Dashboard;
-

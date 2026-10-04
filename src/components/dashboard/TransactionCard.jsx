@@ -1,4 +1,5 @@
 import React from 'react';
+import { ArrowDownLeft, ArrowUpRight } from 'lucide-react';
 
 const TransactionCard = ({ transaction }) => {
   const { type, amount, category, date, description } = transaction;
@@ -29,7 +30,7 @@ const TransactionCard = ({ transaction }) => {
           fontSize: '1.2rem',
           background: isIncome ? 'rgba(0, 230, 118, 0.15)' : 'rgba(255, 82, 82, 0.15)',
         }}>
-          {isIncome ? '💰' : '🛒'}
+          {isIncome ? <ArrowDownLeft size={20} color='#00E676'/> : <ArrowUpRight size={20} color='#FF5252'/>}
         </div>
         <div>
           <h4 style={{ margin: 0, fontSize: '1rem', color: 'var(--text-primary, #fff)' }}>{category}</h4>
@@ -46,7 +47,7 @@ const TransactionCard = ({ transaction }) => {
           fontWeight: 'bold',
           color: isIncome ? '#00E676' : '#FF5252' 
         }}>
-          {isIncome ? '+' : '-'}₹{amount.toFixed(2)}
+          {isIncome ? '+' : '-'}{amount.toFixed(2)}
         </p>
         <p style={{ margin: 0, fontSize: '0.75rem', color: 'var(--text-muted, #718096)' }}>
           {new Date(date).toLocaleDateString()}

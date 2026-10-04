@@ -11,7 +11,7 @@ const BudgetProgressBar = ({ category, spent, limit }) => {
       <div className="budget-header">
         <span className="budget-category">{category}</span>
         <span className="budget-amounts">
-          <strong>₹{spent.toFixed(2)}</strong> / ₹{limit.toFixed(2)}
+          <strong>{spent.toFixed(2)}</strong> / {limit.toFixed(2)}
         </span>
       </div>
       
@@ -27,7 +27,7 @@ const BudgetProgressBar = ({ category, spent, limit }) => {
       
       <div className="budget-footer">
         <span className="budget-remaining">
-          ₹{Math.max(limit - spent, 0).toFixed(2)} remaining
+          {Math.max(limit - spent, 0).toFixed(2)} remaining
         </span>
         <span className="budget-percentage">
           {percentage.toFixed(0)}%

@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
+import { Utensils, Car, BookOpen, Film, Home, HeartPulse, Smartphone, ShoppingBag, Plane, Send, MoreHorizontal, Edit2, X, Briefcase, Gift, DollarSign, PenTool, Wallet, ArrowRightLeft } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
 import { auth } from '../firebase/firebaseClient';
 import { getTransactions, addTransaction, deleteTransaction, updateTransaction } from '../firebase/dbFunctions';
@@ -11,9 +12,10 @@ const EXPENSE_CATEGORIES = [
 const INCOME_CATEGORIES = ['Salary', 'Freelance', 'Business', 'Gift', 'Other'];
 
 const CATEGORY_ICONS = {
-  'Food & Canteen': '🍱', 'Transport & Auto': '🛺', 'Books & Stationery': '📚', 'Entertainment': '🎬', 
-  'Hostel & Rent': '🏠', 'Medical': '💊', 'Mobile Recharge': '📱', 'Shopping': '🛒', 'Travel': '✈️', 'Transfer': '🔄', 'Others': '🔧',
-  'Salary': '💼', 'Freelance': '💻', 'Business': '🏢', 'Gift': '🎁', 'Other': '📦'
+  'Food & Canteen': <Utensils size={16}/>, 'Transport & Auto': <Car size={16}/>, 'Books & Stationery': <BookOpen size={16}/>, 'Entertainment': <Film size={16}/>, 
+  'Hostel & Rent': <Home size={16}/>, 'Medical': <HeartPulse size={16}/>, 'Mobile Recharge': <Smartphone size={16}/>, 'Shopping': <ShoppingBag size={16}/>, 'Travel': <Plane size={16}/>, 'Transfer': <Send size={16}/>, 'Others': <MoreHorizontal size={16}/>,
+  'Salary': <Briefcase size={16}/>, 'Freelance': <PenTool size={16}/>, 'Business': <DollarSign size={16}/>, 'Gift': <Gift size={16}/>, 'Other': <MoreHorizontal size={16}/>,
+  'Wallet Deposit': <Wallet size={16}/>, 'Money Sent': <ArrowRightLeft size={16}/>, 'Money Received': <ArrowRightLeft size={16}/>
 };
 
 const Transactions = () => {
@@ -63,7 +65,7 @@ const Transactions = () => {
     }
   }, [location.state]);
 
-  const fetchData = async (userId) => {
+  async function fetchData (userId) {
     setLoading(true);
     try {
       const txns = await getTransactions(userId);
@@ -165,16 +167,16 @@ const Transactions = () => {
       <div className="summary-bar card">
         <div className="summary-item">
           <span>Total Income</span>
-          <h3 className="text-green">+₹{summary.income.toFixed(2)}</h3>
+          <h3 className="text-green">+{summary.income.toFixed(2)}</h3>
         </div>
         <div className="summary-item">
           <span>Total Expense</span>
-          <h3 className="text-red">-₹{summary.expense.toFixed(2)}</h3>
+          <h3 className="text-red">-{summary.expense.toFixed(2)}</h3>
         </div>
         <div className="summary-item">
           <span>Net Balance</span>
           <h3 className={summary.net >= 0 ? 'text-green' : 'text-red'}>
-            {summary.net >= 0 ? '+' : '-'}₹{Math.abs(summary.net).toFixed(2)}
+            {summary.net >= 0 ? '+' : '-'}{Math.abs(summary.net).toFixed(2)}
           </h3>
         </div>
       </div>
@@ -224,15 +226,15 @@ const Transactions = () => {
                 <tr key={txn.id}>
                   <td>{new Date(txn.date).toLocaleDateString()}</td>
                   <td>
-                    <span className="tx-icon">{CATEGORY_ICONS[txn.category] || '📦'}</span> 
+                    <span className="tx-icon">{CATEGORY_ICONS[txn.category] || ''}</span> 
                     {txn.category}
                   </td>
                   <td className="tx-desc">{txn.description}</td>
                   <td className={`text-right font-bold ${txn.type === 'income' ? 'text-green' : 'text-red'}`}>
-                    {txn.type === 'income' ? '+' : '-'}₹{txn.amount.toFixed(2)}
+                    {txn.type === 'income' ? '+' : '-'}{txn.amount.toFixed(2)}
                   </td>
                   <td className="text-center">
-                    <button className="icon-btn edit-btn" onClick={() => openEditModal(txn)}>✏️</button>
+                    <button className="icon-btn edit-btn" onClick={() => openEditModal(txn)} style={{ color: "#fff" }}><Edit2 size={16} /></button>
                   </td>
                 </tr>
               ))}
@@ -247,7 +249,7 @@ const Transactions = () => {
           <div className="modal card">
             <div className="modal-header">
               <h3>{editingTxn ? 'Edit Transaction' : 'Add Transaction'}</h3>
-              <button className="close-btn" onClick={() => setShowModal(false)}>✕</button>
+              <button className="close-btn" onClick={() => setShowModal(false)}><X size={18} /></button>
             </div>
             <form onSubmit={handleSubmit} className="modal-form">
               <div className="form-group type-toggle">
@@ -256,7 +258,7 @@ const Transactions = () => {
               </div>
               
               <div className="form-group">
-                <label>Amount (₹)</label>
+                <label>Amount ()</label>
                 <input type="number" step="0.01" value={amount} onChange={(e) => setAmount(e.target.value)} required />
               </div>
 

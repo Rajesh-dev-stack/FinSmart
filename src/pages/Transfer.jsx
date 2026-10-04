@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react';
+import { X, Search, Check } from 'lucide-react';
 import SendMoneyModal from '../components/SendMoneyModal';
-import { getUserByFinSmartId } from '../firebase/dbFunctions';
-
 import { auth } from '../firebase/firebaseClient';
-import { getUser, addTransaction, addPayee, getPayees, deletePayee } from '../firebase/dbFunctions';
+import { getUser, addTransaction, addPayee, getPayees, deletePayee, findUserByFinSmartId } from '../firebase/dbFunctions';
 import './Transfer.css';
 
 const Toast = ({ message, type, onClose }) => {
@@ -19,12 +18,8 @@ const Toast = ({ message, type, onClose }) => {
   );
 };
 
-const INITIAL_CONTACTS = [
-  { id: 'c1', type: 'contact', name: 'Self Transfer', avatar: 'https://ui-avatars.com/api/?name=Self+Transfer&background=0D8ABC&color=fff' },
-];
-
 const Transfer = () => {
-  const [contacts, setContacts] = useState(INITIAL_CONTACTS);
+  const [contacts, setContacts] = useState([]);
   
   
   const [toast, setToast] = useState(null);
@@ -44,6 +39,9 @@ const Transfer = () => {
   const [newPayeeName, setNewPayeeName] = useState('');
   const [newPayeeDetail, setNewPayeeDetail] = useState('');
   const [newPayeeType, setNewPayeeType] = useState('contact');
+  const [searchingPayee, setSearchingPayee] = useState(false);
+  const [payeeSearchError, setPayeeSearchError] = useState(null);
+  const [foundPayeeUser, setFoundPayeeUser] = useState(null);
 
   useEffect(() => {
     const fetchWalletAndPayees = async () => {
@@ -56,7 +54,7 @@ const Transfer = () => {
           
           const customContacts = savedPayees.filter(p => p.type === 'contact');
           
-          setContacts([...customContacts, ...INITIAL_CONTACTS]);
+          setContacts(customContacts);
           
         }
       } catch (error) {
@@ -75,29 +73,64 @@ const Transfer = () => {
     setShowSendModal(true);
   };
 
+  const handleSearchPayee = async (e) => {
+    if (e) e.preventDefault();
+    const idToSearch = newPayeeDetail.trim().toUpperCase();
+    if (!idToSearch) {
+      setPayeeSearchError('Please enter a FinSmart ID to search');
+      return;
+    }
+    setSearchingPayee(true);
+    setPayeeSearchError(null);
+    try {
+      const userData = await findUserByFinSmartId(idToSearch);
+      setFoundPayeeUser(userData);
+      if (!newPayeeName || newPayeeName.trim() === '') {
+        setNewPayeeName(userData.name || 'User');
+      }
+    } catch (err) {
+      setFoundPayeeUser(null);
+      setPayeeSearchError(err.message || 'FinSmart ID not found!');
+    } finally {
+      setSearchingPayee(false);
+    }
+  };
+
+  const handleCloseAddPayeeModal = () => {
+    setShowAddPayeeModal(false);
+    setNewPayeeName('');
+    setNewPayeeDetail('');
+    setFoundPayeeUser(null);
+    setPayeeSearchError(null);
+    setSearchingPayee(false);
+  };
+
   const handleAddPayee = async (e) => {
     e.preventDefault();
     if (!auth.currentUser) return;
+    if (!foundPayeeUser) {
+      await handleSearchPayee();
+      return;
+    }
     
     setProcessing(true);
     try {
+      const displayName = (newPayeeName.trim() || foundPayeeUser.name || 'User');
       const newPayeeData = {
-        name: newPayeeName,
-        detail: newPayeeDetail,
+        name: displayName,
+        detail: newPayeeDetail.trim().toUpperCase(),
         type: newPayeeType,
         isCustom: true,
-        avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(newPayeeName)}&background=random&color=fff`
+        avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}&background=random&color=fff`
       };
 
       const docId = await addPayee(auth.currentUser.uid, newPayeeData);
       const savedPayee = { id: docId, ...newPayeeData };
 
       setContacts([savedPayee, ...contacts]);
-      showToast(`Added contact ${newPayeeName}`);
+      showToast(`Added contact ${displayName}`);
 
-      setShowAddPayeeModal(false);
-      setNewPayeeName('');
-      setNewPayeeDetail('');
+      handleCloseAddPayeeModal();
     } catch (error) {
       showToast('Failed to save payee', 'error');
     } finally {
@@ -141,28 +174,32 @@ const Transfer = () => {
       <div className="wallet-balance-card">
         <div style={{ position: 'relative', zIndex: 2 }}>
           <p style={{ opacity: 0.85, fontSize: '0.95rem', margin: 0, fontWeight: 500 }}>Available Wallet Balance</p>
-          <h2>₹{balance.toLocaleString(undefined, { minimumFractionDigits: 2 })}</h2>
+          <h2>{balance.toLocaleString(undefined, { minimumFractionDigits: 2 })}</h2>
         </div>
         <div style={{ fontSize: '4.5rem', opacity: 0.2, position: 'relative', zIndex: 2 }}>
-          💸
+          
         </div>
       </div>
 
       <h3 style={{ marginBottom: '1.25rem' }}>Your Contacts</h3>
-      <div className="contacts-grid">
-        {contacts.map(c => (
-          <div key={c.id} className="contact-card" onClick={() => handleOpenSend(c)}>
-            {c.isCustom && (
-              <button className="delete-contact-btn" onClick={(e) => handleDeletePayee(e, c)} title="Delete Contact">
-                ✕
-              </button>
-            )}
-            <img src={c.avatar} alt={c.name} className="contact-avatar" onError={(e) => { e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(c.name)}&background=random&color=fff` }} />
-            <div className="contact-name">{c.name}</div>
-            <div className="contact-detail">{c.detail || 'Saved Contact'}</div>
-          </div>
-        ))}
-      </div>
+      {contacts.length === 0 ? (
+        <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem' }}>No saved contacts yet. Click "+ Add Contact" to add one.</p>
+      ) : (
+        <div className="contacts-grid">
+          {contacts.map(c => (
+            <div key={c.id} className="contact-card" onClick={() => handleOpenSend(c)}>
+              {c.isCustom && (
+                <button className="delete-contact-btn" onClick={(e) => handleDeletePayee(e, c)} title="Delete Contact">
+                  <X size={14} />
+                </button>
+              )}
+              <img src={c.avatar} alt={c.name} className="contact-avatar" onError={(e) => { e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(c.name)}&background=random&color=fff` }} />
+              <div className="contact-name">{c.name}</div>
+              <div className="contact-detail">{c.detail || 'Saved Contact'}</div>
+            </div>
+          ))}
+        </div>
+      )}
 
             {/* Send Modal */}
       {showSendModal && (
@@ -177,7 +214,7 @@ const Transfer = () => {
           onSuccess={(amt) => {
             setShowSendModal(false);
             setSelectedPayee(null);
-            showToast(`Successfully sent ₹${amt}!`);
+            showToast(`Successfully sent ${amt}!`);
             // balance updates automatically in Wallet, but in Transfer we manually fetch on mount.
             // Let's just update local balance manually.
             setBalance(prev => prev - Number(amt));
@@ -188,36 +225,74 @@ const Transfer = () => {
 {/* Add Payee Modal */}
       {showAddPayeeModal && (
         <div className="modal-overlay">
-          <div className="modal card">
+          <div className="modal card" style={{ maxWidth: '420px', width: '100%' }}>
             <div className="modal-header">
               <h3>Add New Payee</h3>
-              <button className="close-btn" onClick={() => setShowAddPayeeModal(false)}>✕</button>
+              <button className="close-btn" onClick={handleCloseAddPayeeModal}><X size={18} /></button>
             </div>
-            <form onSubmit={handleAddPayee} className="modal-form">
-              
+            <form onSubmit={foundPayeeUser ? handleAddPayee : handleSearchPayee} className="modal-form">
               <div className="form-group">
-                <label>Name</label>
-                <input 
-                  type="text" 
-                  value={newPayeeName} 
-                  onChange={(e) => setNewPayeeName(e.target.value)} 
-                  placeholder="e.g., Alex Johnson"
-                  required
-                />
-              </div>
-              <div className="form-group">
-                <label>Detail (Receiver's FinSmart ID)</label>
+                <label>Receiver's FinSmart ID</label>
                 <input 
                   type="text" 
                   value={newPayeeDetail} 
-                  onChange={(e) => setNewPayeeDetail(e.target.value)} 
+                  onChange={(e) => {
+                    setNewPayeeDetail(e.target.value.toUpperCase());
+                    setFoundPayeeUser(null);
+                    setPayeeSearchError(null);
+                  }} 
                   placeholder="FIN2026..."
+                  maxLength={13}
+                  style={{ textTransform: 'uppercase' }}
                   required
                 />
               </div>
-              <button type="submit" className="btn btn-primary full-width" disabled={processing}>
-                {processing ? 'Saving...' : 'Add Contact'}
-              </button>
+
+              {payeeSearchError && (
+                <div style={{ color: 'var(--danger)', marginBottom: '1rem', background: 'rgba(239, 68, 68, 0.1)', padding: '0.65rem 0.85rem', borderRadius: '8px', fontSize: '0.85rem' }}>
+                  {payeeSearchError}
+                </div>
+              )}
+
+              {foundPayeeUser && (
+                <>
+                  <div style={{ background: 'rgba(0, 201, 167, 0.1)', border: '1px solid rgba(0, 201, 167, 0.3)', padding: '0.85rem', borderRadius: '8px', marginBottom: '1rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.25rem' }}>
+                      <span style={{ fontSize: '0.8rem', color: '#00C9A7', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}>
+                        <Check size={14} /> Verified Account
+                      </span>
+                      <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', fontFamily: 'monospace' }}>{newPayeeDetail}</span>
+                    </div>
+                    <p style={{ margin: 0, fontWeight: 600, fontSize: '1.05rem', color: 'var(--text-primary)' }}>{foundPayeeUser.name}</p>
+                  </div>
+
+                  <div className="form-group">
+                    <label>Contact Name</label>
+                    <input 
+                      type="text" 
+                      value={newPayeeName} 
+                      onChange={(e) => setNewPayeeName(e.target.value)} 
+                      placeholder="e.g., Alex Johnson"
+                      required
+                    />
+                  </div>
+
+                  <button type="submit" className="btn btn-primary full-width" disabled={processing}>
+                    {processing ? 'Saving...' : 'Add Contact'}
+                  </button>
+                </>
+              )}
+
+              {!foundPayeeUser && (
+                <button 
+                  type="submit" 
+                  className="btn btn-primary full-width" 
+                  disabled={searchingPayee || !newPayeeDetail.trim()}
+                  style={{ marginTop: '0.5rem' }}
+                >
+                  {searchingPayee ? 'Searching...' : 'Search Contact'}
+                </button>
+              )}
             </form>
           </div>
         </div>

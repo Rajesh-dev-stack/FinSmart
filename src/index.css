@@ -53,7 +53,7 @@
   
   /* Sizing */
   --sidebar-width: 240px;
-  --navbar-height: 72px;
+  --navbar-height: 84px;
   
   /* Radii & Transitions */
   --r-sm: 8px;
@@ -165,7 +165,7 @@ select option {
   transition: margin-left 0.3s ease;
 }
 
-.page-content {
+.page, .page-content {
   flex: 1;
   padding: 2rem;
   max-width: 1400px;

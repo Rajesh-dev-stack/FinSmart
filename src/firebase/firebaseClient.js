@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getAuth, GoogleAuthProvider } from "firebase/auth";
+import { getAuth, GoogleAuthProvider, setPersistence, browserSessionPersistence } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
 // Your web app's Firebase configuration
@@ -24,6 +24,9 @@ try {
   auth = getAuth(app);
   db = getFirestore(app);
   googleProvider = new GoogleAuthProvider();
+  setPersistence(auth, browserSessionPersistence).catch((error) => {
+    console.warn("Failed to set auth persistence:", error);
+  });
 } catch (error) {
   console.warn("Firebase initialization failed. Please check your .env file:", error.message);
 }

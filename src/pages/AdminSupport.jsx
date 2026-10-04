@@ -32,7 +32,7 @@ const AdminSupport = ({ user }) => {
     }
   }, [isAdmin]);
 
-  const loadTickets = async () => {
+  async function loadTickets() {
     setLoading(true);
     try {
       const data = await getAllTickets();
@@ -132,9 +132,9 @@ const AdminSupport = ({ user }) => {
                     <span style={{ fontFamily: 'monospace', color: 'var(--primary)', fontWeight: 'bold' }}>{ticket.ticketId}</span>
                   </div>
                   <div style={{ display: 'flex', gap: '1rem', color: 'var(--text-secondary)', fontSize: '0.85rem' }}>
-                    <span>👤 {ticket.name}</span>
-                    <span>✉️ {ticket.email}</span>
-                    <span>📅 {new Date(ticket.createdAt).toLocaleString()}</span>
+                    <span> {ticket.name}</span>
+                    <span>️ {ticket.email}</span>
+                    <span> {new Date(ticket.createdAt).toLocaleString()}</span>
                   </div>
                 </div>
                 

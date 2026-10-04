@@ -39,7 +39,7 @@ const Support = ({ user }) => {
     }
   }, [view, user]);
 
-  const loadMyTickets = async () => {
+  async function loadMyTickets() {
     setLoadingTickets(true);
     try {
       const tickets = await getUserTickets(user.uid);
@@ -103,6 +103,12 @@ const Support = ({ user }) => {
         <button 
           className={`btn ${view === 'queries' ? 'btn-primary' : 'btn-outline'}`}
           onClick={() => setView(view === 'new' ? 'queries' : 'new')}
+          style={view === 'new' ? {
+            backgroundColor: 'rgba(0, 201, 167, 0.15)',
+            color: '#00C9A7',
+            border: '1px solid #00C9A7',
+            fontWeight: '600'
+          } : {}}
         >
           {view === 'new' ? 'My Queries' : 'New Ticket'}
         </button>
