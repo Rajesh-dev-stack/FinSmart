@@ -123,7 +123,15 @@ const AdminSupport = ({ user, onLogout }) => {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
         <h2>Admin Support Tickets</h2>
         
-        <div style={{ display: 'flex', gap: '0.5rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+          <button 
+            onClick={onLogout}
+            style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.5rem 1rem', background: 'rgba(255,82,82,0.1)', color: 'var(--danger)', border: '1px solid var(--danger)', borderRadius: '20px', cursor: 'pointer', fontWeight: 600, fontSize: '0.85rem' }}
+          >
+            <LogOut size={16} /> Logout
+          </button>
+          
+          <div style={{ display: 'flex', gap: '0.5rem' }}>
           <button 
             className={`btn ${filter === 'all' ? 'btn-primary' : 'btn-outline'}`}
             onClick={() => setFilter('all')}
@@ -145,6 +153,7 @@ const AdminSupport = ({ user, onLogout }) => {
           >
             Resolved
           </button>
+        </div>
         </div>
       </div>
 
