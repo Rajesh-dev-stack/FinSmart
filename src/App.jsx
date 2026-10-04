@@ -168,7 +168,7 @@ function App() {
 
   return (
     <div className="app-shell">
-      <Sidebar onLogout={handleLogout} />
+      <Sidebar onLogout={handleLogout} user={user} />
       <MobileNav />
       <main className="main-content" style={{ display: 'flex', flexDirection: 'column' }}>
         <Navbar title={getPageTitle(location.pathname)} user={user} onLogout={handleLogout} />
