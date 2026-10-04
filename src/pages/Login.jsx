@@ -270,14 +270,15 @@ const Login = () => {
               <div style={{ position: 'relative' }}>
                 <span className="auth-field-icon" style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)' }}></span>
                 <input
-                  type={showPass ? 'text' : 'password'}
-                  className="input-field"
-                  style={{ paddingLeft: '40px', paddingRight: '40px' }}
-                  placeholder="Enter your password"
-                  value={password}
-                  onChange={e => setPassword(e.target.value)}
-                  required autoComplete="current-password"
-                />
+                    type={showPass ? 'text' : 'password'}
+                    className="input-field"
+                    style={{ paddingLeft: '40px', paddingRight: '40px' }}
+                    placeholder="Enter your password"
+                    value={password}
+                    onChange={e => setPassword(e.target.value)}
+                    required
+                    autoComplete="new-password"
+                  />
                 <span className="auth-field-suffix" style={{ position: 'absolute', right: '16px', top: '50%', transform: 'translateY(-50%)' }} onClick={() => setShowPass(!showPass)} role="button" tabIndex={0}>
                   {showPass ? '' : ''}
                 </span>
