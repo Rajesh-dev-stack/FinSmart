@@ -136,6 +136,9 @@ function App() {
 
   // Redirect authenticated users away from auth pages
   if (effectiveUser && isAuthPage) {
+    if (effectiveUser.email === 'rajesh.professional817@gmail.com') {
+      return <Navigate to="/admin-support" replace />;
+    }
     return <Navigate to="/dashboard" replace />;
   }
 
