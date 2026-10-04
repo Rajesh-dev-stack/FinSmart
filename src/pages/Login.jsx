@@ -1,4 +1,4 @@
-﻿import { useState, useRef } from 'react';
+import { useState, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Button from '../components/ui/Button';
 import { loginWithEmail, loginWithGoogle, resetPassword } from '../firebase/authFunctions';
@@ -177,9 +177,6 @@ const Login = () => {
         {/*  ADMIN LOGIN PANEL  */}
         {showAdminModal ? (
           <div className="forgot-panel">
-            <button type="button" className="forgot-back-btn" onClick={() => setShowAdminModal(false)}>
-               Back to Sign In
-            </button>
             <div style={{ textAlign: 'center', marginBottom: '2rem', marginTop: '1rem' }}>
               <ShieldCheck size={48} style={{ color: 'var(--danger)', marginBottom: '1rem' }} />
               <h2 className="auth-heading">Admin Access</h2>
@@ -202,6 +199,14 @@ const Login = () => {
               <Button type="submit" className="full-width" disabled={adminLoading} style={{ marginTop: '1.5rem', background: 'var(--danger)' }}>
                 {adminLoading ? 'Authenticating...' : 'Access Dashboard'}
               </Button>
+              <button 
+                type="button" 
+                onClick={() => setShowAdminModal(false)} 
+                className="auth-btn-google auth-glass-card" 
+                style={{ marginTop: '1rem', background: 'transparent', borderColor: 'rgba(255,255,255,0.2)', width: '100%', padding: '12px', color: 'var(--text-secondary)' }}
+              >
+                Back to Sign In
+              </button>
             </form>
           </div>
         ) : showForgot ? (

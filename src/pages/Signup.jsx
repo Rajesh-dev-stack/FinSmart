@@ -286,9 +286,6 @@ const Signup = () => {
         </>
         ) : (
           <div className="forgot-panel">
-            <button type="button" className="forgot-back-btn" onClick={() => setShowAdminModal(false)}>
-               Back to Registration
-            </button>
             <div style={{ textAlign: 'center', marginBottom: '2rem', marginTop: '1rem' }}>
               <ShieldCheck size={48} style={{ color: 'var(--danger)', marginBottom: '1rem' }} />
               <h2 className="auth-heading">Admin Access</h2>
