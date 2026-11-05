@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Button from '../components/ui/Button';
 import { loginWithEmail, loginWithGoogle, resetPassword } from '../firebase/authFunctions';
-import { Sparkles, Award, ShieldCheck, BellRing, BarChart2, MonitorSmartphone } from 'lucide-react';
+import { Sparkles, Award, ShieldCheck, BellRing, BarChart2, MonitorSmartphone, Eye, EyeOff } from 'lucide-react';
 import './Auth.css';
 
 const features = [
@@ -33,6 +33,7 @@ const Login = () => {
   const [adminPassword, setAdminPassword]   = useState('');
   const [adminLoading, setAdminLoading]     = useState(false);
   const [adminError, setAdminError]         = useState(null);
+  const [showAdminPass, setShowAdminPass]   = useState(false);
 
   const navigate = useNavigate();
 
@@ -50,7 +51,8 @@ const Login = () => {
     
     // Static Admin Password Check
     if (adminPassword === 'Rajesh7679@') {
-      localStorage.setItem('staticAdmin', 'true');
+      sessionStorage.setItem('staticAdmin', 'true');
+        localStorage.removeItem('staticAdmin');
       window.location.href = '/admin-support'; // Force a full reload to apply static admin state
       return;
     }
@@ -174,9 +176,10 @@ const Login = () => {
             <form className="auth-form" onSubmit={handleAdminLoginSubmit}>
               <div style={{ position: 'relative' }}>
                 <input
-                  type="password"
+                  type={showAdminPass ? 'text' : 'password'}
                   name="admin-secret-key"
                   className="input-field"
+                  style={{ paddingRight: '44px' }}
                   placeholder="Enter admin password"
                   value={adminPassword}
                   onChange={e => setAdminPassword(e.target.value)}
@@ -184,6 +187,15 @@ const Login = () => {
                   autoFocus
                   autoComplete="new-password"
                 />
+                <span 
+                  className="auth-field-suffix" 
+                  style={{ position: 'absolute', right: '16px', top: '50%', transform: 'translateY(-50%)', cursor: 'pointer', display: 'flex', alignItems: 'center' }} 
+                  onClick={() => setShowAdminPass(!showAdminPass)} 
+                  role="button" 
+                  tabIndex={0}
+                >
+                  {showAdminPass ? <EyeOff size={18} /> : <Eye size={18} />}
+                </span>
               </div>
 
               <Button type="submit" className="full-width" disabled={adminLoading} style={{ marginTop: '1.5rem', background: 'var(--danger)' }}>
@@ -276,8 +288,14 @@ const Login = () => {
                     required
                     autoComplete="new-password"
                   />
-                <span className="auth-field-suffix" style={{ position: 'absolute', right: '16px', top: '50%', transform: 'translateY(-50%)' }} onClick={() => setShowPass(!showPass)} role="button" tabIndex={0}>
-                  {showPass ? '' : ''}
+                <span 
+                  className="auth-field-suffix" 
+                  style={{ position: 'absolute', right: '16px', top: '50%', transform: 'translateY(-50%)', cursor: 'pointer', display: 'flex', alignItems: 'center' }} 
+                  onClick={() => setShowPass(!showPass)} 
+                  role="button" 
+                  tabIndex={0}
+                >
+                  {showPass ? <EyeOff size={18} /> : <Eye size={18} />}
                 </span>
               </div>
 

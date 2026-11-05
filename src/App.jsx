@@ -59,7 +59,7 @@ const MobileNav = () => {
 
 function App() {
   const [user, setUser] = useState(null);
-  const [staticAdmin, setStaticAdmin] = useState(() => localStorage.getItem('staticAdmin') === 'true');
+  const [staticAdmin, setStaticAdmin] = useState(() => sessionStorage.getItem('staticAdmin') === 'true');
   const [authReady, setAuthReady] = useState(false);
   const [interestMsg, setInterestMsg] = useState(null);
   const [transferToast, setTransferToast] = useState(null);
@@ -115,6 +115,7 @@ useEffect(() => {
     try {
       if (staticAdmin) {
         setStaticAdmin(false);
+        sessionStorage.removeItem('staticAdmin');
         localStorage.removeItem('staticAdmin');
       }
       if (auth) {
