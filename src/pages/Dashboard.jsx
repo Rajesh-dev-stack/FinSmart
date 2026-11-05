@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Wallet, TrendingUp, TrendingDown, ShieldCheck, PieChart, Utensils, Car, BookOpen, Film, Home, HeartPulse, Smartphone, ShoppingBag, Plane, Send, MoreHorizontal, Briefcase, PenTool, DollarSign, Gift, ArrowRightLeft } from 'lucide-react';
+import { Wallet, TrendingUp, TrendingDown, ShieldCheck, PieChart } from 'lucide-react';
 import {
   Chart as ChartJS,
   CategoryScale, LinearScale, PointElement, LineElement,
@@ -8,7 +8,6 @@ import {
 } from 'chart.js';
 import { Line, Doughnut } from 'react-chartjs-2';
 import { getTransactions, getBudgets, getUser } from '../firebase/dbFunctions';
-import { useTheme } from '../context/ThemeProvider';
 import { auth } from '../firebase/firebaseClient';
 import GlassCard from '../components/ui/GlassCard';
 import './Dashboard.css';

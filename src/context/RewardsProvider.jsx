@@ -50,27 +50,7 @@ export const RewardsProvider = ({ children }) => {
     };
   }, []);
 
-  // Listen for custom fincoin-awarded events
-  useEffect(() => {
-    const handleCoinAward = (e) => {
-      const { amount, reason } = e.detail;
-      
-      // Add Toast
-      const id = Date.now();
-      setToasts(prev => [...prev, { id, amount, reason }]);
-      setTimeout(() => {
-        setToasts(prev => prev.filter(t => t.id !== id));
-      }, 3000);
-      
-      // Fire confetti for large rewards
-      if (amount >= 100) {
-        fireConfetti();
-      }
-    };
 
-    window.addEventListener('fincoin-awarded', handleCoinAward);
-    return () => window.removeEventListener('fincoin-awarded', handleCoinAward);
-  }, []);
 
   const fireConfetti = useCallback(() => {
     const duration = 3000;
@@ -98,6 +78,28 @@ export const RewardsProvider = ({ children }) => {
     };
     frame();
   }, []);
+
+  // Listen for custom fincoin-awarded events
+  useEffect(() => {
+    const handleCoinAward = (e) => {
+      const { amount, reason } = e.detail;
+      
+      // Add Toast
+      const id = Date.now();
+      setToasts(prev => [...prev, { id, amount, reason }]);
+      setTimeout(() => {
+        setToasts(prev => prev.filter(t => t.id !== id));
+      }, 3000);
+      
+      // Fire confetti for large rewards
+      if (amount >= 100) {
+        fireConfetti();
+      }
+    };
+
+    window.addEventListener('fincoin-awarded', handleCoinAward);
+    return () => window.removeEventListener('fincoin-awarded', handleCoinAward);
+  }, [fireConfetti]);
 
   return (
     <RewardsContext.Provider value={{ totalCoins, coinsEarnedToday, isGlowing }}>

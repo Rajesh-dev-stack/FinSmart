@@ -1,4 +1,3 @@
-import React from 'react';
 import { ArrowDownLeft, ArrowUpRight } from 'lucide-react';
 
 const TransactionCard = ({ transaction }) => {

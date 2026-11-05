@@ -6,7 +6,7 @@ import { updateEmail, reauthenticateWithCredential, EmailAuthProvider } from 'fi
 import { deleteUserAccount, resetPassword } from '../firebase/authFunctions';
 import { getUser } from '../firebase/dbFunctions';
 
-const Settings = ({ user, onLogout }) => {
+const Settings = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [userDoc, setUserDoc] = useState(null);

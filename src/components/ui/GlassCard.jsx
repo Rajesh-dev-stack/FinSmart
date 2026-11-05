@@ -1,5 +1,3 @@
-import React from 'react';
-
 const GlassCard = ({ children, className = '', delay = 0, ...props }) => {
   return (
     <div 

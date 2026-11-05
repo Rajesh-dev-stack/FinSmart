@@ -3,20 +3,18 @@ import { useNavigate } from 'react-router-dom';
 import { Settings } from 'lucide-react';
 import { auth } from '../firebase/firebaseClient';
 import { updateEmail, reauthenticateWithCredential, EmailAuthProvider } from 'firebase/auth';
-import { updateAuthProfile, deleteUserAccount, resetPassword } from '../firebase/authFunctions';
+import { updateAuthProfile } from '../firebase/authFunctions';
 import { getUser, generateUniqueFinSmartId, updateUserProfile } from '../firebase/dbFunctions';
 import './Profile.css';
 
-const Profile = ({ user, onLogout, onProfileUpdate }) => {
+const Profile = ({ onProfileUpdate }) => {
   const [loading, setLoading]   = useState(true);
   const [userDoc, setUserDoc]   = useState(null);
   const [name, setName]         = useState('');
   const [saving, setSaving]     = useState(false);
-  const [deleting, setDeleting] = useState(false);
   const [message, setMessage]   = useState(null);
 
   // Settings Menu
-  const [showSettings, setShowSettings] = useState(false);
   const [showEmailModal, setShowEmailModal] = useState(false);
 
   // Email change states
@@ -25,8 +23,6 @@ const Profile = ({ user, onLogout, onProfileUpdate }) => {
   const [emailSaving, setEmailSaving]         = useState(false);
 
   // Password reset state
-  const [resetSent, setResetSent]   = useState(false);
-  const [resetLoading, setResetLoading] = useState(false);
 
   const navigate = useNavigate();
   const isEmailProvider = auth?.currentUser?.providerData?.[0]?.providerId === 'password';
@@ -103,46 +99,7 @@ const Profile = ({ user, onLogout, onProfileUpdate }) => {
     } finally { setEmailSaving(false); }
   };
 
-  /*  Send Password Reset  */
-  const handleSendPasswordReset = async () => {
-    setResetLoading(true);
-    try {
-      await resetPassword(auth.currentUser.email);
-      setResetSent(true);
-      showMsg(`Password reset email sent to ${auth.currentUser.email}`);
-    } catch {
-      showMsg('Failed to send reset email.', 'error');
-    } finally { setResetLoading(false); }
-  };
-
   const [showDeleteWarning, setShowDeleteWarning] = useState(false);
-
-  /*  Delete Account  */
-  const handleDeleteAccountClick = () => {
-    if (userDoc?.walletBalance > 0) {
-      setShowDeleteWarning(true);
-    } else {
-      executeDeleteAccount();
-    }
-  };
-
-  const executeDeleteAccount = async () => {
-    const confirmed = window.confirm(
-      'WARNING: This will permanently delete your account, all transactions, budgets, and wallet data.\n\nThis action CANNOT be undone. Are you sure?'
-    );
-    if (!confirmed) return;
-    setDeleting(true);
-    try {
-      await deleteUserAccount();
-      navigate('/');
-    } catch (err) {
-      if (err.code === 'auth/requires-recent-login')
-        showMsg('Please log out and log back in before deleting your account.', 'error');
-      else
-        showMsg('Failed to delete account. Please try again.', 'error');
-      setDeleting(false);
-    }
-  };
 
   if (loading) return (
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '60vh' }}>

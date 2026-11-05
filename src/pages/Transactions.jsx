@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { Utensils, Car, BookOpen, Film, Home, HeartPulse, Smartphone, ShoppingBag, Plane, Send, MoreHorizontal, Edit2, X, Briefcase, Gift, DollarSign, PenTool, Wallet, ArrowRightLeft } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
 import { auth } from '../firebase/firebaseClient';
-import { getTransactions, addTransaction, deleteTransaction, updateTransaction } from '../firebase/dbFunctions';
+import { getTransactions, addTransaction, updateTransaction } from '../firebase/dbFunctions';
 import './Transactions.css';
 
 const EXPENSE_CATEGORIES = [
@@ -70,8 +70,8 @@ const Transactions = () => {
     try {
       const txns = await getTransactions(userId);
       setTransactions(txns);
-    } catch (error) {
-      console.error(error);
+    } catch {
+      console.error('Failed to save transaction');
     } finally {
       setLoading(false);
     }
@@ -121,7 +121,7 @@ const Transactions = () => {
       }
       setShowModal(false);
       fetchData(user.uid);
-    } catch (error) {
+    } catch {
       alert('Error saving transaction');
     } finally {
       setProcessing(false);
@@ -258,7 +258,7 @@ const Transactions = () => {
               </div>
               
               <div className="form-group">
-                <label>Amount ()</label>
+                <label>Amount</label>
                 <input type="number" step="0.01" value={amount} onChange={(e) => setAmount(e.target.value)} required />
               </div>
 

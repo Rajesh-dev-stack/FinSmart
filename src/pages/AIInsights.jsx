@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { Search, PiggyBank, Target, Lightbulb } from 'lucide-react';
 import { Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
@@ -6,7 +6,7 @@ import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Toolti
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 import { auth } from '../firebase/firebaseClient';
-import { getTransactions, getBudgets, getUser } from '../firebase/dbFunctions';
+import { getTransactions, getBudgets } from '../firebase/dbFunctions';
 import { analyzeSpending, getBudgetAdvice, predictNextMonth, getSavingTips } from '../ai/groqHelper';
 import './AIInsights.css';
 
@@ -35,24 +35,11 @@ const AIInsights = () => {
   const [errorPredictions, setErrorPredictions] = useState(null);
   const [errorTips, setErrorTips] = useState(null);
 
-  useEffect(() => {
-    if (!auth) {
-      setLoading(false);
-      return;
-    }
-    const unsubscribe = auth.onAuthStateChanged((user) => {
-      if (user) fetchData(user.uid);
-      else setLoading(false);
-    });
-    return () => unsubscribe();
-  }, []);
-
-  async function fetchData (userId) {
+  const fetchData = useCallback(async (userId) => {
     setLoading(true);
     try {
       const txns = await getTransactions(userId);
       const bdgts = await getBudgets(userId);
-      const userDoc = await getUser(userId);
       setTransactions(txns);
       setBudgetsData(bdgts);
 
@@ -74,7 +61,19 @@ const AIInsights = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    if (!auth) return;
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) {
+        fetchData(user.uid);
+      } else {
+        setLoading(false);
+      }
+    });
+    return () => unsubscribe();
+  }, [fetchData]);
 
   // Spending patterns for saving tips
   const spendingPatterns = useMemo(() => {

@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { auth } from '../firebase/firebaseClient';
-import { getUser, getTransactionsByMonth, getBudgets } from '../firebase/dbFunctions';
+import { getTransactionsByMonth, getBudgets } from '../firebase/dbFunctions';
 import { analyzeSpending } from '../ai/groqHelper';
 import './Reports.css';
 
@@ -26,7 +26,6 @@ const Reports = () => {
   const [selectedYear, setSelectedYear] = useState(now.getFullYear());
 
   // Data
-  const [userData, setUserData] = useState(null);
   const [transactions, setTransactions] = useState([]);
   const [budgets, setBudgets] = useState([]);
   const [aiSummary, setAiSummary] = useState(null);
@@ -47,13 +46,11 @@ const Reports = () => {
     setAiSummary(null);
 
     try {
-      const [uDoc, txns, bdgts] = await Promise.all([
-        getUser(user.uid),
+      const [txns, bdgts] = await Promise.all([
         getTransactionsByMonth(user.uid, selectedMonth, selectedYear),
         getBudgets(user.uid),
       ]);
 
-      setUserData(uDoc);
       setTransactions(txns);
       setBudgets(bdgts);
       setPreviewReady(true);

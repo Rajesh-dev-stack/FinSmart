@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { getUser, transferToSavings, transferFromSavings, getInterestTransactions } from '../firebase/dbFunctions';
 import { useTheme } from '../context/ThemeProvider';
 import { Line } from 'react-chartjs-2';
@@ -34,7 +34,7 @@ const Savings = ({ user }) => {
   const { theme } = useTheme();
   const isDark = theme === 'dark';
 
-  async function loadData () {
+  const loadData = useCallback(async () => {
     if (!user) return;
     try {
       const uDoc = await getUser(user.uid);
@@ -49,11 +49,11 @@ const Savings = ({ user }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user]);
 
   useEffect(() => {
     loadData();
-  }, [user]);
+  }, [loadData]);
 
   const handleTransfer = async (e) => {
     e.preventDefault();

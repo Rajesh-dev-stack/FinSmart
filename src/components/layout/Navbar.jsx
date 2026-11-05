@@ -1,26 +1,24 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useTheme } from '../../context/ThemeProvider';
 import { useRewards } from '../../context/RewardsProvider';
 import RewardsModal from '../rewards/RewardsModal';
 import './Navbar.css';
 import { Coins, Settings } from 'lucide-react';
+import { getUser, getBudgets } from '../../firebase/dbFunctions';
 
-const Navbar = ({ title = 'Overview', user, onLogout }) => {
+const Navbar = ({ title = 'Overview', user }) => {
   const navigate = useNavigate();
   const [showNotif, setShowNotif] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const [loadingNotifs, setLoadingNotifs] = useState(false);
   const [showRewards, setShowRewards] = useState(false);
-  const { theme } = useTheme();
   const { totalCoins, isGlowing } = useRewards();
 
   // Dynamic notification logic
-  const loadNotifications = async (quiet = false) => {
+  const loadNotifications = useCallback(async (quiet = false) => {
     if (!user) return;
     if (!quiet) setLoadingNotifs(true);
     try {
-      const { getUser, getBudgets } = await import('../../firebase/dbFunctions');
       const notifs = [];
       
       // 1. Check low balance
@@ -49,13 +47,13 @@ const Navbar = ({ title = 'Overview', user, onLogout }) => {
     } finally {
       if (!quiet) setLoadingNotifs(false);
     }
-  };
+  }, [user]);
 
   useEffect(() => {
     if (user) {
       loadNotifications(true);
     }
-  }, [user]);
+  }, [user, loadNotifications]);
 
   const handleNotifClick = () => {
     const nextState = !showNotif;

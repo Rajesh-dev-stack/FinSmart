@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
-import { X, Search, Check } from 'lucide-react';
+import { X, Check } from 'lucide-react';
 import SendMoneyModal from '../components/SendMoneyModal';
 import { auth } from '../firebase/firebaseClient';
-import { getUser, addTransaction, addPayee, getPayees, deletePayee, findUserByFinSmartId } from '../firebase/dbFunctions';
+import { getUser, addPayee, getPayees, deletePayee, findUserByFinSmartId } from '../firebase/dbFunctions';
 import './Transfer.css';
 
 const Toast = ({ message, type, onClose }) => {
@@ -32,13 +32,12 @@ const Transfer = () => {
   const [showAddPayeeModal, setShowAddPayeeModal] = useState(false);
 
   // Send Form
-  const [sendAmount, setSendAmount] = useState('');
   const [processing, setProcessing] = useState(false);
 
   // Add Payee Form
   const [newPayeeName, setNewPayeeName] = useState('');
   const [newPayeeDetail, setNewPayeeDetail] = useState('');
-  const [newPayeeType, setNewPayeeType] = useState('contact');
+  const [newPayeeType] = useState('contact');
   const [searchingPayee, setSearchingPayee] = useState(false);
   const [payeeSearchError, setPayeeSearchError] = useState(null);
   const [foundPayeeUser, setFoundPayeeUser] = useState(null);
@@ -131,7 +130,7 @@ const Transfer = () => {
       showToast(`Added contact ${displayName}`);
 
       handleCloseAddPayeeModal();
-    } catch (error) {
+    } catch {
       showToast('Failed to save payee', 'error');
     } finally {
       setProcessing(false);
@@ -150,7 +149,7 @@ const Transfer = () => {
       }
       setContacts(contacts.filter(c => c.id !== payee.id));
       showToast(`Deleted ${payee.name}`);
-    } catch (error) {
+    } catch {
       showToast('Failed to delete payee', 'error');
     }
   };

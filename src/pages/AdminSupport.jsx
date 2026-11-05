@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { getAllTickets, updateTicketStatus, replyToTicket } from '../firebase/dbFunctions';
 import { sendTicketEmail } from '../emailService';
 import { useTheme } from '../context/ThemeProvider';
@@ -29,13 +29,7 @@ const AdminSupport = ({ user, onLogout }) => {
   // Admin email check
   const isAdmin = user?.email === "rajesh.professional817@gmail.com";
 
-  useEffect(() => {
-    if (isAdmin) {
-      loadTickets();
-    }
-  }, [isAdmin]);
-
-  async function loadTickets() {
+  const loadTickets = useCallback(async () => {
     setLoading(true);
     try {
       const data = await getAllTickets();
@@ -47,7 +41,13 @@ const AdminSupport = ({ user, onLogout }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    if (isAdmin) {
+      loadTickets();
+    }
+  }, [isAdmin, loadTickets]);
 
   const handleResolve = async (ticketId, ticket) => {
     try {

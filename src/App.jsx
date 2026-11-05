@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
-import { Routes, Route, useLocation, Navigate, Link, useNavigate } from 'react-router-dom';
+import { Routes, Route, useLocation, Navigate, Link } from 'react-router-dom';
 import { auth } from './firebase/firebaseClient';
 import { signOut } from 'firebase/auth';
-import { processDailyInterest, listenForNewTransactions } from './firebase/dbFunctions';
+import { processDailyInterest, listenForNewTransactions, evaluateMonthlyRewards } from './firebase/dbFunctions';
 
 
 // Pages
@@ -33,7 +33,6 @@ import { Home, Wallet as WalletIcon, PieChart, User } from 'lucide-react';
 
 const MobileNav = () => {
   const location = useLocation();
-  const navigate = useNavigate();
   const path = location.pathname;
 
   return (
@@ -87,12 +86,7 @@ function App() {
     return () => unsubTxns();
   }, [user]);
 
-  useEffect(() => {
-    if (!user) return;
-
-  }, [user]);
-
-  useEffect(() => {
+useEffect(() => {
     if (!auth) {
       setAuthReady(true);
       return;
@@ -111,9 +105,7 @@ function App() {
         }).catch(err => console.error(err));
         
         // Evaluate monthly FinCoin rewards
-        import('./firebase/dbFunctions').then(({ evaluateMonthlyRewards }) => {
-          evaluateMonthlyRewards(u.uid);
-        });
+        evaluateMonthlyRewards(u.uid);
       }
     });
     return () => unsubscribe();

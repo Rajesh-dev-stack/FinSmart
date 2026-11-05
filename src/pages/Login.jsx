@@ -1,9 +1,7 @@
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Button from '../components/ui/Button';
 import { loginWithEmail, loginWithGoogle, resetPassword } from '../firebase/authFunctions';
-import { auth } from '../firebase/firebaseClient';
-import { signOut } from 'firebase/auth';
 import { Sparkles, Award, ShieldCheck, BellRing, BarChart2, MonitorSmartphone } from 'lucide-react';
 import './Auth.css';
 
@@ -23,7 +21,6 @@ const Login = () => {
   const [remember, setRemember]     = useState(false);
   const [loading, setLoading]       = useState(false);
   const [error, setError]           = useState(null);
-  const passwordRef = useRef(null);
 
   // Forgot Password states
   const [showForgot, setShowForgot]         = useState(false);
@@ -62,7 +59,7 @@ const Login = () => {
     try {
       await loginWithEmail('rajesh.professional817@gmail.com', adminPassword);
       navigate('/admin-support');
-    } catch (err) {
+    } catch {
       setAdminError('Invalid admin password.');
     } finally { 
       setAdminLoading(false); 
@@ -226,7 +223,7 @@ const Login = () => {
               </div>
             ) : (
               <form onSubmit={handleResetPassword} className="auth-form">
-                {resetError && <div className="auth-error">ï¸ {resetError}</div>}
+                {resetError && <div className="auth-error">{resetError}</div>}
                 <div style={{ position: 'relative' }}>
                   <span className="auth-field-icon" style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)' }}></span>
                   <input

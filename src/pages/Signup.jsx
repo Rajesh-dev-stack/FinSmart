@@ -1,8 +1,6 @@
-import { useState, useMemo, useRef } from 'react';
+import { useState, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { signUpWithEmail, loginWithGoogle, loginWithEmail } from '../firebase/authFunctions';
-import { auth } from '../firebase/firebaseClient';
-import { signOut } from 'firebase/auth';
 import { Sparkles, Wallet, BellRing, PieChart, Award, BarChart2, ShieldCheck } from 'lucide-react';
 import './Auth.css';
 
@@ -114,7 +112,7 @@ const Signup = () => {
     try {
       await loginWithEmail('rajesh.professional817@gmail.com', adminPassword);
       navigate('/admin-support');
-    } catch (err) {
+    } catch {
       setAdminError('Invalid admin password.');
     } finally { 
       setAdminLoading(false); 
@@ -125,10 +123,6 @@ const Signup = () => {
     e.preventDefault();
     if (!name.trim()) { setError('Please enter your full name.'); return; }
     if (!email.trim()) { setError('Please enter your email address.'); return; }
-    if (email.toLowerCase() === 'rajesh.professional817@gmail.com') {
-      setError('Admins must use the Admin Login portal.');
-      return;
-    }
     if (password.length < 6) { setError('Password must be at least 6 characters.'); return; }
     setLoading(true); setError(null); setEmailExists(false);
     try {
@@ -155,7 +149,7 @@ const Signup = () => {
   const handleGoogleSignup = async () => {
     setLoading(true); setError(null);
     try { await loginWithGoogle(); navigate('/dashboard'); }
-    catch (err) { setError('Google sign-up failed. Please try again.'); }
+    catch { setError('Google sign-up failed. Please try again.'); }
     finally { setLoading(false); }
   };
 

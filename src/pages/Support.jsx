@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useTheme } from '../context/ThemeProvider';
 import { submitSupportTicket, getUserTickets } from '../firebase/dbFunctions';
 import { sendTicketEmail } from '../emailService';
@@ -34,13 +34,8 @@ const Support = ({ user }) => {
   const [myTickets, setMyTickets] = useState([]);
   const [loadingTickets, setLoadingTickets] = useState(false);
 
-  useEffect(() => {
-    if (view === 'queries' && user?.uid) {
-      loadMyTickets();
-    }
-  }, [view, user]);
-
-  async function loadMyTickets() {
+  const loadMyTickets = useCallback(async () => {
+    if (!user?.uid) return;
     setLoadingTickets(true);
     try {
       const tickets = await getUserTickets(user.uid);
@@ -50,7 +45,13 @@ const Support = ({ user }) => {
     } finally {
       setLoadingTickets(false);
     }
-  };
+  }, [user]);
+
+  useEffect(() => {
+    if (view === 'queries' && user?.uid) {
+      loadMyTickets();
+    }
+  }, [view, user?.uid, loadMyTickets]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });

@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { Utensils, Car, BookOpen, Film, Home, HeartPulse, Smartphone, ShoppingBag, Plane, Send, MoreHorizontal, Edit2, X } from 'lucide-react';
+import { Utensils, Car, BookOpen, Film, Home, HeartPulse, Smartphone, ShoppingBag, Plane, Send, MoreHorizontal, Edit2 } from 'lucide-react';
 import { collection, query, where, onSnapshot } from 'firebase/firestore';
 import { auth, db } from '../firebase/firebaseClient';
 import { setBudget } from '../firebase/dbFunctions';
@@ -112,7 +112,7 @@ const Budget = () => {
       showToast("Budget limit saved! ", "success");
       setLimitInput('');
       window.scrollTo({ top: 0, behavior: 'smooth' });
-    } catch (error) {
+    } catch {
       showToast("Failed to save budget", "error");
     } finally {
       setIsSaving(false);

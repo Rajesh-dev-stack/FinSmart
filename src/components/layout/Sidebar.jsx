@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { NavLink, Link, useNavigate } from 'react-router-dom';
-import { Home, PieChart, ListOrdered, BarChart2, Wallet, PiggyBank, Send, Sparkles, User, HelpCircle, LogOut, Shield } from 'lucide-react';
+import { NavLink, Link } from 'react-router-dom';
+import { Home, PieChart, ListOrdered, BarChart2, Wallet, PiggyBank, Send, Sparkles, User, HelpCircle, LogOut } from 'lucide-react';
 import './Sidebar.css';
 
 const navItems = [
@@ -19,9 +19,7 @@ const accountItems = [
   { to: '/support', icon: <HelpCircle size={18} />, label: 'Support' },
 ];
 
-const Sidebar = ({ onLogout, user }) => {
-  const isAdmin = user?.email === "rajesh.professional817@gmail.com";
-  const navigate = useNavigate();
+const Sidebar = ({ onLogout }) => {
   const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   const handleConfirmLogout = () => {

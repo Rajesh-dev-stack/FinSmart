@@ -1,6 +1,6 @@
 const GROQ_API_KEY = import.meta.env.VITE_GROQ_API_KEY;
 
-async function askGroq(prompt, isJsonResponse = false) {
+async function askGroq(prompt) {
   try {
     const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
@@ -78,14 +78,14 @@ ${summary}
 
 JSON prediction:`;
 
-  const raw = await askGroq(prompt, true);
+  const raw = await askGroq(prompt);
   
   try {
     // If the model wrapped it in markdown like ```json ... ```,extract it
     const jsonMatch = raw.match(/```(?:json)?\s*([\s\S]*?)\s*```/);
     const jsonString = jsonMatch ? jsonMatch[1] : raw;
     return JSON.parse(jsonString);
-  } catch (e) {
+  } catch {
     console.error("Failed to parse prediction JSON:", raw);
     return null;
   }

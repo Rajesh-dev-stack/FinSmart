@@ -954,7 +954,9 @@ export const sendMoneyByFinSmartId = async (senderUID, receiverFinSmartId, amoun
   // Award FinCoins after transaction succeeds
   try {
     await awardCoins(senderUID, 5, 'Secure transfer completed');
-  } catch (e) {}
+  } catch {
+    // Non-critical reward processing
+  }
   
   // Return receiver name for success message
   const finsmartSnap = await getDoc(doc(db, 'finsmartIds', receiverFinSmartId));

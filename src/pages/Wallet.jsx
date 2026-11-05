@@ -1,14 +1,12 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { X } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
 import { auth } from '../firebase/firebaseClient';
 import SendMoneyModal from '../components/SendMoneyModal';
-import { listenToWalletBalance } from '../firebase/dbFunctions';
 import { 
   getUser, 
   getTransactions, 
-  addTransaction, 
-  getUserByEmail 
+  addTransaction,
+  listenToWalletBalance
 } from '../firebase/dbFunctions';
 import TransactionCard from '../components/dashboard/TransactionCard';
 import './Wallet.css';
@@ -27,7 +25,6 @@ const Toast = ({ message, type, onClose }) => {
 };
 
 const Wallet = () => {
-  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [balance, setBalance] = useState(0);
   const [transactions, setTransactions] = useState([]);
@@ -46,11 +43,28 @@ const Wallet = () => {
   const [addAmount, setAddAmount] = useState('');
   const [addMethod, setAddMethod] = useState('UPI');
   
-  const [sendEmail, setSendEmail] = useState('');
-  const [sendAmount, setSendAmount] = useState('');
-  const [sendDesc, setSendDesc] = useState('');
 
   const [processing, setProcessing] = useState(false);
+
+  const showToast = useCallback((message, type = 'success') => {
+    setToast({ message, type });
+  }, []);
+
+  const fetchWalletData = useCallback(async (userId, quiet = false) => {
+    try {
+      if (!quiet) setLoading(true);
+      const userDoc = await getUser(userId);
+      if (userDoc) setBalance(userDoc.walletBalance || 0);
+
+      const txns = await getTransactions(userId);
+      setTransactions(txns);
+    } catch (error) {
+      console.error("fetchWalletData error:", error);
+      showToast(`Error: ${error.message}`, "error");
+    } finally {
+      if (!quiet) setLoading(false);
+    }
+  }, [showToast]);
 
   useEffect(() => {
     if (!auth) {
@@ -72,27 +86,7 @@ const Wallet = () => {
       unsubscribe();
       if (unsubBalance) unsubBalance();
     };
-  }, []);
-
-  async function fetchWalletData (userId, quiet = false) {
-    try {
-      if (!quiet) setLoading(true);
-      const userDoc = await getUser(userId);
-      if (userDoc) setBalance(userDoc.walletBalance || 0);
-
-      const txns = await getTransactions(userId);
-      setTransactions(txns);
-    } catch (error) {
-      console.error("fetchWalletData error:", error);
-      showToast(`Error: ${error.message}`, "error");
-    } finally {
-      if (!quiet) setLoading(false);
-    }
-  };
-
-  const showToast = (message, type = 'success') => {
-    setToast({ message, type });
-  };
+  }, [fetchWalletData]);
 
   const handleAddMoney = async (e) => {
     e.preventDefault();
@@ -202,7 +196,7 @@ const Wallet = () => {
             ) : (
               <form onSubmit={handleAddMoney} className="modal-form">
                 <div className="form-group">
-                  <label>Amount ()</label>
+                  <label>Amount</label>
                   <input 
                     type="number" 
                     step="0.01" 
@@ -236,7 +230,7 @@ const Wallet = () => {
           senderUid={auth.currentUser.uid}
           senderBalance={balance}
           onClose={() => setShowSendModal(false)}
-          onSuccess={(amt) => {
+          onSuccess={() => {
             setShowSendModal(false);
             fetchWalletData(auth.currentUser.uid, true);
           }}

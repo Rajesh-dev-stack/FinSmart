@@ -1,18 +1,18 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRewards } from '../../context/RewardsProvider';
 import { getCoinTransactions, redeemReward } from '../../firebase/dbFunctions';
 import { auth } from '../../firebase/firebaseClient';
 import './RewardsModal.css';
 
 const GIFT_CARDS = [
-  { id: 'amz1', brand: 'Amazon', value: '50', cost: 500, emoji: '' },
-  { id: 'amz2', brand: 'Amazon', value: '120', cost: 1200, emoji: '' },
-  { id: 'swig', brand: 'Swiggy', value: '50', cost: 450, emoji: '' },
-  { id: 'zom', brand: 'Zomato', value: '50', cost: 450, emoji: '' },
-  { id: 'flip', brand: 'Flipkart', value: '50', cost: 500, emoji: '️' },
-  { id: 'myn', brand: 'Myntra', value: '75', cost: 600, emoji: '' },
-  { id: 'bms', brand: 'BookMyShow', value: '50', cost: 500, emoji: '' },
-  { id: 'uber', brand: 'Uber', value: '50', cost: 400, emoji: '' },
+  { id: 'amz1', brand: 'Amazon', value: '50', cost: 500 },
+  { id: 'amz2', brand: 'Amazon', value: '120', cost: 1200 },
+  { id: 'swig', brand: 'Swiggy', value: '50', cost: 450 },
+  { id: 'zom', brand: 'Zomato', value: '50', cost: 450 },
+  { id: 'flip', brand: 'Flipkart', value: '50', cost: 500 },
+  { id: 'myn', brand: 'Myntra', value: '75', cost: 600 },
+  { id: 'bms', brand: 'BookMyShow', value: '50', cost: 500 },
+  { id: 'uber', brand: 'Uber', value: '50', cost: 400 },
 ];
 
 const RewardsModal = ({ onClose }) => {
@@ -26,19 +26,19 @@ const RewardsModal = ({ onClose }) => {
   const [redeemLoading, setRedeemLoading] = useState(false);
   const [successMsg, setSuccessMsg] = useState('');
 
-  useEffect(() => {
-    if (activeTab === 'history') {
-      loadHistory();
-    }
-  }, [activeTab]);
-
-  const loadHistory = async () => {
+  const loadHistory = useCallback(async () => {
     if (!auth.currentUser) return;
     setLoadingHistory(true);
     const txns = await getCoinTransactions(auth.currentUser.uid);
     setTransactions(txns);
     setLoadingHistory(false);
-  };
+  }, []);
+
+  useEffect(() => {
+    if (activeTab === 'history') {
+      loadHistory();
+    }
+  }, [activeTab, loadHistory]);
 
   const handleRedeem = async () => {
     if (!selectedCard || !auth.currentUser) return;
