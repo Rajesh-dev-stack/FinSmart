@@ -1,5 +1,6 @@
 /* FinSmart — Complete Design System */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap');
+@import "tailwindcss";
 
 :root {
   /* Primary Backgrounds */
@@ -31,8 +32,8 @@
   
   /* Text Colors */
   --text-primary: #0A1628;
-  --text-secondary: rgba(10, 22, 40, 0.7);
-  --text-muted: rgba(10, 22, 40, 0.4);
+  --text-secondary: rgba(10, 22, 40, 0.78);
+  --text-muted: rgba(10, 22, 40, 0.55);
   
   /* Border */
   --border-subtle: rgba(10, 22, 40, 0.08);
@@ -93,8 +94,8 @@
   
   /* Text Colors */
   --text-primary: #FFFFFF;
-  --text-secondary: rgba(255,255,255,0.7);
-  --text-muted: rgba(255,255,255,0.4);
+  --text-secondary: rgba(255, 255, 255, 0.78);
+  --text-muted: rgba(255, 255, 255, 0.58);
   
   /* Border */
   --border-subtle: rgba(255,255,255,0.08);

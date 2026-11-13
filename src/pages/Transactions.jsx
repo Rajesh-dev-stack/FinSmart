@@ -231,7 +231,7 @@ const Transactions = () => {
                   </td>
                   <td className="tx-desc">{txn.description}</td>
                   <td className={`text-right font-bold ${txn.type === 'income' ? 'text-green' : 'text-red'}`}>
-                    {txn.type === 'income' ? '+' : '-'}{txn.amount.toFixed(2)}
+                    {txn.type === 'income' ? '+₹' : '-₹'}{Number(txn.amount).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </td>
                   <td className="text-center">
                     <button className="icon-btn edit-btn" onClick={() => openEditModal(txn)} style={{ color: "#fff" }}><Edit2 size={16} /></button>

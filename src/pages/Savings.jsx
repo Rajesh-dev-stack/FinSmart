@@ -142,20 +142,20 @@ const Savings = ({ user }) => {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
           <div className="card" style={{ background: 'var(--primary)', color: '#fff' }}>
             <p style={{ opacity: 0.8, fontSize: '0.9rem' }}>Current Savings Balance</p>
-            <h2 style={{ fontSize: '2.5rem', margin: '0.5rem 0', color: '#fff' }}>{balance.toLocaleString(undefined, {maximumFractionDigits:2})}</h2>
+            <h2 style={{ fontSize: '2.5rem', margin: '0.5rem 0', color: '#fff' }}>₹{balance.toLocaleString('en-IN', { maximumFractionDigits: 2 })}</h2>
             <p style={{ opacity: 0.9, fontSize: '0.85rem' }}>Earning 6% APY Compounded Daily</p>
           </div>
           
           <div className="card">
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Interest Earned Today</p>
-            <h3 style={{ fontSize: '1.8rem', color: 'var(--primary)', margin: '0.5rem 0' }}>+{interestToday.toFixed(2)}</h3>
-            <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>Projected Yearly: {interestYearly.toFixed(2)}</p>
+            <h3 style={{ fontSize: '1.8rem', color: 'var(--primary)', margin: '0.5rem 0' }}>+₹{Number(interestToday).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</h3>
+            <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>Projected Yearly: ₹{Number(interestYearly).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
           </div>
 
           <div className="card">
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Total Interest Earned</p>
-            <h3 style={{ fontSize: '1.8rem', color: 'var(--text-primary)', margin: '0.5rem 0' }}>{totalInterest.toFixed(2)}</h3>
-            <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>Est. This Month: {interestMonth.toFixed(2)}</p>
+            <h3 style={{ fontSize: '1.8rem', color: 'var(--text-primary)', margin: '0.5rem 0' }}>₹{Number(totalInterest).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</h3>
+            <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>Est. This Month: ₹{Number(interestMonth).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
           </div>
         </div>
 
@@ -189,7 +189,7 @@ const Savings = ({ user }) => {
                 
                 <div style={{ marginBottom: '1.5rem' }}>
                   <label style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
-                    Amount (Available: {transferDirection === 'to' ? walletBalance.toLocaleString() : balance.toLocaleString()})
+                    Amount (Available: ₹{(transferDirection === 'to' ? walletBalance : balance).toLocaleString('en-IN')})
                   </label>
                   <input 
                     type="number" 

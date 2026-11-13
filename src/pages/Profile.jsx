@@ -194,7 +194,7 @@ const Profile = ({ onProfileUpdate }) => {
 
           <div className="profile-avatar-wrap">
             <img
-              src={`https://ui-avatars.com/api/?name=${encodeURIComponent(name || 'User')}&background=random&color=fff&bold=true&size=128`}
+              src={`https://ui-avatars.com/api/?name=${encodeURIComponent(name || 'User')}&background=00C9A7&color=fff&bold=true&size=128`}
               alt="Avatar"
             />
           </div>

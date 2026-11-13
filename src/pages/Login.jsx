@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Button from '../components/ui/Button';
 import { loginWithEmail, loginWithGoogle, resetPassword } from '../firebase/authFunctions';
-import { Sparkles, Award, ShieldCheck, BellRing, BarChart2, MonitorSmartphone, Eye, EyeOff } from 'lucide-react';
+import { Sparkles, Award, ShieldCheck, BellRing, BarChart2, MonitorSmartphone, Eye, EyeOff, Mail, Lock } from 'lucide-react';
 import './Auth.css';
 
 const features = [
@@ -175,11 +175,14 @@ const Login = () => {
 
             <form className="auth-form" onSubmit={handleAdminLoginSubmit}>
               <div style={{ position: 'relative' }}>
+                <span className="auth-field-icon" style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', display: 'flex', alignItems: 'center', pointerEvents: 'none', color: 'rgba(255,255,255,0.4)' }}>
+                  <Lock size={18} />
+                </span>
                 <input
                   type={showAdminPass ? 'text' : 'password'}
                   name="admin-secret-key"
                   className="input-field"
-                  style={{ paddingRight: '44px' }}
+                  style={{ paddingLeft: '44px', paddingRight: '44px' }}
                   placeholder="Enter admin password"
                   value={adminPassword}
                   onChange={e => setAdminPassword(e.target.value)}
@@ -237,11 +240,13 @@ const Login = () => {
               <form onSubmit={handleResetPassword} className="auth-form">
                 {resetError && <div className="auth-error">{resetError}</div>}
                 <div style={{ position: 'relative' }}>
-                  <span className="auth-field-icon" style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)' }}></span>
+                  <span className="auth-field-icon" style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', display: 'flex', alignItems: 'center', pointerEvents: 'none', color: 'rgba(255,255,255,0.4)' }}>
+                    <Mail size={18} />
+                  </span>
                   <input
                     type="email"
                     className="input-field"
-                    style={{ paddingLeft: '40px' }}
+                    style={{ paddingLeft: '44px' }}
                     placeholder="Enter your email address"
                     value={resetEmail}
                     onChange={e => setResetEmail(e.target.value)}
@@ -264,11 +269,13 @@ const Login = () => {
 
             <form className="auth-form" onSubmit={handleEmailLogin}>
               <div style={{ position: 'relative' }}>
-                <span className="auth-field-icon" style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)' }}></span>
+                <span className="auth-field-icon" style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', display: 'flex', alignItems: 'center', pointerEvents: 'none', color: 'rgba(255,255,255,0.4)' }}>
+                  <Mail size={18} />
+                </span>
                 <input
                   type="email"
                   className="input-field"
-                  style={{ paddingLeft: '40px' }}
+                  style={{ paddingLeft: '44px' }}
                   placeholder="Enter your email address"
                   value={email}
                   onChange={e => setEmail(e.target.value)}
@@ -277,11 +284,13 @@ const Login = () => {
               </div>
 
               <div style={{ position: 'relative' }}>
-                <span className="auth-field-icon" style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)' }}></span>
+                <span className="auth-field-icon" style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', display: 'flex', alignItems: 'center', pointerEvents: 'none', color: 'rgba(255,255,255,0.4)' }}>
+                  <Lock size={18} />
+                </span>
                 <input
                     type={showPass ? 'text' : 'password'}
                     className="input-field"
-                    style={{ paddingLeft: '40px', paddingRight: '40px' }}
+                    style={{ paddingLeft: '44px', paddingRight: '44px' }}
                     placeholder="Enter your password"
                     value={password}
                     onChange={e => setPassword(e.target.value)}

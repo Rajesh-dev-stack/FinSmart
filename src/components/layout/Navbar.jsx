@@ -24,7 +24,7 @@ const Navbar = ({ title = 'Overview', user }) => {
       // 1. Check low balance
       const uDoc = await getUser(user.uid);
       if (uDoc && (uDoc.walletBalance || 0) < 100) {
-        notifs.push({ id: 'low_bal', type: 'warning', text: `Low wallet balance: ${uDoc.walletBalance || 0}. Consider depositing funds.` });
+        notifs.push({ id: 'low_bal', type: 'warning', text: `Low wallet balance: ₹${(uDoc.walletBalance || 0).toLocaleString('en-IN')}. Consider depositing funds.` });
       }
 
       // 2. Check budgets

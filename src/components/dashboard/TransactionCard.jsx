@@ -46,7 +46,7 @@ const TransactionCard = ({ transaction }) => {
           fontWeight: 'bold',
           color: isIncome ? '#00E676' : '#FF5252' 
         }}>
-          {isIncome ? '+' : '-'}{amount.toFixed(2)}
+          {isIncome ? '+₹' : '-₹'}{Number(amount).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
         </p>
         <p style={{ margin: 0, fontSize: '0.75rem', color: 'var(--text-muted, #718096)' }}>
           {new Date(date).toLocaleDateString()}

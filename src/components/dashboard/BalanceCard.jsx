@@ -15,7 +15,7 @@ const BalanceCard = ({ balance, income, expense, month, setMonth }) => {
       </div>
       
       <div className="balance-amount">
-        <h2>{balance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</h2>
+        <h2>₹{balance.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</h2>
       </div>
 
       <div className="balance-summary">
@@ -23,7 +23,7 @@ const BalanceCard = ({ balance, income, expense, month, setMonth }) => {
           <span className="summary-icon"></span>
           <div>
             <p className="summary-label">Income</p>
-            <p className="summary-value">{income.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+            <p className="summary-value">₹{income.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
           </div>
         </div>
         
@@ -33,7 +33,7 @@ const BalanceCard = ({ balance, income, expense, month, setMonth }) => {
           <span className="summary-icon"></span>
           <div>
             <p className="summary-label">Expense</p>
-            <p className="summary-value">{expense.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+            <p className="summary-value">₹{expense.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
           </div>
         </div>
       </div>

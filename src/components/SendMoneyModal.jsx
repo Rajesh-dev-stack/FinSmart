@@ -143,7 +143,7 @@ const SendMoneyModal = ({ senderUid, senderBalance, initialFinSmartId, onClose, 
             <div>
               <div style={{ textAlign: 'center', marginBottom: '1.5rem', background: 'rgba(0, 201, 167, 0.1)', border: '1px solid rgba(0, 201, 167, 0.3)', padding: '1.5rem', borderRadius: '8px' }}>
                 <p style={{ color: 'var(--text-secondary)', marginBottom: '0.5rem' }}>You are about to send</p>
-                <h2 style={{ fontSize: '2.5rem', color: 'var(--text-primary)', margin: '0 0 1rem 0' }}>{Number(amount).toLocaleString()}</h2>
+                <h2 style={{ fontSize: '2.5rem', color: 'var(--text-primary)', margin: '0 0 1rem 0' }}>₹{Number(amount).toLocaleString('en-IN')}</h2>
                 <p style={{ color: 'var(--text-secondary)', marginBottom: '0.25rem' }}>to</p>
                 <h4 style={{ fontSize: '1.2rem', margin: 0 }}>{receiver.name}</h4>
                 <p style={{ color: 'var(--text-secondary)', fontFamily: 'monospace', fontSize: '0.85rem' }}>{finSmartId}</p>
@@ -162,7 +162,7 @@ const SendMoneyModal = ({ senderUid, senderBalance, initialFinSmartId, onClose, 
             <div style={{ textAlign: 'center' }}>
               <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem' }}><CheckCircle size={56} style={{ color: 'var(--success)' }} /></div>
               <p style={{ fontSize: '1.2rem', marginBottom: '0.5rem' }}>
-                {successData.amount.toLocaleString()} sent to {successData.name}
+                ₹{successData.amount.toLocaleString('en-IN')} sent to {successData.name}
               </p>
               <p style={{ color: 'var(--warning)', fontWeight: 'bold', marginBottom: '1.5rem' }}>
                 +5 FinCoins earned!
@@ -170,7 +170,7 @@ const SendMoneyModal = ({ senderUid, senderBalance, initialFinSmartId, onClose, 
 
               <div style={{ background: 'var(--bg)', padding: '1rem', borderRadius: '8px', marginBottom: '2rem' }}>
                 <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginBottom: '0.25rem' }}>New Balance</p>
-                <p style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>{successData.newBalance.toLocaleString()}</p>
+                <p style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>₹{successData.newBalance.toLocaleString('en-IN')}</p>
               </div>
 
               <button className="btn btn-primary full-width" onClick={onClose}>Done</button>

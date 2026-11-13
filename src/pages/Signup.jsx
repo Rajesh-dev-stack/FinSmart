@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { signUpWithEmail, loginWithGoogle, loginWithEmail } from '../firebase/authFunctions';
-import { Sparkles, Wallet, BellRing, PieChart, Award, BarChart2, ShieldCheck, Eye, EyeOff } from 'lucide-react';
+import { Sparkles, Wallet, BellRing, PieChart, Award, BarChart2, ShieldCheck, Eye, EyeOff, User, Mail, Lock } from 'lucide-react';
 import './Auth.css';
 
 /*  Inline Chart / Growth SVG illustration  */
@@ -192,7 +192,9 @@ const Signup = () => {
 
         <form className="auth-form" onSubmit={handleEmailSignup}>
           <div className="auth-field">
-            <span className="auth-field-icon"></span>
+            <span className="auth-field-icon" style={{ display: 'flex', alignItems: 'center', color: 'rgba(255,255,255,0.4)' }}>
+              <User size={18} />
+            </span>
             <input
               type="text"
               placeholder="Your full name"
@@ -204,7 +206,9 @@ const Signup = () => {
           </div>
 
           <div className="auth-field">
-            <span className="auth-field-icon"></span>
+            <span className="auth-field-icon" style={{ display: 'flex', alignItems: 'center', color: 'rgba(255,255,255,0.4)' }}>
+              <Mail size={18} />
+            </span>
             <input
               type="email"
               placeholder="Enter your email address"
@@ -215,7 +219,9 @@ const Signup = () => {
           </div>
 
           <div className="auth-field" style={{ marginBottom: password ? '0.5rem' : '1.25rem' }}>
-            <span className="auth-field-icon"></span>
+            <span className="auth-field-icon" style={{ display: 'flex', alignItems: 'center', color: 'rgba(255,255,255,0.4)' }}>
+              <Lock size={18} />
+            </span>
             <input
               type={showPass ? 'text' : 'password'}
               placeholder="Create a password (min 6 chars)"
@@ -282,11 +288,14 @@ const Signup = () => {
 
             <form className="auth-form" onSubmit={handleAdminLoginSubmit}>
               <div style={{ position: 'relative' }}>
+                <span className="auth-field-icon" style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', display: 'flex', alignItems: 'center', pointerEvents: 'none', color: 'rgba(255,255,255,0.4)' }}>
+                  <Lock size={18} />
+                </span>
                 <input
                   type={showAdminPass ? 'text' : 'password'}
                   name="admin-secret-key"
                   className="input-field"
-                  style={{ paddingRight: '44px' }}
+                  style={{ paddingLeft: '44px', paddingRight: '44px' }}
                   placeholder="Enter admin password"
                   value={adminPassword}
                   onChange={e => setAdminPassword(e.target.value)}

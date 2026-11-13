@@ -204,7 +204,7 @@ const Budget = () => {
 
   const currentSelectedBudget = budgets.find(b => b.category === selectedCategory);
   const currentLimitText = currentSelectedBudget && currentSelectedBudget.limit > 0 
-    ? `Current limit: ${currentSelectedBudget.limit.toLocaleString()}` 
+    ? `Current limit: ₹${currentSelectedBudget.limit.toLocaleString('en-IN')}` 
     : "e.g. 2000";
 
   if (loading && budgets.length === 0) return <div className="page-content"><div className="global-spinner" style={{margin: '4rem auto'}}></div></div>;
@@ -237,11 +237,11 @@ const Budget = () => {
           <div className="summary-stats-fullwidth" style={{ flex: '1', minWidth: '200px' }}>
             <div className="stat" style={{ marginBottom: '1rem' }}>
               <span className="text-secondary">Total Budgeted</span>
-              <h4 style={{ fontSize: '2rem', color: 'var(--accent-primary)' }}>{summary.totalLimit.toLocaleString()}</h4>
+              <h4 style={{ fontSize: '2rem', color: 'var(--accent-primary)' }}>₹{summary.totalLimit.toLocaleString('en-IN')}</h4>
             </div>
             <div className="stat">
               <span className="text-secondary">Total Spent</span>
-              <h4 style={{ fontSize: '2rem', color: summary.percentage >= 100 ? 'var(--danger)' : 'var(--text-primary)' }}>{summary.totalSpent.toLocaleString()}</h4>
+              <h4 style={{ fontSize: '2rem', color: summary.percentage >= 100 ? 'var(--danger)' : 'var(--text-primary)' }}>₹{summary.totalSpent.toLocaleString('en-IN')}</h4>
             </div>
           </div>
           
@@ -260,7 +260,7 @@ const Budget = () => {
               }}/>
             </div>
             <p className="text-secondary" style={{ marginTop: '0.75rem', textAlign: 'right', fontSize: '0.9rem' }}>
-              {Math.max(summary.totalLimit - summary.totalSpent, 0).toLocaleString()} remaining total
+              ₹{Math.max(summary.totalLimit - summary.totalSpent, 0).toLocaleString('en-IN')} remaining total
             </p>
           </div>
         </div>
@@ -322,7 +322,7 @@ const Budget = () => {
                 
                 <div style={{ marginBottom: '1rem' }}>
                   <p style={{ fontSize: '1.25rem', fontWeight: 'bold' }}>
-                    {b.spent.toLocaleString()} <span className="text-muted" style={{ fontSize: '0.9rem', fontWeight: 'normal' }}>of {b.limit.toLocaleString()}</span>
+                    ₹{b.spent.toLocaleString('en-IN')} <span className="text-muted" style={{ fontSize: '0.9rem', fontWeight: 'normal' }}>of ₹{b.limit.toLocaleString('en-IN')}</span>
                   </p>
                 </div>
 

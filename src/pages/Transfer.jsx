@@ -173,7 +173,7 @@ const Transfer = () => {
       <div className="wallet-balance-card">
         <div style={{ position: 'relative', zIndex: 2 }}>
           <p style={{ opacity: 0.85, fontSize: '0.95rem', margin: 0, fontWeight: 500 }}>Available Wallet Balance</p>
-          <h2>{balance.toLocaleString(undefined, { minimumFractionDigits: 2 })}</h2>
+          <h2>₹{balance.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</h2>
         </div>
         <div style={{ fontSize: '4.5rem', opacity: 0.2, position: 'relative', zIndex: 2 }}>
           

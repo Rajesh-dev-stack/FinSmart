@@ -143,7 +143,7 @@ const Wallet = () => {
         <div className="wallet-card-bg"></div>
         <div className="wallet-content">
           <p className="wallet-label">Available Balance</p>
-          <h1 className="wallet-amount">{balance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</h1>
+          <h1 className="wallet-amount">₹{balance.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</h1>
           
           <div className="wallet-actions">
             <button className="btn btn-primary" onClick={() => setShowAddModal(true)}>
