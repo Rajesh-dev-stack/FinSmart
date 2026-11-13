@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import Button from '../components/ui/Button';
 import { loginWithEmail, loginWithGoogle, resetPassword } from '../firebase/authFunctions';
 import { Sparkles, Award, ShieldCheck, BellRing, BarChart2, MonitorSmartphone, Eye, EyeOff, Mail, Lock } from 'lucide-react';
 import './Auth.css';
@@ -38,7 +37,7 @@ const Login = () => {
   const navigate = useNavigate();
 
   /*  Login  */
-    const handleAdminShortcut = () => {
+  const handleAdminShortcut = () => {
     setShowAdminModal(true);
     setAdminError(null);
     setAdminPassword('');
@@ -52,7 +51,7 @@ const Login = () => {
     // Static Admin Password Check
     if (adminPassword === 'Rajesh7679@') {
       sessionStorage.setItem('staticAdmin', 'true');
-        localStorage.removeItem('staticAdmin');
+      localStorage.removeItem('staticAdmin');
       window.location.href = '/admin-support'; // Force a full reload to apply static admin state
       return;
     }
@@ -108,7 +107,6 @@ const Login = () => {
         setError('This Google account has been disabled.');
       else
         setError('Google sign-in failed. Please try again.');
-      // Note: Firestore offline errors are handled silently in authFunctions.js
     } finally { setLoading(false); }
   };
 
@@ -174,15 +172,13 @@ const Login = () => {
             {adminError && <div className="auth-error">{adminError}</div>}
 
             <form className="auth-form" onSubmit={handleAdminLoginSubmit}>
-              <div style={{ position: 'relative' }}>
-                <span className="auth-field-icon" style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', display: 'flex', alignItems: 'center', pointerEvents: 'none', color: 'rgba(255,255,255,0.4)' }}>
+              <div className="auth-field">
+                <span className="auth-field-icon" style={{ display: 'flex', alignItems: 'center', color: 'rgba(255,255,255,0.4)' }}>
                   <Lock size={18} />
                 </span>
                 <input
                   type={showAdminPass ? 'text' : 'password'}
                   name="admin-secret-key"
-                  className="input-field"
-                  style={{ paddingLeft: '44px', paddingRight: '44px' }}
                   placeholder="Enter admin password"
                   value={adminPassword}
                   onChange={e => setAdminPassword(e.target.value)}
@@ -192,23 +188,23 @@ const Login = () => {
                 />
                 <span 
                   className="auth-field-suffix" 
-                  style={{ position: 'absolute', right: '16px', top: '50%', transform: 'translateY(-50%)', cursor: 'pointer', display: 'flex', alignItems: 'center' }} 
                   onClick={() => setShowAdminPass(!showAdminPass)} 
                   role="button" 
                   tabIndex={0}
+                  style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}
                 >
                   {showAdminPass ? <EyeOff size={18} /> : <Eye size={18} />}
                 </span>
               </div>
 
-              <Button type="submit" className="full-width" disabled={adminLoading} style={{ marginTop: '1.5rem', background: 'var(--danger)' }}>
+              <button type="submit" className="auth-btn-primary" disabled={adminLoading} style={{ marginTop: '1.25rem', background: 'var(--danger)' }}>
                 {adminLoading ? 'Authenticating...' : 'Access Dashboard'}
-              </Button>
+              </button>
               <button 
                 type="button" 
                 onClick={() => setShowAdminModal(false)} 
-                className="auth-btn-google auth-glass-card" 
-                style={{ marginTop: '1rem', background: 'transparent', borderColor: 'rgba(255,255,255,0.2)', width: '100%', padding: '12px', color: 'var(--text-secondary)' }}
+                className="auth-btn-google" 
+                style={{ marginTop: '0.75rem' }}
               >
                 Back to Sign In
               </button>
@@ -239,23 +235,21 @@ const Login = () => {
             ) : (
               <form onSubmit={handleResetPassword} className="auth-form">
                 {resetError && <div className="auth-error">{resetError}</div>}
-                <div style={{ position: 'relative' }}>
-                  <span className="auth-field-icon" style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', display: 'flex', alignItems: 'center', pointerEvents: 'none', color: 'rgba(255,255,255,0.4)' }}>
+                <div className="auth-field">
+                  <span className="auth-field-icon" style={{ display: 'flex', alignItems: 'center', color: 'rgba(255,255,255,0.4)' }}>
                     <Mail size={18} />
                   </span>
                   <input
                     type="email"
-                    className="input-field"
-                    style={{ paddingLeft: '44px' }}
                     placeholder="Enter your email address"
                     value={resetEmail}
                     onChange={e => setResetEmail(e.target.value)}
                     required autoFocus
                   />
                 </div>
-                <Button type="submit" disabled={resetLoading}>
+                <button type="submit" className="auth-btn-primary" disabled={resetLoading}>
                   {resetLoading ? 'Sending...' : 'Send Reset Link'}
-                </Button>
+                </button>
               </form>
             )}
           </div>
@@ -268,14 +262,12 @@ const Login = () => {
             {error && <div className="auth-error">{error}</div>}
 
             <form className="auth-form" onSubmit={handleEmailLogin}>
-              <div style={{ position: 'relative' }}>
-                <span className="auth-field-icon" style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', display: 'flex', alignItems: 'center', pointerEvents: 'none', color: 'rgba(255,255,255,0.4)' }}>
+              <div className="auth-field">
+                <span className="auth-field-icon" style={{ display: 'flex', alignItems: 'center', color: 'rgba(255,255,255,0.4)' }}>
                   <Mail size={18} />
                 </span>
                 <input
                   type="email"
-                  className="input-field"
-                  style={{ paddingLeft: '44px' }}
                   placeholder="Enter your email address"
                   value={email}
                   onChange={e => setEmail(e.target.value)}
@@ -283,26 +275,24 @@ const Login = () => {
                 />
               </div>
 
-              <div style={{ position: 'relative' }}>
-                <span className="auth-field-icon" style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', display: 'flex', alignItems: 'center', pointerEvents: 'none', color: 'rgba(255,255,255,0.4)' }}>
+              <div className="auth-field">
+                <span className="auth-field-icon" style={{ display: 'flex', alignItems: 'center', color: 'rgba(255,255,255,0.4)' }}>
                   <Lock size={18} />
                 </span>
                 <input
-                    type={showPass ? 'text' : 'password'}
-                    className="input-field"
-                    style={{ paddingLeft: '44px', paddingRight: '44px' }}
-                    placeholder="Enter your password"
-                    value={password}
-                    onChange={e => setPassword(e.target.value)}
-                    required
-                    autoComplete="new-password"
-                  />
+                  type={showPass ? 'text' : 'password'}
+                  placeholder="Enter your password"
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
+                  required
+                  autoComplete="current-password"
+                />
                 <span 
                   className="auth-field-suffix" 
-                  style={{ position: 'absolute', right: '16px', top: '50%', transform: 'translateY(-50%)', cursor: 'pointer', display: 'flex', alignItems: 'center' }} 
                   onClick={() => setShowPass(!showPass)} 
                   role="button" 
                   tabIndex={0}
+                  style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}
                 >
                   {showPass ? <EyeOff size={18} /> : <Eye size={18} />}
                 </span>
@@ -318,15 +308,15 @@ const Login = () => {
                 </span>
               </div>
 
-              <Button type="submit" disabled={loading}>
+              <button type="submit" className="auth-btn-primary" disabled={loading}>
                 {loading ? 'Signing in...' : 'Sign in'}
-              </Button>
+              </button>
             </form>
 
             <div className="auth-divider" style={{ margin: '1.25rem 0' }}>OR</div>
 
-            <button className="auth-btn-google auth-glass-card" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem', padding: '12px', width: '100%', background: 'transparent', borderColor: 'rgba(255,255,255,0.2)' }} onClick={handleGoogleLogin} disabled={loading}>
-              <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" style={{ width: '18px' }} />
+            <button className="auth-btn-google" onClick={handleGoogleLogin} disabled={loading}>
+              <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" />
               Sign in with Google
             </button>
 
@@ -402,4 +392,3 @@ const Login = () => {
 };
 
 export default Login;
-
