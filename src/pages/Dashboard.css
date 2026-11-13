@@ -15,222 +15,51 @@
   padding: 1rem 1.25rem;
 }
 
-.dash-stat-icon {
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.2rem;
-  font-weight: 700;
-  flex-shrink: 0;
-}
-
-.dash-stat-label {
-  font-size: 0.75rem;
-  color: rgba(255, 255, 255, 0.7);
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  margin-bottom: 0.15rem;
-}
-
-.dash-stat-val {
-  font-size: 1.35rem;
-  font-weight: 700;
-  font-family: 'Outfit', sans-serif;
-  color: var(--text-primary);
-  line-height: 1.2;
-}
-
-/* Widget grid */
+/* 3-column balanced Grid */
 .dash-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 1rem;
+  align-items: stretch;
 }
 
 @media (max-width: 1100px) {
   .dash-grid { grid-template-columns: repeat(2, 1fr); }
+  .dash-widget-wide { grid-column: span 2; }
 }
 
-@media (max-width: 680px) {
+@media (max-width: 768px) {
   .dash-grid { grid-template-columns: 1fr; }
+  .dash-widget-wide { grid-column: span 1; }
   .dash-stats { grid-template-columns: repeat(2, 1fr); }
 }
 
+@media (max-width: 480px) {
+  .dash-stats { grid-template-columns: 1fr; }
+}
+
 .dash-widget {
-  padding: 1.1rem 1.25rem;
+  padding: 1.15rem 1.25rem;
   border-radius: var(--r-lg);
+  display: flex;
+  flex-direction: column;
 }
 
 .dash-widget-wide {
   grid-column: span 2;
 }
 
-@media (max-width: 1100px) {
-  .dash-widget-wide { grid-column: span 2; }
-}
-
-@media (max-width: 680px) {
-  .dash-widget-wide { grid-column: span 1; }
-}
-
-/* Widget Header */
-.dash-widget-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 0.5rem;
-}
-
-.dash-widget-header h3 {
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: var(--text-primary);
-}
-
-.dash-widget-add {
-  width: 26px;
-  height: 26px;
-  border-radius: 50%;
-  background: rgba(0, 201, 167, 0.15);
-  color: var(--mint);
-  font-size: 1rem;
-  font-weight: 500;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: none;
-  cursor: pointer;
-  transition: var(--ease);
-  line-height: 1;
-}
-
-.dash-widget-add:hover {
-  background: var(--mint);
-  color: #0A1628;
-}
-
-/* Transaction rows */
-.dash-txn-list {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  margin-top: 0.35rem;
-}
-
-.dash-txn-row {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 0.5rem 0.75rem;
-  border-radius: var(--r-md);
-  transition: background 0.15s;
-}
-
-.dash-txn-row:hover {
-  background: rgba(255, 255, 255, 0.05);
-}
-
-.dash-txn-avatar {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background: var(--mint-light);
-  color: var(--mint-dark);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.95rem;
-  font-weight: 700;
-  flex-shrink: 0;
-}
-
-.dash-txn-info {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-}
-
-.dash-txn-name {
-  font-size: 0.88rem;
-  font-weight: 600;
-  color: var(--text-primary);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.dash-txn-date {
-  font-size: 0.75rem;
-  color: rgba(255, 255, 255, 0.65);
-}
-
-.dash-txn-amount {
-  font-size: 0.9rem;
-  font-weight: 700;
-  flex-shrink: 0;
-}
-
-.dash-txn-amount.income { color: #00E676; }
-.dash-txn-amount.expense { color: #FF5252; }
-
-/* Reports widget */
+/* Reports widget summary */
 .dash-reports-summary {
   display: flex;
   gap: 1.5rem;
-  margin-top: 0.5rem;
+  margin-top: 0.25rem;
 }
 
-/* Budget bars */
-.dash-budget-row {
+/* Transaction list */
+.dash-txn-list {
   display: flex;
   flex-direction: column;
-  gap: 0.35rem;
-}
-
-.dash-budget-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-}
-
-.dash-budget-label {
-  font-size: 0.82rem;
-  font-weight: 600;
-  color: var(--text-primary);
-}
-
-.dash-budget-val {
-  font-size: 0.78rem;
-  color: rgba(255, 255, 255, 0.7);
-}
-
-.dash-budget-val.over { color: var(--danger); }
-
-.dash-budget-track {
-  height: 6px;
-  background: rgba(255, 255, 255, 0.08);
-  border-radius: 99px;
-  overflow: hidden;
-}
-
-.dash-budget-fill {
-  height: 100%;
-  background: linear-gradient(90deg, #00D4FF, #00B4A0);
-  border-radius: 99px;
-  transition: width 0.6s ease;
-}
-
-.dash-budget-fill.over {
-  background: linear-gradient(90deg, #FF974A, #FC5A5A);
-}
-
-/* Circle Progress */
-.dash-circle-progress {
-  display: flex;
-  justify-content: center;
+  gap: 0.25rem;
+  margin-top: 0.25rem;
 }

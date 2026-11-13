@@ -46,9 +46,9 @@ const TransactionRow = ({ txn }) => {
   const amountStr = formatINR(txn.amount || 0);
 
   return (
-    <div className="flex items-center justify-between p-2.5 rounded-xl border border-[rgba(255,255,255,0.06)] bg-[rgba(255,255,255,0.02)] hover:bg-[rgba(255,255,255,0.05)] transition-all mb-2">
+    <div className="flex items-center justify-between p-2.5 rounded-xl border border-[rgba(255,255,255,0.06)] bg-[rgba(255,255,255,0.02)] hover:bg-[rgba(255,255,255,0.05)] transition-all mb-1.5">
       <div className="flex items-center gap-3 min-w-0">
-        <Avatar className="h-9 w-9 shrink-0">
+        <Avatar className="h-8 w-8 shrink-0">
           <AvatarFallback className={cn("text-xs font-bold", isIncome ? "bg-[rgba(0,230,118,0.2)] text-[#00E676]" : "bg-[rgba(0,212,255,0.15)] text-[var(--accent-primary)]")}>
             {initials}
           </AvatarFallback>
@@ -74,14 +74,14 @@ const BudgetBar = ({ label, spent, limit }) => {
   const pct = limit > 0 ? Math.min((spent / limit) * 100, 100) : 0;
   const over = pct >= 100;
   return (
-    <div className="space-y-1.5">
+    <div className="space-y-1">
       <div className="flex justify-between items-baseline text-xs">
-        <span className="font-semibold text-[var(--text-primary)]">{label}</span>
+        <span className="font-semibold text-[var(--text-primary)] truncate max-w-[140px]">{label}</span>
         <span className={cn("font-medium", over ? "text-[#FF5252]" : "text-[rgba(255,255,255,0.7)]")}>
           {formatINR(spent)} / {formatINR(limit)}
         </span>
       </div>
-      <Progress value={pct} isOver={over} className="h-2" />
+      <Progress value={pct} isOver={over} className="h-1.5" />
     </div>
   );
 };
@@ -256,7 +256,7 @@ const Dashboard = ({ user }) => {
       legend: {
         display: true,
         position: 'right',
-        labels: { color: 'rgba(255,255,255,0.7)', font: { family: 'Plus Jakarta Sans' } }
+        labels: { color: 'rgba(255,255,255,0.7)', font: { family: 'Plus Jakarta Sans', size: 11 } }
       },
       tooltip: {
         backgroundColor: 'rgba(13,33,55,0.95)',
@@ -264,8 +264,8 @@ const Dashboard = ({ user }) => {
         borderWidth: 1,
         titleColor: '#00D4FF',
         bodyColor: 'rgba(255,255,255,0.8)',
-        padding: 12,
-        cornerRadius: 12,
+        padding: 10,
+        cornerRadius: 10,
         callbacks: {
           label: (item) => ` ${item.label}: ${formatINR(item.raw)}`
         }
@@ -293,7 +293,7 @@ const Dashboard = ({ user }) => {
       <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
       
       <div className="page-content dashboard">
-        {/* Page Header with plain white title */}
+        {/* Page Header */}
         <div className="page-header" style={{ marginBottom: '1.25rem' }}>
           <div>
             <h1 style={{ fontSize: '1.85rem', color: '#FFFFFF', fontWeight: 700, margin: 0 }}>
@@ -305,11 +305,11 @@ const Dashboard = ({ user }) => {
           </div>
         </div>
 
-        {/* 1. Stat Cards Row using shadcn Card */}
+        {/* 1. Stat Cards Row */}
         <div className="dash-stats">
           <Card className="bg-gradient-to-br from-[rgba(0,212,255,0.12)] to-[rgba(0,212,255,0.02)] border-t-2 border-t-[var(--accent-primary)] p-4 flex items-center gap-3.5 transition-all hover:-translate-y-0.5">
-            <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-[rgba(0,212,255,0.15)] text-[var(--accent-primary)] shrink-0">
-              <Wallet size={24} />
+            <div className="w-11 h-11 rounded-xl flex items-center justify-center bg-[rgba(0,212,255,0.15)] text-[var(--accent-primary)] shrink-0">
+              <Wallet size={22} />
             </div>
             <div>
               <p className="text-xs uppercase tracking-wider text-[rgba(255,255,255,0.65)] font-semibold">Total Balance</p>
@@ -320,8 +320,8 @@ const Dashboard = ({ user }) => {
           </Card>
 
           <Card className="bg-gradient-to-br from-[rgba(0,230,118,0.12)] to-[rgba(0,230,118,0.02)] border-t-2 border-t-[var(--success)] p-4 flex items-center gap-3.5 transition-all hover:-translate-y-0.5">
-            <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-[rgba(0,230,118,0.15)] text-[var(--success)] shrink-0">
-              <TrendingUp size={24} />
+            <div className="w-11 h-11 rounded-xl flex items-center justify-center bg-[rgba(0,230,118,0.15)] text-[var(--success)] shrink-0">
+              <TrendingUp size={22} />
             </div>
             <div>
               <p className="text-xs uppercase tracking-wider text-[rgba(255,255,255,0.65)] font-semibold">Monthly Income</p>
@@ -332,8 +332,8 @@ const Dashboard = ({ user }) => {
           </Card>
 
           <Card className="bg-gradient-to-br from-[rgba(255,82,82,0.12)] to-[rgba(255,82,82,0.02)] border-t-2 border-t-[var(--danger)] p-4 flex items-center gap-3.5 transition-all hover:-translate-y-0.5">
-            <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-[rgba(255,82,82,0.15)] text-[var(--danger)] shrink-0">
-              <TrendingDown size={24} />
+            <div className="w-11 h-11 rounded-xl flex items-center justify-center bg-[rgba(255,82,82,0.15)] text-[var(--danger)] shrink-0">
+              <TrendingDown size={22} />
             </div>
             <div>
               <p className="text-xs uppercase tracking-wider text-[rgba(255,255,255,0.65)] font-semibold">Monthly Expenses</p>
@@ -344,8 +344,8 @@ const Dashboard = ({ user }) => {
           </Card>
 
           <Card className="bg-gradient-to-br from-[rgba(123,97,255,0.12)] to-[rgba(123,97,255,0.02)] border-t-2 border-t-[var(--accent-purple)] p-4 flex items-center gap-3.5 transition-all hover:-translate-y-0.5">
-            <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-[rgba(123,97,255,0.15)] text-[var(--accent-purple)] shrink-0">
-              <ShieldCheck size={24} />
+            <div className="w-11 h-11 rounded-xl flex items-center justify-center bg-[rgba(123,97,255,0.15)] text-[var(--accent-purple)] shrink-0">
+              <ShieldCheck size={22} />
             </div>
             <div>
               <p className="text-xs uppercase tracking-wider text-[rgba(255,255,255,0.65)] font-semibold">Savings</p>
@@ -356,87 +356,10 @@ const Dashboard = ({ user }) => {
           </Card>
         </div>
 
-        {/* Main Grid */}
+        {/* Balanced 3x2 Main Grid */}
         <div className="dash-grid">
 
-          {/* 2. All Transactions Widget */}
-          <Card className="dash-widget">
-            <CardHeader className="p-0 pb-3 flex flex-row items-center justify-between">
-              <CardTitle className="text-base font-semibold">All Transactions</CardTitle>
-              <button 
-                className="w-7 h-7 rounded-full bg-[rgba(0,201,167,0.15)] text-[#00C9A7] hover:bg-[#00C9A7] hover:text-[#0A1628] flex items-center justify-center transition-all cursor-pointer" 
-                onClick={() => navigate('/transactions', { state: { openAdd: true } })}
-                title="Add Transaction"
-              >
-                <Plus size={16} />
-              </button>
-            </CardHeader>
-            <CardContent className="p-0 pt-1">
-              {transactions.length === 0 ? (
-                <p className="text-[rgba(255,255,255,0.65)] text-xs text-center py-6">No transactions yet.</p>
-              ) : (
-                <div className="dash-txn-list">
-                  {transactions.slice(0, 4).map(t => <TransactionRow key={t.id} txn={t} />)}
-                </div>
-              )}
-            </CardContent>
-          </Card>
-
-          {/* 3. Reports Widget */}
-          <Card className="dash-widget">
-            <CardHeader className="p-0 pb-3">
-              <CardTitle className="text-base font-semibold">Reports</CardTitle>
-            </CardHeader>
-            <CardContent className="p-0">
-              <div className="dash-reports-summary">
-                <div>
-                  <p className="text-xs text-[rgba(255,255,255,0.65)] font-medium">Balance</p>
-                  <p className="font-bold text-lg text-[#00C9A7] font-['Outfit',sans-serif]">{formatINR(walletBalance)}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-[rgba(255,255,255,0.65)] font-medium">Spent</p>
-                  <p className="font-bold text-lg text-[#FC5A5A] font-['Outfit',sans-serif]">{formatINR(expenseMonth)}</p>
-                </div>
-              </div>
-              <div style={{ height: 90, marginTop: '0.75rem' }}>
-                {rechartsData ? (
-                  <ResponsiveContainer width="100%" height={90}>
-                    <AreaChart data={rechartsData} margin={{ top: 5, right: 0, left: 0, bottom: 0 }}>
-                      <defs>
-                        <linearGradient id="sparkIncome" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="0%" stopColor="#00C9A7" stopOpacity={0.4} />
-                          <stop offset="100%" stopColor="#00C9A7" stopOpacity={0.0} />
-                        </linearGradient>
-                      </defs>
-                      <Area type="monotone" dataKey="Income" stroke="#00C9A7" strokeWidth={2} fill="url(#sparkIncome)" dot={false} />
-                    </AreaChart>
-                  </ResponsiveContainer>
-                ) : (
-                  <EmptyChartPlaceholder text="No data to report" />
-                )}
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* 4. Budget Widget */}
-          <Card className="dash-widget">
-            <CardHeader className="p-0 pb-3">
-              <CardTitle className="text-base font-semibold">Budget</CardTitle>
-            </CardHeader>
-            <CardContent className="p-0 pt-1">
-              {budgets.length === 0 ? (
-                <p className="text-[rgba(255,255,255,0.65)] text-xs text-center py-6">No budgets set.</p>
-              ) : (
-                <div className="flex flex-col gap-3">
-                  {budgets.slice(0, 3).map(b => (
-                    <BudgetBar key={b.category} label={b.category} spent={b.spent || 0} limit={b.limit} />
-                  ))}
-                </div>
-              )}
-            </CardContent>
-          </Card>
-
-          {/* 5. Income vs Expense Chart using Recharts */}
+          {/* Row 1, Col 1-2: Hero Chart (Income vs Expense) */}
           <Card className="dash-widget dash-widget-wide">
             <CardHeader className="p-0 pb-2 flex flex-row items-center justify-between">
               <CardTitle className="text-base font-semibold">Income vs Expenses</CardTitle>
@@ -460,10 +383,10 @@ const Dashboard = ({ user }) => {
                 <option value="6 Month">6 Months</option>
               </select>
             </CardHeader>
-            <CardContent className="p-0 pt-2">
-              <div style={{ height: 200, width: '100%' }}>
+            <CardContent className="p-0 pt-1">
+              <div style={{ height: 210, width: '100%' }}>
                 {rechartsData ? (
-                  <ResponsiveContainer width="100%" height={200}>
+                  <ResponsiveContainer width="100%" height={210}>
                     <AreaChart data={rechartsData} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
                       <defs>
                         <linearGradient id="rechartsIncomeGrad" x1="0" y1="0" x2="0" y2="1">
@@ -491,7 +414,7 @@ const Dashboard = ({ user }) => {
                         verticalAlign="top" 
                         align="right" 
                         iconType="circle"
-                        wrapperStyle={{ paddingBottom: '8px', fontSize: '12px' }} 
+                        wrapperStyle={{ paddingBottom: '6px', fontSize: '12px' }} 
                       />
                       <Area 
                         type="monotone" 
@@ -520,7 +443,109 @@ const Dashboard = ({ user }) => {
             </CardContent>
           </Card>
 
-          {/* 6. Spending by Category Donut */}
+          {/* Row 1, Col 3: Reports Summary */}
+          <Card className="dash-widget">
+            <CardHeader className="p-0 pb-2">
+              <CardTitle className="text-base font-semibold">Reports</CardTitle>
+            </CardHeader>
+            <CardContent className="p-0">
+              <div className="dash-reports-summary">
+                <div>
+                  <p className="text-xs text-[rgba(255,255,255,0.65)] font-medium">Balance</p>
+                  <p className="font-bold text-lg text-[#00C9A7] font-['Outfit',sans-serif]">{formatINR(walletBalance)}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-[rgba(255,255,255,0.65)] font-medium">Spent</p>
+                  <p className="font-bold text-lg text-[#FC5A5A] font-['Outfit',sans-serif]">{formatINR(expenseMonth)}</p>
+                </div>
+              </div>
+              <div style={{ height: 110, marginTop: '0.75rem' }}>
+                {rechartsData ? (
+                  <ResponsiveContainer width="100%" height={110}>
+                    <AreaChart data={rechartsData} margin={{ top: 5, right: 0, left: 0, bottom: 0 }}>
+                      <defs>
+                        <linearGradient id="sparkIncome" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stopColor="#00C9A7" stopOpacity={0.4} />
+                          <stop offset="100%" stopColor="#00C9A7" stopOpacity={0.0} />
+                        </linearGradient>
+                      </defs>
+                      <Area type="monotone" dataKey="Income" stroke="#00C9A7" strokeWidth={2} fill="url(#sparkIncome)" dot={false} />
+                    </AreaChart>
+                  </ResponsiveContainer>
+                ) : (
+                  <EmptyChartPlaceholder text="No data to report" />
+                )}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Row 2, Col 1: All Transactions */}
+          <Card className="dash-widget">
+            <CardHeader className="p-0 pb-3 flex flex-row items-center justify-between">
+              <CardTitle className="text-base font-semibold">Recent Transactions</CardTitle>
+              <button 
+                className="w-7 h-7 rounded-full bg-[rgba(0,201,167,0.15)] text-[#00C9A7] hover:bg-[#00C9A7] hover:text-[#0A1628] flex items-center justify-center transition-all cursor-pointer" 
+                onClick={() => navigate('/transactions', { state: { openAdd: true } })}
+                title="Add Transaction"
+              >
+                <Plus size={16} />
+              </button>
+            </CardHeader>
+            <CardContent className="p-0">
+              {transactions.length === 0 ? (
+                <p className="text-[rgba(255,255,255,0.65)] text-xs text-center py-6">No transactions yet.</p>
+              ) : (
+                <div className="dash-txn-list">
+                  {transactions.slice(0, 4).map(t => <TransactionRow key={t.id} txn={t} />)}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Row 2, Col 2: Unified Budget Overview & Limits */}
+          <Card className="dash-widget">
+            <CardHeader className="p-0 pb-2 flex flex-row items-center justify-between">
+              <CardTitle className="text-base font-semibold">Budget Overview</CardTitle>
+              <span className="text-xs font-bold text-[#00C9A7]">{budgetPct}% Used</span>
+            </CardHeader>
+            <CardContent className="p-0">
+              <div className="flex items-center gap-3 py-1 mb-2 border-b border-[rgba(255,255,255,0.06)] pb-2">
+                <div className="shrink-0">
+                  <svg width="48" height="48" viewBox="0 0 100 100">
+                    <circle cx="50" cy="50" r="40" fill="none" stroke="rgba(0,201,167,0.12)" strokeWidth="10" />
+                    <circle
+                      cx="50" cy="50" r="40" fill="none"
+                      stroke={budgetPct >= 100 ? '#FC5A5A' : '#00C9A7'}
+                      strokeWidth="10"
+                      strokeDasharray={`${(budgetPct / 100) * 251.2} 251.2`}
+                      strokeLinecap="round"
+                      transform="rotate(-90 50 50)"
+                      style={{ transition: 'stroke-dasharray 0.8s ease' }}
+                    />
+                    <text x="50" y="55" textAnchor="middle" fontSize="20" fontWeight="700" fill="var(--text-primary)">{budgetPct}%</text>
+                  </svg>
+                </div>
+                <div className="min-w-0">
+                  <p className="text-xs text-[rgba(255,255,255,0.65)] font-medium">Spent vs Budget</p>
+                  <p className="text-sm font-bold font-['Outfit',sans-serif] text-[var(--text-primary)] truncate">
+                    {formatINR(totalSpent)} <span className="text-xs font-normal text-[rgba(255,255,255,0.5)]">/ {formatINR(totalBudget)}</span>
+                  </p>
+                </div>
+              </div>
+
+              {budgets.length === 0 ? (
+                <p className="text-[rgba(255,255,255,0.65)] text-xs text-center py-4">No budgets set.</p>
+              ) : (
+                <div className="flex flex-col gap-2.5">
+                  {budgets.slice(0, 3).map(b => (
+                    <BudgetBar key={b.category} label={b.category} spent={b.spent || 0} limit={b.limit} />
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Row 2, Col 3: Spending by Category Donut */}
           <Card className="dash-widget">
             <CardHeader className="p-0 pb-2">
               <CardTitle className="text-base font-semibold">By Category</CardTitle>
@@ -536,33 +561,6 @@ const Dashboard = ({ user }) => {
                   </div>
                 )}
               </div>
-            </CardContent>
-          </Card>
-
-          {/* 7. Budget Summary */}
-          <Card className="dash-widget">
-            <CardHeader className="p-0 pb-2">
-              <CardTitle className="text-base font-semibold">Budget Used</CardTitle>
-            </CardHeader>
-            <CardContent className="p-0 text-center">
-              <div className="dash-circle-progress" style={{ marginTop: '0.5rem' }}>
-                <svg width="90" height="90" viewBox="0 0 100 100">
-                  <circle cx="50" cy="50" r="40" fill="none" stroke="rgba(0,201,167,0.12)" strokeWidth="10" />
-                  <circle
-                    cx="50" cy="50" r="40" fill="none"
-                    stroke={budgetPct >= 100 ? '#FC5A5A' : '#00C9A7'}
-                    strokeWidth="10"
-                    strokeDasharray={`${(budgetPct / 100) * 251.2} 251.2`}
-                    strokeLinecap="round"
-                    transform="rotate(-90 50 50)"
-                    style={{ transition: 'stroke-dasharray 0.8s ease' }}
-                  />
-                  <text x="50" y="54" textAnchor="middle" fontSize="18" fontWeight="700" fill="var(--text-primary)">{budgetPct}%</text>
-                </svg>
-              </div>
-              <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.82rem', marginTop: '0.5rem', fontWeight: 500 }}>
-                {formatINR(totalSpent)} of {formatINR(totalBudget)}
-              </p>
             </CardContent>
           </Card>
 

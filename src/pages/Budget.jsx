@@ -3,7 +3,7 @@ import { Utensils, Car, BookOpen, Film, Home, HeartPulse, Smartphone, ShoppingBa
 import { collection, query, where, onSnapshot } from 'firebase/firestore';
 import { auth, db } from '../firebase/firebaseClient';
 import { setBudget } from '../firebase/dbFunctions';
-import GlassCard from '../components/ui/GlassCard';
+import { Card } from '../components/ui/Card';
 import './Budget.css';
 
 const EXPENSE_CATEGORIES = [
@@ -232,7 +232,7 @@ const Budget = () => {
       </div>
 
       {/* Monthly Budget Summary */}
-      <GlassCard className="budget-summary-card-fullwidth" style={{ padding: '2rem', marginBottom: '2rem', borderTop: '2px solid var(--accent-primary)' }}>
+      <Card className="budget-summary-card-fullwidth" style={{ padding: '2rem', marginBottom: '2rem', borderTop: '2px solid var(--accent-primary)' }}>
         <div className="fullwidth-summary-content" style={{ display: 'flex', gap: '2rem', alignItems: 'center', flexWrap: 'wrap' }}>
           <div className="summary-stats-fullwidth" style={{ flex: '1', minWidth: '200px' }}>
             <div className="stat" style={{ marginBottom: '1rem' }}>
@@ -264,12 +264,12 @@ const Budget = () => {
             </p>
           </div>
         </div>
-      </GlassCard>
+      </Card>
 
       <div className="budget-layout" style={{ display: 'grid', gridTemplateColumns: '1fr 3fr', gap: '2rem', alignItems: 'start' }}>
         <div className="budget-sidebar">
           {/* Set Budget Form */}
-          <GlassCard className="set-budget-card" style={{ padding: '1.5rem', position: 'sticky', top: '100px' }}>
+          <Card className="set-budget-card" style={{ padding: '1.5rem', position: 'sticky', top: '100px' }}>
             <h3 style={{ marginBottom: '0.5rem' }}>Set Budget Limit</h3>
             <p className="text-secondary" style={{ fontSize: '0.85rem', marginBottom: '1.5rem' }}>Manage your monthly spending limits.</p>
             <form onSubmit={handleSaveBudget} className="budget-form" style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
@@ -300,13 +300,13 @@ const Budget = () => {
                 {isSaving ? 'Saving...' : 'Save Budget'}
               </button>
             </form>
-          </GlassCard>
+          </Card>
         </div>
 
         <div className="budget-main">
           <div className="budget-cards-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1.25rem' }}>
             {budgetData.map(b => (
-              <GlassCard key={b.category} className="budget-card" style={{ padding: '1.5rem', position: 'relative' }}>
+              <Card key={b.category} className="budget-card" style={{ padding: '1.5rem', position: 'relative' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
                   <h4 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '1.1rem' }}>
                     <span>{CATEGORY_ICONS[b.category]}</span>
@@ -344,7 +344,7 @@ const Budget = () => {
                     {b.percentage.toFixed(0)}% used
                   </span>
                 </div>
-              </GlassCard>
+              </Card>
             ))}
           </div>
         </div>

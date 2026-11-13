@@ -15,17 +15,18 @@
 
 .top-navbar-title {
   font-family: 'Outfit', sans-serif;
-  font-size: 1.2rem;
+  font-size: 1.35rem;
   font-weight: 700;
-  color: #0A1628;
-  background: linear-gradient(135deg, #FFD740, #FFA000);
+  color: #FFFFFF;
+  background: transparent;
   border: none;
-  padding: 4px 12px;
-  border-radius: 20px;
+  padding: 0;
+  border-radius: 0;
   display: inline-flex;
   align-items: center;
   gap: 6px;
   margin: 0;
+  letter-spacing: -0.01em;
 }
 
 .top-navbar-right {
