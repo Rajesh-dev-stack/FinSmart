@@ -4,60 +4,6 @@ import { signUpWithEmail, loginWithGoogle, loginWithEmail } from '../firebase/au
 import { Sparkles, Wallet, BellRing, PieChart, Award, BarChart2, ShieldCheck, Eye, EyeOff, User, Mail, Lock } from 'lucide-react';
 import './Auth.css';
 
-/*  Inline Chart / Growth SVG illustration  */
-const GrowthSVG = () => (
-  <svg viewBox="0 0 260 240" fill="none" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
-    {/* Shadow */}
-    <ellipse cx="130" cy="228" rx="80" ry="10" fill="rgba(0,0,0,0.18)"/>
-    {/* Phone frame */}
-    <rect x="60" y="20" width="140" height="200" rx="22" fill="url(#phoneGrad)"/>
-    <rect x="65" y="25" width="130" height="190" rx="18" fill="#1C1F2E"/>
-    {/* Screen content */}
-    <rect x="75" y="40" width="110" height="16" rx="6" fill="rgba(255,255,255,0.08)"/>
-    <rect x="75" y="62" width="70" height="10" rx="4" fill="rgba(255,255,255,0.12)"/>
-    {/* Balance */}
-    <text x="75" y="95" fill="white" fontSize="11" fontWeight="700" opacity="0.6">Total Balance</text>
-    <text x="75" y="115" fill="white" fontSize="18" fontWeight="800">4,250</text>
-    {/* Mini chart bars */}
-    <rect x="75"  y="145" width="14" height="35" rx="4" fill="url(#barGrad1)" opacity="0.7"/>
-    <rect x="95"  y="130" width="14" height="50" rx="4" fill="url(#barGrad1)" opacity="0.85"/>
-    <rect x="115" y="138" width="14" height="42" rx="4" fill="url(#barGrad1)" opacity="0.7"/>
-    <rect x="135" y="120" width="14" height="60" rx="4" fill="url(#barGrad1)"/>
-    <rect x="155" y="128" width="14" height="52" rx="4" fill="url(#barGrad2)" opacity="0.9"/>
-    {/* Trend line */}
-    <polyline points="82,160 102,145 122,152 142,135 162,142" stroke="#00C9A7" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
-    {/* Dots */}
-    <circle cx="82"  cy="160" r="3" fill="#00C9A7"/>
-    <circle cx="142" cy="135" r="4" fill="#00C9A7"/>
-    <circle cx="162" cy="142" r="3" fill="#00C9A7"/>
-    {/* Notch */}
-    <rect x="110" y="24" width="40" height="6" rx="3" fill="rgba(255,255,255,0.15)"/>
-    {/* Floating badge */}
-    <rect x="110" y="50" width="100" height="36" rx="10" fill="white" opacity="0.95"/>
-    <text x="118" y="64" fill="#00C9A7" fontSize="9" fontWeight="800">Saved 850</text>
-    <text x="118" y="78" fill="#718096" fontSize="8">this month </text>
-    {/* Floating coin */}
-    <circle cx="58"  cy="150" r="20" fill="#FFD166"/>
-    <circle cx="58"  cy="150" r="14" fill="#FFC233"/>
-    <text x="52" y="155" fill="#9A6A00" fontSize="12" fontWeight="bold">$</text>
-    {/* Defs */}
-    <defs>
-      <linearGradient id="phoneGrad" x1="60" y1="20" x2="200" y2="220" gradientUnits="userSpaceOnUse">
-        <stop stopColor="#6C63FF"/>
-        <stop offset="1" stopColor="#A89AE3"/>
-      </linearGradient>
-      <linearGradient id="barGrad1" x1="0" y1="0" x2="0" y2="1" gradientUnits="objectBoundingBox">
-        <stop stopColor="#6C63FF" stopOpacity="0.9"/>
-        <stop offset="1" stopColor="#A89AE3" stopOpacity="0.4"/>
-      </linearGradient>
-      <linearGradient id="barGrad2" x1="0" y1="0" x2="0" y2="1" gradientUnits="objectBoundingBox">
-        <stop stopColor="#00C9A7" stopOpacity="0.9"/>
-        <stop offset="1" stopColor="#00C9A7" stopOpacity="0.3"/>
-      </linearGradient>
-    </defs>
-  </svg>
-);
-
 const features = [
   { icon: <Sparkles size={18} />, text: 'AI Spending Analyzer' },
   { icon: <Wallet size={18} />, text: 'Digital Wallet' },
@@ -346,13 +292,27 @@ const Signup = () => {
         <div className="deco-dot dot-3"></div>
 
         <div className="auth-right-top">
-          <div className="auth-illustration-wrap">
-            <GrowthSVG />
+          <div className="auth-feature-cards-wrap">
+            <div className="auth-glass-card card-1">
+              <div className="icon"></div>
+              <h4>AI Insights</h4>
+              <p>Get personalized spending tips</p>
+            </div>
+            <div className="auth-glass-card card-2">
+              <div className="icon"></div>
+              <h4>Earn Rewards</h4>
+              <p>Save money, earn FinCoins</p>
+            </div>
+            <div className="auth-glass-card card-3">
+              <div className="icon"></div>
+              <h4>Smart Budget</h4>
+              <p>Never overspend again</p>
+            </div>
           </div>
         </div>
 
         <div className="auth-right-bottom">
-          <p className="auth-tagline">Take control of your<br />financial future</p>
+          <p className="auth-tagline">AI powered expense tracking built<br />for Indian college students</p>
 
           <div className="auth-features-grid">
             {features.map(f => (
