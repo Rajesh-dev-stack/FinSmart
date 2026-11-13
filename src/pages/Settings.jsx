@@ -114,9 +114,26 @@ const Settings = () => {
       <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.75rem', gap: '1rem' }}>
         <button 
           onClick={() => navigate(-1)} 
-          style={{ background: 'transparent', border: '1px solid var(--border)', borderRadius: 'var(--r-md)', padding: '0.5rem 1rem', cursor: 'pointer', color: 'var(--text-primary)' }}
+          style={{ 
+            display: 'inline-flex', 
+            alignItems: 'center', 
+            gap: '8px', 
+            background: 'rgba(255, 255, 255, 0.04)', 
+            border: '1px solid var(--border)', 
+            borderRadius: 'var(--r-md)', 
+            padding: '0.5rem 0.875rem', 
+            cursor: 'pointer', 
+            color: 'var(--text-primary)',
+            fontSize: '0.875rem',
+            fontWeight: 500,
+            whiteSpace: 'nowrap',
+            transition: 'all 0.2s ease'
+          }}
+          onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255, 255, 255, 0.08)'; e.currentTarget.style.borderColor = 'var(--text-secondary)'; }}
+          onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(255, 255, 255, 0.04)'; e.currentTarget.style.borderColor = 'var(--border)'; }}
         >
-          <ArrowLeft size={16} style={{marginRight:'4px'}}/> Back
+          <ArrowLeft size={16} />
+          <span>Back</span>
         </button>
         <h1 style={{ margin: 0 }}>Settings</h1>
       </div>
@@ -173,7 +190,7 @@ const Settings = () => {
           <div className="modal card">
             <div className="modal-header">
               <h3>Change Email Address</h3>
-              <button className="close-btn" onClick={() => setShowEmailModal(false)}><X size={18} /></button>
+              <button className="close-btn" onClick={() => setShowEmailModal(false)} style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}><X size={18} /></button>
             </div>
             <form onSubmit={handleEmailChange} className="profile-form" style={{ padding: '1.5rem' }}>
               <div className="profile-field">
@@ -198,7 +215,7 @@ const Settings = () => {
           <div className="modal card">
             <div className="modal-header">
               <h3>Action Required</h3>
-              <button className="close-btn" onClick={() => setShowDeleteWarning(false)}><X size={18} /></button>
+              <button className="close-btn" onClick={() => setShowDeleteWarning(false)} style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}><X size={18} /></button>
             </div>
             <div style={{ padding: '1.5rem', textAlign: 'center' }}>
               <p style={{ marginBottom: '1.5rem', fontSize: '1.05rem', color: 'var(--text-secondary)' }}>
