@@ -236,8 +236,8 @@ const Savings = ({ user }) => {
                         <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>{new Date(txn.date).toLocaleDateString()} • {txn.daysCalculated} days</p>
                       </div>
                       <div style={{ textAlign: 'right' }}>
-                        <p style={{ fontWeight: 700, color: 'var(--primary)' }}>+{txn.amount.toFixed(2)}</p>
-                        <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Balance: {txn.balanceAfter.toFixed(2)}</p>
+                        <p style={{ fontWeight: 700, color: 'var(--primary)' }}>+₹{Number(txn.amount).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+                        <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Balance: ₹{Number(txn.balanceAfter).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
                       </div>
                     </div>
                   ))}

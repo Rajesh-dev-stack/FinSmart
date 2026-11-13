@@ -258,13 +258,13 @@ const AIInsights = () => {
                     maintainAspectRatio: false,
                     plugins: { legend: { display: false } },
                     scales: {
-                      y: { beginAtZero: true, ticks: { callback: (v) => `${v}` } }
+                      y: { beginAtZero: true, ticks: { callback: (v) => `₹${v.toLocaleString('en-IN')}` } }
                     }
                   }} 
                 />
               </div>
               <div className="prediction-summary">
-                <p><strong>Total Predicted:</strong> {Object.values(predictions).reduce((a, b) => a + b, 0).toFixed(2)}</p>
+                <p><strong>Total Predicted:</strong> ₹{Object.values(predictions).reduce((a, b) => a + b, 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
               </div>
               <button className="btn btn-outline btn-sm mt-3" onClick={handlePredict}> Re-predict</button>
             </div>

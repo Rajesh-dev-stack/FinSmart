@@ -167,16 +167,16 @@ const Transactions = () => {
       <div className="summary-bar card">
         <div className="summary-item">
           <span>Total Income</span>
-          <h3 className="text-green">+{summary.income.toFixed(2)}</h3>
+          <h3 className="text-green">+₹{summary.income.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</h3>
         </div>
         <div className="summary-item">
           <span>Total Expense</span>
-          <h3 className="text-red">-{summary.expense.toFixed(2)}</h3>
+          <h3 className="text-red">-₹{summary.expense.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</h3>
         </div>
         <div className="summary-item">
           <span>Net Balance</span>
           <h3 className={summary.net >= 0 ? 'text-green' : 'text-red'}>
-            {summary.net >= 0 ? '+' : '-'}{Math.abs(summary.net).toFixed(2)}
+            {summary.net >= 0 ? '+₹' : '-₹'}{Math.abs(summary.net).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </h3>
         </div>
       </div>
